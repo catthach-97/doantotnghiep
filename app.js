@@ -135,36 +135,34 @@ app.use(errorHandler);
 
 // Kết nối MongoDB và khởi động server
 const startServer = async () => {
-    try {
-        await new Promise((resolve, reject) => {
-            mongoConnect(() => {
-                logger.info('MongoDB connected successfully');
-                resolve();
-            });
-        });
+  try {
+    await new Promise((resolve, reject) => {
+      mongoConnect(() => {
+        logger.info('MongoDB connected successfully');
+        resolve();
+      });
+    });
 
-        // Kết nối Mongoose cho các model sử dụng Mongoose (ví dụ: Category)
-        mongoose.connect('mongodb+srv://ITCschool:8GZ4Vs2IufF9uwFY@cluster0.unzei.mongodb.net/Cshop?retryWrites=true&w=majority&appName=Cluster0', {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        }).then(() => {
-            console.log('Mongoose connected!');
-        }).catch(err => {
-            console.error('Mongoose connection error:', err);
-        });
+    // Kết nối Mongoose cho các model sử dụng Mongoose
+    mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
+    .then(() => console.log('Mongoose connected!'))
+    .catch(err => console.error('Mongoose connection error:', err));
 
-        const port = process.env.PORT || 3000;
-        app.listen(port, () => {
-            logger.info(`Server started successfully`, { 
-                port,
-                environment: process.env.NODE_ENV || 'development',
-                timestamp: new Date().toISOString()
-            });
-        });
-    } catch (err) {
-        logger.error('Failed to start server', err);
-        process.exit(1);
-    }
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+      logger.info(`Server started successfully`, { 
+        port,
+        environment: process.env.NODE_ENV || 'development',
+        timestamp: new Date().toISOString()
+      });
+    });
+  } catch (err) {
+    logger.error('Failed to start server', err);
+    process.exit(1);
+  }
 };
 
 startServer();
