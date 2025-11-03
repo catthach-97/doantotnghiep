@@ -1,0 +1,405 @@
+<!-- Page Header -->
+<div class="mb-8">
+    <div class="flex items-center justify-between mb-8">
+            <div>
+            <h1 class="text-3xl font-bold text-gray-900">Quản lý đơn hàng</h1>
+            <p class="mt-2 text-gray-600">Theo dõi và quản lý tất cả đơn hàng của khách hàng</p>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <!-- Total Orders -->
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #3b82f6; --to-color: #1d4ed8;">
+        <div class="p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                <i class="ri-shopping-cart-line text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <dl>
+                            <dt class="text-sm font-medium text-blue-100 truncate">Tổng đơn hàng</dt>
+                            <dd class="text-2xl font-bold text-white"><%= totalOrders || 0 %></dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl text-white opacity-20">
+                            <i class="ri-shopping-cart-line"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                <div class="text-sm">
+                    <span class="font-medium text-white">Tất cả đơn hàng</span>
+                </div>
+            </div>
+    </div>
+    
+    <!-- Pending Orders -->
+        <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #eab308; --to-color: #ca8a04;">
+        <div class="p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                            <i class="ri-time-line text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <dl>
+                            <dt class="text-sm font-medium text-yellow-100 truncate">Chờ xử lý</dt>
+                                <dd class="text-2xl font-bold text-white"><%= statusStats.pending || 0 %></dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl text-white opacity-20">
+                        <i class="ri-time-line"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                <div class="text-sm">
+                    <span class="font-medium text-white">Đang chờ xử lý</span>
+                </div>
+            </div>
+    </div>
+    
+    <!-- Completed Orders -->
+        <div class="bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #22c55e; --to-color: #16a34a;">
+        <div class="p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                <i class="ri-check-line text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <dl>
+                            <dt class="text-sm font-medium text-green-100 truncate">Đã hoàn thành</dt>
+                                <dd class="text-2xl font-bold text-white"><%= statusStats.completed || 0 %></dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl text-white opacity-20">
+                            <i class="ri-check-line"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                <div class="text-sm">
+                    <span class="font-medium text-white">Đã hoàn thành</span>
+                </div>
+            </div>
+    </div>
+    
+    <!-- Total Revenue -->
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #a855f7; --to-color: #9333ea;">
+        <div class="p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                            <i class="ri-money-dollar-circle-line text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <dl>
+                            <dt class="text-sm font-medium text-purple-100 truncate">Tổng doanh thu</dt>
+                                <dd class="text-2xl font-bold text-white"><%= (totalRevenue || 0).toLocaleString('vi-VN') %>₫</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl text-white opacity-20">
+                        <i class="ri-money-dollar-circle-line"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                <div class="text-sm">
+                    <span class="font-medium text-white">Tổng doanh thu</span>
+                </div>
+            </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="mb-8">
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <h3 class="text-lg font-semibold text-gray-900">Bộ lọc & Tìm kiếm</h3>
+            <form method="GET" action="/admin/orders" class="flex flex-wrap items-center gap-4">
+                <div class="relative">
+                    <input type="text"
+                           name="search"
+                           placeholder="Tìm kiếm đơn hàng..."
+                           value="<%= search || '' %>"
+                           class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+                <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Tất cả trạng thái</option>
+                <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>Chờ xử lý</option>
+                    <option value="processing" <%= status === 'processing' ? 'selected' : '' %>>Đang xử lý</option>
+                    <option value="shipped" <%= status === 'shipped' ? 'selected' : '' %>>Đã giao hàng</option>
+                    <option value="completed" <%= status === 'completed' ? 'selected' : '' %>>Hoàn thành</option>
+                <option value="cancelled" <%= status === 'cancelled' ? 'selected' : '' %>>Đã hủy</option>
+            </select>
+                <select name="paymentStatus" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Tất cả thanh toán</option>
+                <option value="pending" <%= paymentStatus === 'pending' ? 'selected' : '' %>>Chờ thanh toán</option>
+                <option value="paid" <%= paymentStatus === 'paid' ? 'selected' : '' %>>Đã thanh toán</option>
+                <option value="failed" <%= paymentStatus === 'failed' ? 'selected' : '' %>>Thanh toán thất bại</option>
+            </select>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="ri-filter-line mr-2"></i>Lọc
+            </button>
+                <a href="/admin/orders" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                    <i class="ri-refresh-line mr-2"></i>Làm mới
+                </a>
+    </form>
+        </div>
+</div>
+
+<!-- Orders Table -->
+<div class="mb-8">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Danh sách đơn hàng</h3>
+    </div>
+    
+        <% if (orders && orders.length > 0) { %>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã đơn hàng</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách hàng</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số lượng</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng tiền</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thanh toán</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                        <% orders.forEach((order, index) => { %>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">#<%= order._id.toString().substring(0, 8) %></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900"><%= order.shippingInfo ? order.shippingInfo.name : 'N/A' %></div>
+                                <div class="text-sm text-gray-500"><%= order.shippingInfo ? order.shippingInfo.email : 'N/A' %></div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900"><%= order.items ? order.items.length : 0 %> sản phẩm</div>
+                            </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900"><%= order.totalPrice ? order.totalPrice.toLocaleString('vi-VN') : 0 %>₫</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= 
+                                        order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                        order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                                        order.status === 'shipped' ? 'bg-yellow-100 text-yellow-800' :
+                                        order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                        'bg-gray-100 text-gray-800'
+                                    %>">
+                                        <%= order.status === 'completed' ? 'Hoàn thành' :
+                                            order.status === 'processing' ? 'Đang xử lý' :
+                                            order.status === 'shipped' ? 'Đã giao hàng' :
+                                            order.status === 'cancelled' ? 'Đã hủy' :
+                                            'Chờ xử lý'
+                                        %>
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= 
+                                        order.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
+                                        order.paymentStatus === 'failed' ? 'bg-red-100 text-red-800' :
+                                        'bg-yellow-100 text-yellow-800'
+                                    %>">
+                                        <%= order.paymentStatus === 'paid' ? 'Đã thanh toán' :
+                                            order.paymentStatus === 'failed' ? 'Thất bại' :
+                                            'Chờ thanh toán'
+                                        %>
+                                </span>
+                            </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <%= order.createdAt ? new Date(order.createdAt).toLocaleDateString('vi-VN') : 'N/A' %>
+                                </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <a href="/admin/orders/<%= order._id %>" 
+                                           class="text-blue-600 hover:text-blue-900">
+                                        <i class="ri-eye-line"></i>
+                                    </a>
+                                        <!-- <button onclick="updateOrderStatus('<%= order._id %>')" 
+                                                class="text-green-600 hover:text-green-900">
+                                        <i class="ri-edit-line"></i>
+                                    </button> -->
+                                        <button onclick="deleteOrder('<%= order._id %>')" 
+                                                class="text-red-600 hover:text-red-900">
+                                            <i class="ri-delete-bin-line"></i>
+                                        </button>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+            <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+                <div class="px-6 py-4 border-t border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            Hiển thị <span class="font-medium"><%= (currentPage - 1) * limit + 1 %></span> - 
+                            <span class="font-medium"><%= Math.min(currentPage * limit, totalOrders) %></span> 
+                            trong tổng <span class="font-medium"><%= totalOrders %></span> đơn hàng
+        </div>
+                        <div class="flex items-center space-x-2">
+                            <% if (hasPrevPage) { %>
+                                <a href="?page=<%= prevPage %><%= search ? '&search=' + search : '' %><%= status ? '&status=' + status : '' %><%= paymentStatus ? '&paymentStatus=' + paymentStatus : '' %>" 
+                                   class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                    Trước
+                    </a>
+                <% } %>
+                
+                            <% pageNumbers.forEach(pageNum => { %>
+                                <a href="?page=<%= pageNum %><%= search ? '&search=' + search : '' %><%= status ? '&status=' + status : '' %><%= paymentStatus ? '&paymentStatus=' + paymentStatus : '' %>" 
+                                   class="px-3 py-2 text-sm font-medium <%= pageNum === currentPage ? 'text-white bg-blue-600' : 'text-gray-500 bg-white border border-gray-300' %> rounded-md hover:bg-gray-50">
+                                    <%= pageNum %>
+                                </a>
+                            <% }); %>
+                            
+                            <% if (hasNextPage) { %>
+                                <a href="?page=<%= nextPage %><%= search ? '&search=' + search : '' %><%= status ? '&status=' + status : '' %><%= paymentStatus ? '&paymentStatus=' + paymentStatus : '' %>" 
+                                   class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                    Sau
+                    </a>
+                <% } %>
+                        </div>
+        </div>
+    </div>
+    <% } %>
+        <% } else { %>
+            <div class="text-center py-12">
+                <i class="ri-shopping-cart-line text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-500 mb-2">Chưa có đơn hàng nào</h3>
+                <p class="text-gray-400">Khách hàng chưa đặt đơn hàng nào</p>
+</div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+function updateOrderStatus(orderId) {
+    const newStatus = prompt('Nhập trạng thái mới (pending/processing/shipped/completed/cancelled):');
+    if (newStatus && ['pending', 'processing', 'shipped', 'completed', 'cancelled'].includes(newStatus)) {
+        fetch('/admin/update-order-status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                orderId: orderId,
+                status: newStatus
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Cập nhật trạng thái thành công!');
+                location.reload();
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi cập nhật trạng thái');
+        });
+    } else if (newStatus) {
+        alert('Trạng thái không hợp lệ. Vui lòng chọn: pending, processing, shipped, completed, hoặc cancelled');
+    }
+}
+    
+function deleteOrder(orderId) {
+    if (confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')) {
+        fetch(`/admin/orders/${orderId}/delete`, {
+            method: 'DELETE',
+            headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi xóa đơn hàng');
+        });
+    }
+}
+</script>
+
+<style>
+/* Gradient Cards Animation */
+.gradient-card {
+    background: linear-gradient(135deg, var(--from-color), var(--to-color));
+    position: relative;
+    overflow: hidden;
+}
+
+.gradient-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.gradient-card:hover::before {
+    left: 100%;
+}
+
+/* Icon glow effect */
+.icon-glow {
+    box-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+/* Card hover effects */
+.card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+</style>

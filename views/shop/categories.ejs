@@ -1,0 +1,576 @@
+<%- include('../includes/head') %>
+
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <%- include('../includes/navigation') %>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4 py-4">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="/" class="text-blue-600 hover:text-blue-800 transition-colors duration-200">
+                    Trang chủ
+                </a>
+                <span class="text-gray-400">/</span>
+                <span class="text-gray-600">Danh mục sản phẩm</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Hero Slider Section -->
+    <section class="hero-slider-section relative overflow-hidden w-full">
+        <div class="swiper hero-swiper w-full">
+            <div class="swiper-wrapper">
+                <% if (slides && slides.length > 0) { %>
+                    <% slides.forEach((slide, index) => { %>
+                        <div class="swiper-slide" style="<%= index === 0 ? 'display: block;' : 'display: none;' %>">
+                            <div class="hero-slide relative" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('<%= slide.image %>');">
+                                <div class="floating-elements"></div>
+                                <div class="w-full max-w-7xl mx-auto px-4 h-full flex items-center">
+                                    <div class="max-w-4xl text-white animate-fade-in">
+                                        <h1 class="text-6xl md:text-8xl font-bold font-pacifico mb-6 leading-tight">
+                                            <span class="gradient-text"><%= slide.title %></span>
+                                            <% if (slide.subtitle) { %>
+                                                <br>
+                                                <span class="text-4xl md:text-5xl font-light"><%= slide.subtitle %></span>
+                                            <% } %>
+                                        </h1>
+                                        <% if (slide.description) { %>
+                                            <p class="text-xl md:text-2xl mb-8 leading-relaxed text-gray-200">
+                                                <%= slide.description %>
+                                            </p>
+                                        <% } %>
+                                        <% if (slide.link) { %>
+                                            <div class="flex flex-col sm:flex-row gap-4">
+                                                <a href="<%= slide.link %>" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                                    <i class="ri-shopping-cart-line mr-2"></i>
+                                                    <%= slide.buttonText || 'Xem ngay' %>
+                                                </a>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <!-- Fallback slides nếu không có slides từ database -->
+                    <div class="swiper-slide" style="display: block;">
+                        <div class="hero-slide relative" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2012&q=80');">
+                            <div class="floating-elements"></div>
+                            <div class="w-full max-w-7xl mx-auto px-4 h-full flex items-center">
+                                <div class="max-w-4xl text-white animate-fade-in">
+                                    <h1 class="text-6xl md:text-8xl font-bold font-pacifico mb-6 leading-tight">
+                                        <span class="gradient-text">Giày Thể Thao</span>
+                                        <br>
+                                        <span class="text-4xl md:text-5xl font-light">Cao Cấp</span>
+                                    </h1>
+                                    <p class="text-xl md:text-2xl mb-8 leading-relaxed text-gray-200">
+                                        Khám phá bộ sưu tập giày thể thao mới nhất với công nghệ tiên tiến và thiết kế đỉnh cao
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            
+            <!-- Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+
+    <!-- Danh mục Title Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                    <span class="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        Danh mục
+                    </span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Khám phá các danh mục giày hàng đầu thế giới với chất lượng và thiết kế đỉnh cao
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Categories Grid -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-7xl mx-auto">
+                <% if (categories && categories.length > 0) { %>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-12">
+                        <% categories.forEach((category, index) => { %>
+                            <% if (category.imageUrl) { %>
+                                <!-- Beautiful image card -->
+                                <div class="category-card group relative rounded-2xl overflow-hidden shadow-xl cursor-pointer animate-scale-in transform transition-all duration-500 hover:scale-105 hover:shadow-2xl" 
+                                     style="animation-delay: <%= (index * 0.1) %>s; height: 300px;"
+                                     onclick="window.location.href='/products?category=<%= category.slug || category.name %>'">
+                                    
+                                    <!-- Background Image -->
+                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-500 group-hover:scale-110"
+                                         style="background-image: url('<%= category.imageUrl %>');">
+                                    </div>
+                                
+                                    <!-- Dark Overlay -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 transition-all duration-500 group-hover:from-black/70 group-hover:via-black/30 group-hover:to-black/10"></div>
+                                    
+                                    <!-- Content -->
+                                    <div class="content-overlay h-full flex flex-col justify-end p-8 text-white">
+                                        <!-- Title -->
+                                        <h3 class="text-2xl font-bold mb-3 group-hover:text-3xl transition-all duration-300 leading-tight">
+                                            <%= category.name %>
+                                        </h3>
+                                        
+                                        <!-- Description -->
+                                        <p class="text-sm opacity-90 group-hover:opacity-100 group-hover:text-base transition-all duration-300 leading-relaxed">
+                                            <%= category.description || 'Danh mục sản phẩm chất lượng cao' %>
+                                        </p>
+                                        
+                                        <!-- Hover Arrow -->
+                                        <div class="mt-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                            <span class="text-xl">→</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Shine Effect -->
+                                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <!-- Simple card for categories without images -->
+                                <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl p-8 text-center text-gray-700 hover:from-gray-200 hover:to-gray-300 transition-all duration-300 cursor-pointer animate-scale-in" 
+                                     style="animation-delay: <%= (index * 0.1) %>s; height: 300px;"
+                                     onclick="window.location.href='/products?category=<%= category.slug || category.name %>'">
+                                    
+                                    <div class="h-full flex flex-col justify-center items-center">
+                                        <h3 class="text-2xl font-bold mb-3 leading-tight">
+                                            <%= category.name %>
+                                        </h3>
+                                        
+                                        <p class="text-sm opacity-80 leading-relaxed">
+                                            <%= category.description || 'Danh mục sản phẩm chất lượng cao' %>
+                                        </p>
+                                    </div>
+                                </div>
+                            <% } %>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-20">
+                        <div class="max-w-md mx-auto">
+                            <h3 class="text-2xl font-semibold text-gray-500 mb-4">Chưa có danh mục nào</h3>
+                            <p class="text-gray-400 mb-8">Danh mục sản phẩm sẽ xuất hiện ở đây khi được thêm vào</p>
+                            <a href="/" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                                Về trang chủ
+                            </a>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Introduction Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Giới thiệu danh mục</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Tìm hiểu về đặc điểm và phong cách của từng danh mục giày</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Basketball Category -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="ri-basketball-line text-orange-500 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Basketball</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Giày bóng rổ chuyên nghiệp với đế cao su chống trượt, đệm khí hỗ trợ vận động mạnh. 
+                        Thiết kế tối ưu cho các vận động viên bóng rổ với độ bền cao.
+                    </p>
+                </div>
+
+                <!-- Running Category -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="ri-run-line text-blue-500 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Running</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Giày chạy bộ chuyên nghiệp với công nghệ đệm khí hiện đại, thiết kế nhẹ và thoáng khí. 
+                        Phù hợp cho các vận động viên chạy bộ và người tập luyện thể thao.
+                    </p>
+                </div>
+
+                <!-- Casual Category -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="ri-walk-line text-green-500 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Casual</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Giày casual phong cách hàng ngày với thiết kế đơn giản, thoải mái và dễ phối đồ. 
+                        Phù hợp cho các hoạt động thường ngày và thời trang street style.
+                    </p>
+                </div>
+
+                <!-- Lifestyle Category -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="ri-heart-line text-purple-500 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Lifestyle</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Giày lifestyle phong cách sống với thiết kế thời trang, kết hợp giữa thể thao và thời trang. 
+                        Phù hợp cho các hoạt động xã hội và phong cách sống hiện đại.
+                    </p>
+                </div>
+
+                <!-- Boot Category -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="ri-boot-line text-yellow-500 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Boot</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Giày boot cổ điển và hiện đại với thiết kế chắc chắn, bảo vệ chân tốt. 
+                        Phù hợp cho các hoạt động ngoài trời và phong cách thời trang cá tính.
+                    </p>
+                </div>
+
+                <!-- Sneaker Category -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="ri-sneaker-line text-red-500 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Sneaker</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Giày sneaker thời trang và thể thao với thiết kế đa dạng, màu sắc phong phú. 
+                        Phù hợp cho giới trẻ và những người yêu thích phong cách street fashion.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <%- include('../includes/end.ejs') %>
+
+    <!-- Scroll to Top Button -->
+
+    <style>
+        /* Hero Slide Styles */
+        .hero-slide {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 80vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+        }
+
+        .swiper {
+            width: 100vw;
+            height: 80vh;
+            margin-left: calc(-50vw + 50%);
+        }
+
+        .swiper-slide {
+            width: 100vw;
+            height: 100%;
+        }
+
+        /* Ensure slides are visible */
+        .swiper-wrapper {
+            display: flex;
+            width: 100vw;
+            height: 100%;
+        }
+
+        /* Fallback for when Swiper doesn't load */
+        .hero-swiper .swiper-slide {
+            display: block !important;
+        }
+
+        /* Ensure first slide is always visible */
+        .hero-swiper .swiper-slide:first-child {
+            display: block !important;
+        }
+
+        /* Hide other slides initially */
+        .hero-swiper .swiper-slide:not(:first-child) {
+            display: none;
+        }
+
+        /* Show all slides when Swiper is initialized */
+        .hero-swiper.swiper-initialized .swiper-slide {
+            display: block !important;
+        }
+
+        /* Full width hero section */
+        .hero-slider-section {
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            position: relative;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, rgba(87, 181, 231, 1), rgba(67, 161, 211, 1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .swiper-pagination-bullet {
+            background: white !important;
+            opacity: 0.5 !important;
+        }
+        
+        .swiper-pagination-bullet-active {
+            opacity: 1 !important;
+            background: #6366f1 !important;
+        }
+        
+        .swiper-button-next,
+        .swiper-button-prev {
+            color: white !important;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin-top: -25px;
+        }
+        
+        .swiper-button-next:after,
+        .swiper-button-prev:after {
+            font-size: 20px;
+        }
+        
+        .swiper-button-next:hover,
+        .swiper-button-prev:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Floating elements animation */
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .floating-elements::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-elements::after {
+            content: '';
+            position: absolute;
+            top: 60%;
+            right: 15%;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        /* Category Card Styles */
+        .category-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+            z-index: 1;
+        }
+        
+        .category-card:hover::before {
+            transform: translateX(100%);
+        }
+        
+        /* Enhanced hover effects */
+        .category-card:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Text glow effect */
+        .category-card h3 {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .category-card:hover h3 {
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Ensure content is above other elements */
+        .content-overlay {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Animation delays */
+        .animate-scale-in {
+            animation: scaleIn 0.6s ease-out forwards;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        @keyframes scaleIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if Swiper is available
+            if (typeof Swiper === 'undefined') {
+                console.error('Swiper is not loaded');
+                return;
+            }
+
+            // Initialize Swiper
+            try {
+                const swiper = new Swiper('.hero-swiper', {
+                    loop: true,
+                    autoplay: {
+                        delay: 5000,
+                        disableOnInteraction: false,
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    effect: 'fade',
+                    fadeEffect: {
+                        crossFade: true
+                    },
+                    speed: 1000,
+                    on: {
+                        init: function () {
+                            console.log('Swiper initialized successfully');
+                            // Ensure all slides are visible after initialization
+                            document.querySelectorAll('.hero-swiper .swiper-slide').forEach(slide => {
+                                slide.style.display = 'block';
+                            });
+                        },
+                        slideChange: function () {
+                            console.log('Slide changed');
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error initializing Swiper:', error);
+                // Fallback: show all slides if Swiper fails
+                document.querySelectorAll('.hero-swiper .swiper-slide').forEach(slide => {
+                    slide.style.display = 'block';
+                });
+            }
+
+            // Intersection Observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fade-in');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all animated elements
+            document.querySelectorAll('.animate-fade-in, .animate-slide-up, .animate-scale-in, .animate-slide-in-left, .animate-slide-in-right').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

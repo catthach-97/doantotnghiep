@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= pageTitle || 'Quản lý hệ thống' %> - Shoe Store
+    </title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/admin-sidebar.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                        'primary-dark': '#3730a3',
+                        'sidebar-bg': '#1f2937',
+                        'sidebar-hover': '#374151',
+                        'content-bg': '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Sidebar -->
+    <div id="sidebar"
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-center h-16 bg-gradient-to-r from-blue-700 to-blue-800 border-b border-blue-600/50">
+                <a href="/admin/dashboard" class="flex items-center space-x-2 text-white">
+                    <i class="ri-store-2-line text-2xl text-blue-200"></i>
+                    <span class="text-2xl font-bold">Shoe Store</span>
+                </a>
+            </div>
+        <!-- Sidebar Navigation -->
+        <nav class="mt-5 px-2">
+            <div class="space-y-1">
+                <!-- Dashboard -->
+                <a href="/admin/dashboard"
+                    class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/dashboard' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                    <i
+                        class="ri-dashboard-line mr-3 text-lg <%= path === '/admin/dashboard' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                    Dashboard
+                </a>
+
+                <!-- Products -->
+                <a href="/admin/products"
+                    class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/products' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                    <i
+                        class="ri-shopping-bag-line mr-3 text-lg <%= path === '/admin/products' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                    Quản lý sản phẩm
+                </a>
+
+                <!-- Inventory -->
+                <!-- <a href="/admin/inventory" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/inventory' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                    <i class="ri-store-2-line mr-3 text-lg"></i>
+                    Quản lý kho
+                </a> -->
+
+                <!-- Orders -->
+                <a href="/admin/orders"
+                    class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/orders' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                    <i
+                        class="ri-file-list-3-line mr-3 text-lg <%= path === '/admin/orders' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                    Đơn hàng
+                </a>
+
+                <!-- Users -->
+                <a href="/admin/accounts"
+                    class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/accounts' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                    <i
+                        class="ri-user-settings-line mr-3 text-lg <%= path === '/admin/accounts' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                    Tài khoản
+                </a>
+
+                <!-- Categories -->
+                <a href="/admin/categories"
+                    class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/categories' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                    <i
+                        class="ri-folder-line mr-3 text-lg <%= path === '/admin/categories' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                    Danh mục
+                </a>
+
+                <!-- Brands -->
+                <a href="/admin/brands"
+                    class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/brands' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                    <i
+                        class="ri-award-line mr-3 text-lg <%= path === '/admin/brands' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                    Thương hiệu
+                </a>
+
+                <!-- Reviews -->
+                <a href="/admin/reviews"
+                    class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/reviews' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                    <i
+                        class="ri-star-line mr-3 text-lg <%= path === '/admin/reviews' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                    Đánh giá
+                </a>
+
+                <!-- Slide Banner -->
+                <a href="/admin/slides"
+                    class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/slides' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                    <i
+                        class="ri-image-line mr-3 text-lg <%= path === '/admin/slides' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                    Slide Banner
+                </a>
+
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="absolute bottom-0 w-full p-4 border-t border-gray-700">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <i class="ri-user-line text-white text-sm"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-white truncate">
+                        <%= user ? user.name : 'Admin' %>
+                    </p>
+                    <p class="text-xs text-gray-400 truncate">
+                        <%= user ? user.email : 'admin@example.com' %>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:pl-64">
+        <!-- Top Navigation -->
+        <div
+            class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+            <!-- Mobile menu button -->
+            <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" id="sidebar-toggle">
+                <i class="ri-menu-line text-xl"></i>
+            </button>
+
+            <!-- Separator -->
+            <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
+
+            <!-- Page title -->
+            <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+                <div class="flex flex-1 items-center">
+                    <h1 class="text-xl font-semibold text-gray-900">
+                        <%= pageTitle || 'Admin Panel' %>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Right side -->
+            <div class="flex items-center gap-x-4 lg:gap-x-6">
+                <!-- Notifications -->
+                <button type="button" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+                    <i class="ri-notification-3-line text-xl"></i>
+                </button>
+
+                <!-- Separator -->
+                <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" aria-hidden="true"></div>
+
+                <!-- Profile dropdown -->
+                <div class="relative">
+                    <button type="button" class="-m-1.5 flex items-center p-1.5" id="user-menu-button">
+                        <span class="sr-only">Open user menu</span>
+                        <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+                            <i class="ri-user-line text-white text-sm"></i>
+                        </div>
+                        <span class="hidden lg:flex lg:items-center">
+                            <span class="ml-4 text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">
+                                <%= user ? user.name : 'Admin' %>
+                            </span>
+                            <i class="ri-arrow-down-s-line ml-2 text-gray-400"></i>
+                        </span>
+                    </button>
+
+                    <!-- Dropdown menu -->
+                    <div class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none hidden"
+                        id="user-menu">
+                        <a href="/admin/profile"
+                            class="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50">
+                            <i class="ri-user-line mr-2"></i>Profile
+                        </a>
+                        <a href="/admin/settings"
+                            class="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50">
+                            <i class="ri-settings-line mr-2"></i>Settings
+                        </a>
+                        <form action="/logout" method="POST" class="block">
+                            <button type="submit"
+                                class="w-full text-left px-3 py-1 text-sm leading-6 text-red-600 hover:bg-gray-50">
+                                <i class="ri-logout-box-line mr-2"></i>Đăng xuất
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <main class="py-6">
+            <div class="px-6">
+                <%- body %>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Sidebar toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            // Toggle sidebar
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function () {
+                    sidebar.classList.toggle('-translate-x-full');
+                });
+            }
+
+            // Toggle user menu
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', function () {
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // Close user menu when clicking outside
+                document.addEventListener('click', function (event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Custom JavaScript -->
+    <script src="/js/main.js"></script>
+</body>
+
+</html>

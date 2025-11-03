@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết quả tìm kiếm - Shoe Store</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'rgba(87, 181, 231, 1)',
+                        'primary-dark': 'rgba(67, 161, 211, 1)',
+                        secondary: '#8b5cf6',
+                        accent: '#06b6d4'
+                    },
+                    fontFamily: {
+                        'pacifico': ['Pacifico', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .product-image {
+            aspect-ratio: 1;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+        
+        .product-image:hover {
+            transform: scale(1.1);
+        }
+        
+        .search-highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        
+        .filter-card {
+            transition: all 0.3s ease;
+        }
+        
+        .filter-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <%- include('../includes/navigation', { user, isAdmin, isAuthenticated, path, cartCount }) %>
+
+    <!-- Search Header -->
+    <section class="bg-gradient-to-r from-blue-600 to-purple-600 py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center text-white">
+                <h1 class="text-4xl md:text-6xl font-bold font-pacifico mb-4">
+                    Kết quả tìm kiếm
+                </h1>
+                <div class="flex items-center justify-center mb-8">
+                    <i class="ri-search-line text-2xl mr-3"></i>
+                    <span class="text-xl md:text-2xl">
+                        Từ khóa: 
+                        <span class="search-highlight text-gray-800 font-semibold">
+                            "<%= searchQuery %>"
+                        </span>
+                    </span>
+                </div>
+                <% if (products && products.length > 0) { %>
+                    <p class="text-lg opacity-90">
+                        Tìm thấy <span class="font-bold text-yellow-300"><%= products.length %></span> sản phẩm phù hợp
+                    </p>
+                <% } else { %>
+                    <p class="text-lg opacity-90">
+                        Không tìm thấy sản phẩm nào phù hợp với từ khóa này
+                    </p>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Results -->
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <% if (products && products.length > 0) { %>
+                <!-- Results Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <% products.forEach(function(product, index) { %>
+                        <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden animate-fade-in" 
+                             style="animation-delay: <%= (index * 0.1) %>s">
+                            <div class="relative overflow-hidden">
+                                <a href="/products/<%= product._id %>" class="block">
+                                    <% if (product.imageUrl) { %>
+                                        <img src="<%= product.imageUrl %>" 
+                                             alt="<%= product.title %>" 
+                                             class="product-image w-full h-64 object-cover">
+                                    <% } else { %>
+                                        <div class="product-image w-full h-64 bg-gray-200 flex items-center justify-center">
+                                            <i class="ri-image-line text-4xl text-gray-400"></i>
+                                        </div>
+                                    <% } %>
+                                </a>
+                                
+                                <!-- Favorite Button -->
+                                <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                                    <button class="favorite-btn absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all duration-300 text-xl z-10 <%= favorites && favorites.includes(product._id.toString()) ? 'text-red-500' : 'text-gray-400' %>"
+                                            data-product-id="<%= product._id %>"
+                                            aria-label="Yêu thích">
+                                        <i class="<%= favorites && favorites.includes(product._id.toString()) ? 'ri-heart-fill' : 'ri-heart-line' %>"></i>
+                                    </button>
+                                <% } else { %>
+                                    <a href="/login?returnTo=<%= encodeURIComponent(request.originalUrl || '/') %>" 
+                                       class="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg text-xl z-10 text-gray-400" 
+                                       aria-label="Yêu thích">
+                                        <i class="ri-heart-line"></i>
+                                    </a>
+                                <% } %>
+                                
+                                <!-- Product Badge -->
+                                <% if (product.discount && product.discount > 0) { %>
+                                    <div class="absolute top-4 left-4">
+                                        <span class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
+                                            -<%= product.discount %>%
+                                        </span>
+                                    </div>
+                                <% } else if (index === 0) { %>
+                                    <div class="absolute top-4 left-4">
+                                        <span class="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
+                                            Mới
+                                        </span>
+                                    </div>
+                                <% } %>
+                            </div>
+                            
+                            <div class="p-6">
+                                <a href="/products/<%= product._id %>" class="block">
+                                    <h3 class="text-base font-bold text-gray-900 mb-2 hover:text-primary transition-colors" style="white-space: nowrap; overflow: visible; word-break: keep-all;">
+                                        <%= product.title %>
+                                    </h3>
+                                </a>
+                                
+                                <p class="text-gray-600 text-xs mb-4" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-break: keep-all;">
+                                    <%= product.description || 'Sản phẩm chất lượng cao' %>
+                                </p>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <% if (product.discount && product.discount > 0) { %>
+                                            <% const discountedPrice = product.price * (1 - product.discount / 100); %>
+                                            <span class="text-2xl font-bold text-primary">
+                                                <%= discountedPrice.toLocaleString('vi-VN') %>đ
+                                            </span>
+                                            <span class="text-sm text-gray-500 line-through">
+                                                <%= product.price.toLocaleString('vi-VN') %>đ
+                                            </span>
+                                        <% } else { %>
+                                            <span class="text-2xl font-bold text-primary">
+                                                <%= product.price ? product.price.toLocaleString('vi-VN') : '0' %>đ
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                    
+                                    <a href="/products/<%= product._id %>" 
+                                       class="w-10 h-10 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors flex items-center justify-center">
+                                        <i class="ri-shopping-cart-line"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+                
+                <!-- Search Suggestions -->
+                <div class="mt-16 text-center">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Không tìm thấy sản phẩm mong muốn?</h3>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <a href="/products" class="px-6 py-3 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors">
+                            <i class="ri-store-line mr-2"></i>
+                            Xem tất cả sản phẩm
+                        </a>
+                        <a href="/brands" class="px-6 py-3 bg-secondary text-white rounded-full hover:bg-purple-700 transition-colors">
+                            <i class="ri-award-line mr-2"></i>
+                            Khám phá thương hiệu
+                        </a>
+                        <a href="/contact" class="px-6 py-3 bg-accent text-white rounded-full hover:bg-cyan-600 transition-colors">
+                            <i class="ri-customer-service-2-line mr-2"></i>
+                            Liên hệ hỗ trợ
+                        </a>
+                    </div>
+                </div>
+                
+            <% } else { %>
+                <!-- No Results -->
+                <div class="max-w-2xl mx-auto text-center py-16">
+                    <div class="mb-8">
+                        <i class="ri-search-line text-8xl text-gray-300 mb-4"></i>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Không tìm thấy sản phẩm</h2>
+                        <p class="text-lg text-gray-600 mb-8">
+                            Không có sản phẩm nào phù hợp với từ khóa 
+                            <span class="font-semibold text-primary">"<%= searchQuery %>"</span>
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Gợi ý tìm kiếm:</h3>
+                        <ul class="text-left space-y-2 text-gray-600">
+                            <li class="flex items-center">
+                                <i class="ri-check-line text-green-500 mr-2"></i>
+                                Kiểm tra chính tả từ khóa
+                            </li>
+                            <li class="flex items-center">
+                                <i class="ri-check-line text-green-500 mr-2"></i>
+                                Thử từ khóa ngắn gọn hơn
+                            </li>
+                            <li class="flex items-center">
+                                <i class="ri-check-line text-green-500 mr-2"></i>
+                                Sử dụng từ đồng nghĩa
+                            </li>
+                            <li class="flex items-center">
+                                <i class="ri-check-line text-green-500 mr-2"></i>
+                                Thử tìm kiếm theo thương hiệu
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <a href="/products" class="px-8 py-4 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors font-semibold">
+                            <i class="ri-store-line mr-2"></i>
+                            Xem tất cả sản phẩm
+                        </a>
+                        <a href="/brands" class="px-8 py-4 bg-secondary text-white rounded-full hover:bg-purple-700 transition-colors font-semibold">
+                            <i class="ri-award-line mr-2"></i>
+                            Khám phá thương hiệu
+                        </a>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <%- include('../includes/footer') %>
+
+    <!-- Scroll to Top Button -->
+
+    <script>
+        // Favorite functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.favorite-btn').forEach(btn => {
+                btn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    const productId = this.dataset.productId;
+                    const icon = this.querySelector('i');
+                    const isFavorite = icon.classList.contains('ri-heart-fill');
+                    
+                    try {
+                        if (!isFavorite) {
+                            const res = await fetch(`/favorites/${productId}`, { 
+                                method: 'POST', 
+                                headers: { 'Content-Type': 'application/json' } 
+                            });
+                            if (res.ok) {
+                                icon.classList.remove('ri-heart-line', 'text-gray-400');
+                                icon.classList.add('ri-heart-fill', 'text-red-500');
+                            }
+                        } else {
+                            const res = await fetch(`/favorites/${productId}`, { 
+                                method: 'DELETE', 
+                                headers: { 'Content-Type': 'application/json' } 
+                            });
+                            if (res.ok) {
+                                icon.classList.remove('ri-heart-fill', 'text-red-500');
+                                icon.classList.add('ri-heart-line', 'text-gray-400');
+                            }
+                        }
+                    } catch (err) {
+                        console.error('Error toggling favorite:', err);
+                        alert('Có lỗi xảy ra khi thao tác yêu thích!');
+                    }
+                });
+            });
+
+            // Add smooth animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fade-in');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all animated elements
+            document.querySelectorAll('.product-card').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html> 

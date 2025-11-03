@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thương hiệu - Shoe Store</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'rgba(87, 181, 231, 1)',
+                        'primary-dark': 'rgba(67, 161, 211, 1)'
+                    },
+                    fontFamily: {
+                        'pacifico': ['Pacifico', 'cursive']
+                    },
+                    borderRadius: {
+                        'button': '12px'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <%- include('../includes/navigation', { user, isAdmin, isAuthenticated, path, cartCount }) %>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl font-bold mb-4">Thương hiệu giày nổi tiếng</h1>
+                <p class="text-xl opacity-90">Khám phá các thương hiệu giày hàng đầu thế giới</p>
+            </div>
+        </div>
+    </section>
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Sản phẩm theo thương hiệu</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Chọn thương hiệu yêu thích để xem sản phẩm</p>
+            </div>
+
+
+            <!-- Products Grid -->
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Products will be loaded here via JavaScript -->
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="flex justify-center mt-12">
+                <!-- Pagination will be loaded here -->
+            </div>
+        </div>
+    </section>
+    <!-- Brands Grid Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Danh sách thương hiệu</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Chọn thương hiệu yêu thích để xem sản phẩm</p>
+            </div>
+            
+            <!-- Brands Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-12">
+                <% if (brands && brands.length > 0) { %>
+                    <% brands.forEach(brand => { %>
+                        <div class="brand-card bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2 cursor-pointer" onclick="filterByBrand('<%= brand.slug %>')">
+                            <div class="w-20 h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                <% if (brand.logo && brand.logo !== '') { %>
+                                    <img src="<%= brand.logo %>" alt="<%= brand.name %>" class="w-16 h-16 object-contain rounded-full">
+                                <% } else { %>
+                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center">
+                                        <i class="ri-award-line text-blue-500 text-2xl"></i>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2"><%= brand.name %></h3>
+                            <p class="text-sm text-gray-600"><%= brand.description || 'Thương hiệu nổi tiếng' %></p>
+                            <div class="mt-2 text-xs text-blue-600">
+                                <%= brandCounts[brand.name] || 0 %> sản phẩm
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="col-span-full text-center py-12">
+                        <i class="ri-award-line text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-500 mb-2">Chưa có thương hiệu nào</h3>
+                        <p class="text-gray-400">Thương hiệu sẽ xuất hiện ở đây khi được thêm vào</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brand Introduction Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Giới thiệu thương hiệu</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Tìm hiểu về lịch sử và phong cách đặc trưng của từng thương hiệu</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Nike Introduction -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <img src="https://logos-world.net/wp-content/uploads/2020/04/Nike-Logo.png" alt="Nike" class="w-12 h-12 mr-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Nike</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Thành lập năm 1964, Nike là thương hiệu thể thao hàng đầu thế giới với slogan "Just Do It". 
+                        Chuyên về giày thể thao hiệu suất cao, quần áo và phụ kiện thể thao.
+                    </p>
+                </div>
+
+                <!-- Adidas Introduction -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <img src="https://logos-world.net/wp-content/uploads/2020/04/Adidas-Logo.png" alt="Adidas" class="w-12 h-12 mr-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Adidas</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Thành lập năm 1949 tại Đức, Adidas nổi tiếng với ba sọc đặc trưng. 
+                        Thương hiệu chuyên về giày thể thao, thời trang và phong cách streetwear.
+                    </p>
+                </div>
+
+                <!-- Converse Introduction -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <img src="https://logos-world.net/wp-content/uploads/2020/04/Converse-Logo.png" alt="Converse" class="w-12 h-12 mr-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Converse</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Thành lập năm 1908, Converse nổi tiếng với giày Chuck Taylor All Star. 
+                        Thương hiệu mang phong cách cổ điển, thời trang và văn hóa rock.
+                    </p>
+                </div>
+
+                <!-- Vans Introduction -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <img src="https://logos-world.net/wp-content/uploads/2020/04/Vans-Logo.png" alt="Vans" class="w-12 h-12 mr-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Vans</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Thành lập năm 1966, Vans là thương hiệu giày skateboard nổi tiếng với slogan "Off The Wall". 
+                        Chuyên về giày canvas, sneakers và phong cách street culture.
+                    </p>
+                </div>
+
+                <!-- Puma Introduction -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <img src="https://logos-world.net/wp-content/uploads/2020/04/Puma-Logo.png" alt="Puma" class="w-12 h-12 mr-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Puma</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Thành lập năm 1948 tại Đức, Puma với slogan "Forever Faster". 
+                        Chuyên về giày thể thao, thời trang và hợp tác với các nghệ sĩ nổi tiếng.
+                    </p>
+                </div>
+
+                <!-- Jordan Introduction -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <img src="https://logos-world.net/wp-content/uploads/2020/04/Air-Jordan-Logo.png" alt="Jordan" class="w-12 h-12 mr-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Jordan</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Thương hiệu Jordan thuộc Nike, được đặt tên theo huyền thoại bóng rổ Michael Jordan. 
+                        Nổi tiếng với giày bóng rổ và phong cách streetwear cao cấp.
+                    </p>
+                </div>
+
+                <!-- New Balance Introduction -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <img src="https://logos-world.net/wp-content/uploads/2020/04/New-Balance-Logo.png" alt="New Balance" class="w-12 h-12 mr-4">
+                        <h3 class="text-xl font-semibold text-gray-800">New Balance</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Thành lập năm 1906 tại Mỹ, New Balance với slogan "Fearlessly Independent". 
+                        Chuyên về giày chạy bộ và giày lifestyle với công nghệ tiên tiến.
+                    </p>
+                </div>
+
+                <!-- Timberland Introduction -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <img src="https://logos-world.net/wp-content/uploads/2020/04/Timberland-Logo.png" alt="Timberland" class="w-12 h-12 mr-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Timberland</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Thành lập năm 1973 tại Mỹ, Timberland với slogan "Make It Better". 
+                        Chuyên về giày boot, giày outdoor và thời trang bền bỉ, thân thiện môi trường.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Filter Section -->
+  
+
+    <script>
+        // Brand filtering function
+        function filterByBrand(brand) {
+            window.location.href = `/products?brand=${brand}`;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add fade-in animation to brand cards
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.brand-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
+
+    <!-- Footer -->
+    <%- include('../partials/footer') %>
+    
+    <!-- Custom JavaScript -->
+    <script src="/js/main.js"></script>
+</body>
+</html>

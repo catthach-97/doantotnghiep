@@ -1,0 +1,9 @@
+[14:59:08 04/10/2025] [INFO] MongoDB connected successfully
+[14:59:08 04/10/2025] [INFO] Server started successfully | Meta: {"port":"5000","environment":"development","timestamp":"2025-10-04T07:59:08.220Z"}
+[15:04:30 04/10/2025] [INFO] GET / - 200 - 1073ms | Meta: {"method":"GET","url":"/","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36","statusCode":200,"responseTime":"1073ms","userId":null}
+[15:04:32 04/10/2025] [WARN] GET /favicon.ico - 404 - 90ms | Meta: {"method":"GET","url":"/favicon.ico","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36","statusCode":404,"responseTime":"90ms","userId":null}
+[15:10:00 04/10/2025] [INFO] GET /categories - 200 - 69ms | Meta: {"method":"GET","url":"/categories","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36","statusCode":200,"responseTime":"69ms","userId":null}
+[15:10:52 04/10/2025] [INFO] GET /products?category=running - 200 - 974ms | Meta: {"method":"GET","url":"/products?category=running","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36","statusCode":200,"responseTime":"974ms","userId":null}
+[15:11:00 04/10/2025] [INFO] GET / - 304 - 480ms | Meta: {"method":"GET","url":"/","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36","statusCode":304,"responseTime":"480ms","userId":null}
+[21:00:38 04/10/2025] [INFO] MongoDB connected successfully
+[21:00:38 04/10/2025] [INFO] Server started successfully | Meta: {"port":"5000","environment":"development","timestamp":"2025-10-04T14:00:38.546Z"}

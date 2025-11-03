@@ -1,0 +1,90 @@
+[
+  {
+    "_id": "brand_1",
+    "name": "Nike",
+    "slug": "nike",
+    "description": "Thương hiệu Nike nổi tiếng với các sản phẩm thể thao chất lượng cao",
+    "logoUrl": "/images/brands/nike/nike.gif",
+    "isActive": true,
+    "sortOrder": 1,
+    "createdAt": "2025-10-19T14:11:00.004Z",
+    "updatedAt": "2025-10-19T14:11:00.018Z"
+  },
+  {
+    "_id": "brand_2",
+    "name": "Adidas",
+    "slug": "adidas",
+    "description": "Thương hiệu Adidas với công nghệ Boost tiên tiến",
+    "logoUrl": "/images/brands/adidas/adidas.gif",
+    "isActive": true,
+    "sortOrder": 2,
+    "createdAt": "2025-10-19T14:11:00.018Z",
+    "updatedAt": "2025-10-19T14:11:00.018Z"
+  },
+  {
+    "_id": "brand_3",
+    "name": "Converse",
+    "slug": "converse",
+    "description": "Thương hiệu Converse với phong cách cổ điển",
+    "logoUrl": "/images/brands/conver/giphy.gif",
+    "isActive": true,
+    "sortOrder": 3,
+    "createdAt": "2025-10-19T14:11:00.018Z",
+    "updatedAt": "2025-10-19T14:11:00.019Z"
+  },
+  {
+    "_id": "brand_4",
+    "name": "Vans",
+    "slug": "vans",
+    "description": "Thương hiệu Vans nổi tiếng với giày skateboard",
+    "logoUrl": "/images/brands/van/vans-vans-off-the-wall.gif",
+    "isActive": true,
+    "sortOrder": 4,
+    "createdAt": "2025-10-19T14:11:00.019Z",
+    "updatedAt": "2025-10-19T14:11:00.019Z"
+  },
+  {
+    "_id": "brand_5",
+    "name": "Puma",
+    "slug": "puma",
+    "description": "Thương hiệu Puma với thiết kế hiện đại",
+    "logoUrl": "/images/brands/puma/Puma-Rider-inspiration.gif",
+    "isActive": true,
+    "sortOrder": 5,
+    "createdAt": "2025-10-19T14:11:00.019Z",
+    "updatedAt": "2025-10-19T14:11:00.019Z"
+  },
+  {
+    "_id": "brand_6",
+    "name": "Jordan",
+    "slug": "jordan",
+    "description": "Thương hiệu Jordan với dòng giày bóng rổ nổi tiếng",
+    "logoUrl": "/images/brands/jordan/jordan_square_gif_042918.gif",
+    "isActive": true,
+    "sortOrder": 6,
+    "createdAt": "2025-10-19T14:11:00.019Z",
+    "updatedAt": "2025-10-19T14:11:00.019Z"
+  },
+  {
+    "_id": "brand_7",
+    "name": "New Balance",
+    "slug": "new-balance",
+    "description": "Thương hiệu New Balance với công nghệ chạy bộ tiên tiến",
+    "logoUrl": "/images/brands/new/giphy.gif",
+    "isActive": true,
+    "sortOrder": 7,
+    "createdAt": "2025-10-19T14:11:00.019Z",
+    "updatedAt": "2025-10-19T14:11:00.019Z"
+  },
+  {
+    "_id": "brand_8",
+    "name": "Timberland",
+    "slug": "timberland",
+    "description": "Thương hiệu Timberland với giày boot chất lượng cao",
+    "logoUrl": "/images/brands/timber/giphy (1).gif",
+    "isActive": true,
+    "sortOrder": 8,
+    "createdAt": "2025-10-19T14:11:00.019Z",
+    "updatedAt": "2025-10-19T14:11:00.019Z"
+  }
+]

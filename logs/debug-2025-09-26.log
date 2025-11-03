@@ -1,0 +1,5 @@
+[11:29:06 26/09/2025] [DEBUG] Request authentication | Meta: {"url":"/","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[11:29:09 26/09/2025] [DEBUG] Request authentication | Meta: {"url":"/","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[11:29:14 26/09/2025] [DEBUG] Request authentication | Meta: {"url":"/favicon.ico","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[21:02:00 26/09/2025] [DEBUG] Request authentication | Meta: {"url":"/","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[21:02:05 26/09/2025] [DEBUG] Request authentication | Meta: {"url":"/favicon.ico","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}

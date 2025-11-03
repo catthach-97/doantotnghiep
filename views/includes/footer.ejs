@@ -1,0 +1,145 @@
+<!-- Footer -->
+<link rel="stylesheet" href="/css/footer.css">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico:wght@400&display=swap" rel="stylesheet">
+
+<footer class="footer-container">
+    <div class="footer-content">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <!-- Main Footer Content -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                    <!-- Company Info -->
+                    <div class="footer-section">
+                        <div class="footer-brand">
+                            <div class="brand-logo-footer">
+                                <i class="ri-store-line"></i>
+                            </div>
+                            <h3 class="brand-name-footer">Shoe Store</h3>
+                        </div>
+                        <p class="brand-description">
+                            Cửa hàng giày uy tín với các thương hiệu nổi tiếng thế giới. 
+                            Chất lượng cao, giá cả hợp lý, dịch vụ tận tâm.
+                        </p>
+                        <div class="social-links">
+                            <a href="#" class="social-link">
+                                <i class="ri-facebook-fill"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="ri-instagram-line"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="ri-twitter-line"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="ri-youtube-line"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="footer-section">
+                        <h4>Liên kết nhanh</h4>
+                        <ul class="footer-links">
+                            <li><a href="/">Trang chủ</a></li>
+                            <li><a href="/products">Sản phẩm</a></li>
+                            <li><a href="/brands">Thương hiệu</a></li>
+                            <li><a href="/about">Về chúng tôi</a></li>
+                            <li><a href="/contact">Liên hệ</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="footer-section">
+                        <h4>Danh mục</h4>
+                        <ul class="footer-links">
+                            <% if (typeof categories !== 'undefined' && categories && categories.length > 0) { %>
+                                <% categories.slice(0, 5).forEach((category) => { %>
+                                    <li><a href="/products?category=<%= category.slug || category.name %>"><%= category.name %></a></li>
+                                <% }); %>
+                            <% } else { %>
+                                <!-- Fallback categories if no data from database -->
+                                <li><a href="/products?category=giay-the-thao">Giày thể thao</a></li>
+                                <li><a href="/products?category=giay-casual">Giày casual</a></li>
+                                <li><a href="/products?category=giay-chay-bo">Giày chạy bộ</a></li>
+                                <li><a href="/products?category=giay-bong-da">Giày bóng đá</a></li>
+                                <li><a href="/products?category=giay-bong-ro">Giày bóng rổ</a></li>
+                            <% } %>
+                        </ul>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="footer-section">
+                        <h4>Thông tin liên hệ</h4>
+                        <div class="contact-item">
+                            <i class="ri-map-pin-line"></i>
+                            <div>
+                                <p>123 Đường ABC, Quận XYZ</p>
+                                <p>TP. Hồ Chí Minh, Việt Nam</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="ri-phone-line"></i>
+                            <p>+84 123 456 789</p>
+                        </div>
+                        <div class="contact-item">
+                            <i class="ri-mail-line"></i>
+                            <p>info@shoestore.com</p>
+                        </div>
+                        <div class="contact-item">
+                            <i class="ri-time-line"></i>
+                            <div>
+                                <p>T2 - T6: 8:00 - 22:00</p>
+                                <p>T7 - CN: 9:00 - 21:00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Footer -->
+                <div class="footer-bottom">
+                    <div class="footer-bottom-content">
+                        <div class="footer-copyright">
+                            <p>&copy; 2024 Shoe Store. Tất cả quyền được bảo lưu.</p>
+                        </div>
+                        <div class="footer-bottom-links">
+                            <a href="/privacy">Chính sách bảo mật</a>
+                            <a href="/terms">Điều khoản sử dụng</a>
+                            <a href="/shipping">Chính sách giao hàng</a>
+                            <a href="/returns">Chính sách đổi trả</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Back to Top Button -->
+<a 
+    id="backToTop" 
+    class="back-to-top"
+    href="#top"
+    onclick="scrollToTop(event)"
+>
+    <i class="ri-arrow-up-line"></i>
+</a>
+
+<script>
+// Back to top functionality
+window.addEventListener('scroll', function() {
+    const backToTop = document.getElementById('backToTop');
+    if (window.pageYOffset > 300) {
+        backToTop.classList.add('visible');
+    } else {
+        backToTop.classList.remove('visible');
+    }
+});
+
+function scrollToTop(event) {
+    event.preventDefault();
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+</script>

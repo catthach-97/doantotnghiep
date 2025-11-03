@@ -14,10 +14,10 @@ if (!fs.existsSync(pdfDirPath)) {
 // Format currency and date
 const formatCurrency = (amount) => {
     try {
-        return '$' + amount.toLocaleString('en-US');
+        return amount.toLocaleString('vi-VN') + ' đ';
     } catch (error) {
         console.error('Error formatting currency:', error);
-        return '$' + amount;
+        return amount + ' đ';
     }
 };
 
@@ -54,17 +54,26 @@ const generateOrderPDF = async (order, user) => {
         try {
             const fileName = `order-${order._id}-${moment().format('YYYYMMDD')}.pdf`;
             const filePath = path.join(pdfDirPath, fileName);
-            const doc = new PDFDocument({ 
-                size: 'A4', 
-                margin: 50,
-                font: 'Helvetica'
-            });
+            const doc = new PDFDocument({ size: 'A4', margin: 50 });
+
+            // Đăng ký font Roboto nếu có
+            let useRoboto = false;
+            if (safeRegisterFont(doc, 'Roboto', robotoRegularPath)) {
+                try {
+                    doc.font('Roboto');
+                    useRoboto = true;
+                } catch (e) {
+                    doc.font('Helvetica');
+                }
+            } else {
+                doc.font('Helvetica');
+            }
 
             const writeStream = fs.createWriteStream(filePath);
             writeStream.on('error', (error) => reject(error));
             doc.pipe(writeStream);
 
-            // --- Variables & Colors ---
+            // --- Màu sắc & biến ---
             const pageMargins = doc.page.margins;
             const startY = pageMargins.top;
             const contentWidth = doc.page.width - pageMargins.left - pageMargins.right;
@@ -87,138 +96,156 @@ const generateOrderPDF = async (order, user) => {
                 return false; 
             };
             
-            // --- Invoice Title ---
-            addNewPageIfNeeded(36);
-            doc.font('Helvetica-Bold').fontSize(20).fillColor(textColor)
-               .text('ORDER INVOICE', pageMargins.left, currentY, { align: 'center', width: contentWidth });
+            // --- Tiêu đề & thương hiệu ---
+            addNewPageIfNeeded(40);
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica-Bold').fontSize(22).fillColor(primaryColor)
+                .text('SHOE STORE', pageMargins.left, currentY, { align: 'center', width: contentWidth });
             currentY += 28;
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica-Bold').fontSize(18).fillColor(textColor)
+                .text('HÓA ĐƠN BÁN HÀNG', pageMargins.left, currentY, { align: 'center', width: contentWidth });
+            currentY += 24;
             drawLine(doc, currentY);
             currentY += 8;
 
-            // --- Info Boxes (side by side, same height, balanced, sát bảng) ---
-            addNewPageIfNeeded(120);
-            const infoBoxGap = 12;
-            const infoBoxWidth = (contentWidth - infoBoxGap) / 2;
-            const infoBoxHeight = 110;
+            // --- Thông tin cửa hàng ---
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(10).fillColor(textColor)
+                .text('Địa chỉ: 123 Đường Giày, Quận Thời Trang, TP. Hồ Chí Minh', pageMargins.left, currentY)
+                .text('Hotline: 0123 456 789   |   Email: support@shoestore.vn', pageMargins.left, currentY + 14);
+            currentY += 32;
+
+            // --- Thông tin hóa đơn & khách hàng ---
+            addNewPageIfNeeded(90);
+            const infoBoxWidth = (contentWidth - 12) / 2;
+            const infoBoxHeight = 80;
             const infoBoxStartY = currentY;
-            const infoBoxPadX = 18;
-            const infoBoxPadY = 16;
-
-            // Box 1: Order Info
-            doc.roundedRect(pageMargins.left, infoBoxStartY, infoBoxWidth, infoBoxHeight, 10).fillAndStroke(greyColor, darkGreyColor);
-            doc.fillColor(textColor).font('Helvetica-Bold').fontSize(11).text('Order Information', pageMargins.left + infoBoxPadX, infoBoxStartY + infoBoxPadY - 2);
-            doc.font('Helvetica').fontSize(9);
+            const infoBoxPadX = 14;
+            const infoBoxPadY = 10;
+            // Box 1: Hóa đơn
+            doc.roundedRect(pageMargins.left, infoBoxStartY, infoBoxWidth, infoBoxHeight, 8).fillAndStroke(greyColor, darkGreyColor);
+            doc.fillColor(textColor).font(useRoboto ? 'Roboto' : 'Helvetica-Bold').fontSize(11).text('Thông tin hóa đơn', pageMargins.left + infoBoxPadX, infoBoxStartY + infoBoxPadY - 2);
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(9);
             let y = infoBoxStartY + infoBoxPadY + 14;
-            doc.text(`Order ID: ${order._id}`, pageMargins.left + infoBoxPadX, y, { lineGap }); y += 13;
-            doc.text(`Order Date: ${formatDate(order.createdAt, 'MMM D, YYYY HH:mm')}`, pageMargins.left + infoBoxPadX, y, { lineGap }); y += 13;
-            doc.text(`Status: ${order.status || 'Pending'}`, pageMargins.left + infoBoxPadX, y, { lineGap }); y += 13;
-            doc.text(`Payment Method: ${order.paymentMethod || 'N/A'}`, pageMargins.left + infoBoxPadX, y, { lineGap }); y += 13;
-            doc.text(`Payment Status: ${order.paymentStatus || 'N/A'}`, pageMargins.left + infoBoxPadX, y, { lineGap });
-
-            // Box 2: Customer Info
-            doc.roundedRect(pageMargins.left + infoBoxWidth + infoBoxGap, infoBoxStartY, infoBoxWidth, infoBoxHeight, 10).fillAndStroke(greyColor, darkGreyColor);
-            doc.fillColor(textColor).font('Helvetica-Bold').fontSize(11).text('Customer Information', pageMargins.left + infoBoxWidth + infoBoxGap + infoBoxPadX, infoBoxStartY + infoBoxPadY - 2);
-            doc.font('Helvetica').fontSize(9);
+            doc.text(`Mã hóa đơn: ${order._id}`, pageMargins.left + infoBoxPadX, y, { lineGap }); y += 13;
+            doc.text(`Ngày lập: ${formatDate(order.createdAt, 'DD/MM/YYYY HH:mm')}`, pageMargins.left + infoBoxPadX, y, { lineGap }); y += 13;
+            doc.text(`Trạng thái: ${order.status || 'Chờ xác nhận'}`, pageMargins.left + infoBoxPadX, y, { lineGap }); y += 13;
+            doc.text(`Thanh toán: ${order.paymentStatus === 'paid' || order.paymentStatus === 'completed' ? 'Đã thanh toán' : 'Chưa thanh toán'}`, pageMargins.left + infoBoxPadX, y, { lineGap });
+            // Box 2: Khách hàng
+            doc.roundedRect(pageMargins.left + infoBoxWidth + 12, infoBoxStartY, infoBoxWidth, infoBoxHeight, 8).fillAndStroke(greyColor, darkGreyColor);
+            doc.fillColor(textColor).font(useRoboto ? 'Roboto' : 'Helvetica-Bold').fontSize(11).text('Thông tin khách hàng', pageMargins.left + infoBoxWidth + 12 + infoBoxPadX, infoBoxStartY + infoBoxPadY - 2);
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(9);
             y = infoBoxStartY + infoBoxPadY + 14;
-            doc.text(`Name: ${user.name || (order.shippingInfo && order.shippingInfo.name) || 'N/A'}`, pageMargins.left + infoBoxWidth + infoBoxGap + infoBoxPadX, y, { lineGap }); y += 13;
-            doc.text(`Email: ${user.email || (order.shippingInfo && order.shippingInfo.email) || 'N/A'}`, pageMargins.left + infoBoxWidth + infoBoxGap + infoBoxPadX, y, { lineGap }); y += 13;
-            doc.text(`Phone: ${(order.shippingInfo && order.shippingInfo.phone) || user.phone || 'N/A'}`, pageMargins.left + infoBoxWidth + infoBoxGap + infoBoxPadX, y, { lineGap }); y += 13;
-            doc.text(`Shipping Address: ${(order.shippingInfo && order.shippingInfo.address) || user.address || 'N/A'}`, pageMargins.left + infoBoxWidth + infoBoxGap + infoBoxPadX, y, { lineGap, width: infoBoxWidth - 2 * infoBoxPadX });
-            currentY = infoBoxStartY + infoBoxHeight + 10;
+            doc.text(`Họ tên: ${user.name || (order.shippingInfo && order.shippingInfo.name) || 'N/A'}`, pageMargins.left + infoBoxWidth + 12 + infoBoxPadX, y, { lineGap }); y += 13;
+            doc.text(`Email: ${user.email || (order.shippingInfo && order.shippingInfo.email) || 'N/A'}`, pageMargins.left + infoBoxWidth + 12 + infoBoxPadX, y, { lineGap }); y += 13;
+            doc.text(`SĐT: ${(order.shippingInfo && order.shippingInfo.phone) || user.phone || 'N/A'}`, pageMargins.left + infoBoxWidth + 12 + infoBoxPadX, y, { lineGap }); y += 13;
+            doc.text(`Địa chỉ: ${(order.shippingInfo && order.shippingInfo.address) || user.address || 'N/A'}`, pageMargins.left + infoBoxWidth + 12 + infoBoxPadX, y, { lineGap, width: infoBoxWidth - 2 * infoBoxPadX });
+            currentY = infoBoxStartY + infoBoxHeight + 14;
 
-            // --- Table Header ---
+            // --- Bảng sản phẩm ---
             addNewPageIfNeeded(32);
             const tableHeaderY = currentY;
-            doc.rect(pageMargins.left, tableHeaderY, contentWidth, 24).fill(darkGreyColor);
-            doc.fillColor(textColor).font('Helvetica-Bold').fontSize(10);
-            doc.text('Product', pageMargins.left + 12, tableHeaderY + 8, { width: contentWidth * 0.3 - 12 })
-               .text('SKU', pageMargins.left + contentWidth * 0.3, tableHeaderY + 8, { width: contentWidth * 0.15, align: 'left' })
-               .text('Quantity', pageMargins.left + contentWidth * 0.45, tableHeaderY + 8, { width: contentWidth * 0.12, align: 'right' })
-               .text('Unit Price', pageMargins.left + contentWidth * 0.57, tableHeaderY + 8, { width: contentWidth * 0.18, align: 'right' })
-               .text('Total Price', pageMargins.left + contentWidth * 0.75, tableHeaderY + 8, { width: contentWidth * 0.25 - 12, align: 'right' });
-            currentY = tableHeaderY + 26;
-            doc.font('Helvetica');
+            doc.rect(pageMargins.left, tableHeaderY, contentWidth, 22).fill(darkGreyColor);
+            doc.fillColor(textColor).font(useRoboto ? 'Roboto' : 'Helvetica-Bold').fontSize(10);
+            doc.text('Sản phẩm', pageMargins.left + 10, tableHeaderY + 7, { width: contentWidth * 0.32 - 10 })
+               .text('Mã SP', pageMargins.left + contentWidth * 0.32, tableHeaderY + 7, { width: contentWidth * 0.13, align: 'left' })
+               .text('Số lượng', pageMargins.left + contentWidth * 0.45, tableHeaderY + 7, { width: contentWidth * 0.12, align: 'right' })
+               .text('Đơn giá', pageMargins.left + contentWidth * 0.57, tableHeaderY + 7, { width: contentWidth * 0.18, align: 'right' })
+               .text('Thành tiền', pageMargins.left + contentWidth * 0.75, tableHeaderY + 7, { width: contentWidth * 0.25 - 10, align: 'right' });
+            currentY = tableHeaderY + 24;
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica');
 
-            // --- Table Body ---
+            // --- Dữ liệu sản phẩm ---
             let i = 0;
             let subtotal = 0;
             order.items.forEach((item) => {
-                const productName = item.title || (item.product ? item.product.name : 'Unknown product');
-                const sku = item.sku || (item.product ? item.product.sku : '') || 'N/A';
-                const quantity = item.quantity || 1;
-                const price = item.price || 0;
+                // ✅ Xử lý thông tin sản phẩm đầy đủ hơn
+                let productName = 'Sản phẩm không xác định';
+                let sku = 'N/A';
+                
+                // Kiểm tra nếu có productId đã populate
+                if (item.productId && typeof item.productId === 'object') {
+                    productName = item.productId.title || 'Sản phẩm không xác định';
+                    sku = item.productId.sku || item.productId._id.toString().slice(-8).toUpperCase();
+                } else if (item.title) {
+                    // Fallback nếu có title trực tiếp
+                    productName = item.title;
+                    sku = item.sku || (item.productId ? item.productId.toString().slice(-8).toUpperCase() : 'N/A');
+                } else if (item.product && item.product.name) {
+                    // Fallback cho cấu trúc cũ
+                    productName = item.product.name;
+                    sku = item.product.sku || 'N/A';
+                }
+                
+                const quantity = parseInt(item.quantity) || 1;
+                const price = parseFloat(item.price) || 0;
                 const totalPrice = price * quantity;
                 subtotal += totalPrice;
 
-                const productNameHeight = doc.fontSize(9).heightOfString(productName, { width: contentWidth * 0.3 - 12, lineGap });
+                const productNameHeight = doc.fontSize(9).heightOfString(productName, { width: contentWidth * 0.32 - 10, lineGap });
                 const itemHeight = productNameHeight + lineGap * 3.5;
                 const rowNeededHeight = itemHeight + 4;
                 if (addNewPageIfNeeded(rowNeededHeight)) {
-                    // Draw table header again
+                    // Vẽ lại header bảng trên trang mới
                     const newTableHeaderY = currentY;
-                    doc.rect(pageMargins.left, newTableHeaderY, contentWidth, 24).fill(darkGreyColor);
-                    doc.fillColor(textColor).font('Helvetica-Bold').fontSize(10);
-                    doc.text('Product', pageMargins.left + 12, newTableHeaderY + 8, { width: contentWidth * 0.3 - 12 })
-                       .text('SKU', pageMargins.left + contentWidth * 0.3, newTableHeaderY + 8, { width: contentWidth * 0.15, align: 'left' })
-                       .text('Quantity', pageMargins.left + contentWidth * 0.45, newTableHeaderY + 8, { width: contentWidth * 0.12, align: 'right' })
-                       .text('Unit Price', pageMargins.left + contentWidth * 0.57, newTableHeaderY + 8, { width: contentWidth * 0.18, align: 'right' })
-                       .text('Total Price', pageMargins.left + contentWidth * 0.75, newTableHeaderY + 8, { width: contentWidth * 0.25 - 12, align: 'right' });
-                    currentY = newTableHeaderY + 26;
-                    doc.font('Helvetica');
+                    doc.rect(pageMargins.left, newTableHeaderY, contentWidth, 22).fill(darkGreyColor);
+                    doc.fillColor(textColor).font(useRoboto ? 'Roboto' : 'Helvetica-Bold').fontSize(10);
+                    doc.text('Sản phẩm', pageMargins.left + 10, newTableHeaderY + 7, { width: contentWidth * 0.32 - 10 })
+                       .text('Mã SP', pageMargins.left + contentWidth * 0.32, newTableHeaderY + 7, { width: contentWidth * 0.13, align: 'left' })
+                       .text('Số lượng', pageMargins.left + contentWidth * 0.45, newTableHeaderY + 7, { width: contentWidth * 0.12, align: 'right' })
+                       .text('Đơn giá', pageMargins.left + contentWidth * 0.57, newTableHeaderY + 7, { width: contentWidth * 0.18, align: 'right' })
+                       .text('Thành tiền', pageMargins.left + contentWidth * 0.75, newTableHeaderY + 7, { width: contentWidth * 0.25 - 10, align: 'right' });
+                    currentY = newTableHeaderY + 24;
+                    doc.font(useRoboto ? 'Roboto' : 'Helvetica');
                 }
                 if (i % 2 !== 0) {
                      doc.rect(pageMargins.left, currentY, contentWidth, itemHeight).fill(greyColor);
                 }
                 const rowY = currentY + lineGap + 2;
                 doc.fillColor(textColor).fontSize(9)
-                   .text(productName, pageMargins.left + 12, rowY, { width: contentWidth * 0.3 - 12, lineGap })
-                   .text(sku, pageMargins.left + contentWidth * 0.3, rowY, { width: contentWidth * 0.15, align: 'left' })
+                   .text(productName, pageMargins.left + 10, rowY, { width: contentWidth * 0.32 - 10, lineGap })
+                   .text(sku, pageMargins.left + contentWidth * 0.32, rowY, { width: contentWidth * 0.13, align: 'left' })
                    .text(quantity.toString(), pageMargins.left + contentWidth * 0.45, rowY, { width: contentWidth * 0.12, align: 'right' })
                    .text(formatCurrency(price), pageMargins.left + contentWidth * 0.57, rowY, { width: contentWidth * 0.18, align: 'right' })
-                   .text(formatCurrency(totalPrice), pageMargins.left + contentWidth * 0.75, rowY, { width: contentWidth * 0.25 - 12, align: 'right' });
+                   .text(formatCurrency(totalPrice), pageMargins.left + contentWidth * 0.75, rowY, { width: contentWidth * 0.25 - 10, align: 'right' });
                 currentY += itemHeight;
                 i++;
             });
 
-            // --- Order Summary & Payment Info (dư không gian, box lớn hơn) ---
+            // --- Tổng kết ---
             addNewPageIfNeeded(80);
             currentY += 14;
             const shippingFee = order.shippingFee || 0;
             const discount = order.discount || 0;
             const grandTotal = subtotal + shippingFee - discount;
-            const summaryBoxWidth = 260;
-            const summaryBoxX = pageMargins.left + contentWidth - summaryBoxWidth;
-            const summaryBoxY = currentY;
-            const summaryBoxHeight = 80;
-            // Order Summary box (phải)
-            doc.roundedRect(summaryBoxX, summaryBoxY, summaryBoxWidth, summaryBoxHeight, 12).fillAndStroke(primaryColor, primaryColor);
-            doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(11)
-                .text('Subtotal:', summaryBoxX + 22, summaryBoxY + 14)
-                .text(`${formatCurrency(subtotal)}`, summaryBoxX + 150, summaryBoxY + 14, { width: 90, align: 'right' })
-                .text('Shipping Fee:', summaryBoxX + 22, summaryBoxY + 32)
-                .text(`${formatCurrency(shippingFee)}`, summaryBoxX + 150, summaryBoxY + 32, { width: 90, align: 'right' })
-                .text('Discount:', summaryBoxX + 22, summaryBoxY + 50)
-                .text(`- ${formatCurrency(discount)}`, summaryBoxX + 150, summaryBoxY + 50, { width: 90, align: 'right' })
-                .text('Grand Total:', summaryBoxX + 22, summaryBoxY + 68)
-                .text(`${formatCurrency(grandTotal)}`, summaryBoxX + 150, summaryBoxY + 68, { width: 90, align: 'right' });
-            // Payment Info box (trái, box lớn hơn)
-            const paymentBoxX = pageMargins.left;
-            const paymentBoxY = summaryBoxY;
-            const paymentBoxWidth = summaryBoxX - pageMargins.left - 14 > 200 ? summaryBoxX - pageMargins.left - 14 : summaryBoxWidth;
-            const paymentBoxHeight = 80;
-            doc.roundedRect(paymentBoxX, paymentBoxY, paymentBoxWidth, paymentBoxHeight, 12).fillAndStroke(greyColor, darkGreyColor);
-            doc.font('Helvetica-Bold').fontSize(11).fillColor(textColor).text('Payment Information', paymentBoxX + 18, paymentBoxY + 14, { underline: true });
-            doc.font('Helvetica').fontSize(9).fillColor(lightTextColor);
-            doc.text(`Method: ${order.paymentMethod || 'N/A'}`, paymentBoxX + 18, paymentBoxY + 32, { lineGap });
-            doc.text(`Status: ${order.paymentStatus || 'N/A'}`, paymentBoxX + 18, paymentBoxY + 46, { lineGap });
-            let notesSectionHeight = 0;
-            if (order.notes && order.notes.trim() !== '') {
-                doc.font('Helvetica-Bold').fontSize(10).fillColor(textColor).text('Notes', paymentBoxX + 18, paymentBoxY + 62, { underline: true });
-                doc.font('Helvetica').fontSize(9).fillColor(lightTextColor);
-                doc.text(order.notes, paymentBoxX + 18, paymentBoxY + 76, { width: paymentBoxWidth - 36, lineGap });
-                notesSectionHeight = 22;
-            }
-            currentY = summaryBoxY + summaryBoxHeight + notesSectionHeight + 16;
+            // KHÔNG vẽ khung xanh/tổng kết nữa, chỉ để text căn phải
+            let summaryX = pageMargins.left + contentWidth - 280;
+            let summaryY = currentY;
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica-Bold').fontSize(11).fillColor(textColor)
+                .text('Tổng tiền hàng:', summaryX, summaryY, { width: 180, align: 'left' })
+                .text(`${formatCurrency(subtotal)}`, summaryX + 180, summaryY, { width: 100, align: 'right' });
+            summaryY += 18;
+            doc.text('Phí vận chuyển:', summaryX, summaryY, { width: 180, align: 'left' })
+                .text(`${formatCurrency(shippingFee)}`, summaryX + 180, summaryY, { width: 100, align: 'right' });
+            summaryY += 18;
+            doc.text('Giảm giá:', summaryX, summaryY, { width: 180, align: 'left' })
+                .text(`- ${formatCurrency(discount)}`, summaryX + 180, summaryY, { width: 100, align: 'right' });
+            summaryY += 18;
+            doc.text('Tổng cộng:', summaryX, summaryY, { width: 180, align: 'left' })
+                .text(`${formatCurrency(grandTotal)}`, summaryX + 180, summaryY, { width: 100, align: 'right' });
+            summaryY += 18;
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(9).fillColor(textColor)
+                .text(`Bằng chữ: ${convertNumberToVietnameseWords(grandTotal)} đồng`, summaryX, summaryY, { width: 280 });
+            currentY = summaryY + 24;
+
+            // --- Chữ ký ---
+            addNewPageIfNeeded(60);
+            currentY = summaryY + 24 + 30;
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(10).fillColor(textColor)
+                .text('Người mua hàng', pageMargins.left + 40, currentY)
+                .text('Người lập hóa đơn', pageMargins.left + contentWidth - 180, currentY);
+            doc.fontSize(9).fillColor(lightTextColor)
+                .text('(Ký, ghi rõ họ tên)', pageMargins.left + 40, currentY + 16)
+                .text('(Ký, ghi rõ họ tên)', pageMargins.left + contentWidth - 180, currentY + 16);
+
             doc.end();
             writeStream.on('finish', () => resolve(filePath));
         } catch (error) {
@@ -415,7 +442,238 @@ const generateProductsPDF = async (products) => {
     });
 };
 
+const robotoRegularPath = path.join(__dirname, '../public/fonts/Roboto-Regular.ttf');
+function safeRegisterFont(doc, name, path) {
+    try {
+        if (fs.existsSync(path)) {
+            doc.registerFont(name, path);
+            return true;
+        }
+    } catch (e) {}
+    return false;
+}
+
+// Generate Inventory PDF
+const generateInventoryPDF = async (products, categories, statistics) => {
+    return new Promise((resolve, reject) => {
+        try {
+            const fileName = `inventory-report-${moment().format('YYYYMMDD-HHmmss')}.pdf`;
+            const filePath = path.join(pdfDirPath, fileName);
+            const doc = new PDFDocument({ 
+                size: 'A4', 
+                margin: 50
+            });
+
+            // Chỉ đăng ký và sử dụng Roboto-Regular cho toàn bộ PDF
+            let useRoboto = false;
+            if (safeRegisterFont(doc, 'Roboto', robotoRegularPath)) {
+                try {
+                    doc.font('Roboto');
+                    useRoboto = true;
+                } catch (e) {
+                    console.warn('Could not use Roboto font, fallback to Helvetica:', e.message);
+                    doc.font('Helvetica');
+                }
+            } else {
+                doc.font('Helvetica');
+            }
+
+            const writeStream = fs.createWriteStream(filePath);
+            writeStream.on('error', (error) => reject(error));
+            doc.pipe(writeStream);
+
+            // Variables & Colors
+            const pageMargins = doc.page.margins;
+            const startY = pageMargins.top;
+            const contentWidth = doc.page.width - pageMargins.left - pageMargins.right;
+            const endY = doc.page.height - pageMargins.bottom;
+            let currentY = startY;
+            const lineGap = 4;
+            const primaryColor = '#2563EB';
+            const greyColor = '#F3F4F6';
+            const darkGreyColor = '#E5E7EB';
+            const textColor = '#1F2937';
+            const lightTextColor = '#6B7280';
+
+            // Helper Function to Add New Page
+            const addNewPageIfNeeded = (neededHeight) => {
+                if (currentY + neededHeight > endY - lineGap) {
+                    doc.addPage();
+                    currentY = startY;
+                    return true; 
+                }
+                return false; 
+            };
+
+            // Title
+            addNewPageIfNeeded(40);
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(24).fillColor(textColor)
+               .text('BÁO CÁO QUẢN LÝ KHO SẢN PHẨM', pageMargins.left, currentY, { align: 'center', width: contentWidth });
+            currentY += 32;
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(10).fillColor(lightTextColor)
+               .text(`Ngày xuất báo cáo: ${moment().format('DD/MM/YYYY HH:mm')}`, pageMargins.left, currentY, { align: 'center', width: contentWidth });
+            currentY += 20;
+            drawLine(doc, currentY);
+            currentY += 12;
+
+            // Statistics Section
+            addNewPageIfNeeded(80);
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(14).fillColor(textColor)
+               .text('THỐNG KÊ TỔNG QUAN', pageMargins.left, currentY);
+            currentY += 20;
+
+            const statBoxWidth = (contentWidth - 30) / 4;
+            const statBoxHeight = 50;
+            const statBoxY = currentY;
+
+            // Total Items
+            doc.roundedRect(pageMargins.left, statBoxY, statBoxWidth, statBoxHeight, 8).fillAndStroke(greyColor, darkGreyColor);
+            doc.fillColor(textColor).font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(12).text('Tổng sản phẩm', pageMargins.left + 10, statBoxY + 8);
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(16).text(statistics.totalItems.toString(), pageMargins.left + 10, statBoxY + 25);
+
+            // In Stock
+            doc.roundedRect(pageMargins.left + statBoxWidth + 10, statBoxY, statBoxWidth, statBoxHeight, 8).fillAndStroke(greyColor, darkGreyColor);
+            doc.fillColor(textColor).font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(12).text('Còn hàng', pageMargins.left + statBoxWidth + 20, statBoxY + 8);
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(16).text(statistics.inStockItems.toString(), pageMargins.left + statBoxWidth + 20, statBoxY + 25);
+
+            // Out of Stock
+            doc.roundedRect(pageMargins.left + (statBoxWidth + 10) * 2, statBoxY, statBoxWidth, statBoxHeight, 8).fillAndStroke(greyColor, darkGreyColor);
+            doc.fillColor(textColor).font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(12).text('Hết hàng', pageMargins.left + (statBoxWidth + 10) * 2 + 10, statBoxY + 8);
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(16).text(statistics.outOfStockItems.toString(), pageMargins.left + (statBoxWidth + 10) * 2 + 10, statBoxY + 25);
+
+            // Low Stock
+            doc.roundedRect(pageMargins.left + (statBoxWidth + 10) * 3, statBoxY, statBoxWidth, statBoxHeight, 8).fillAndStroke(greyColor, darkGreyColor);
+            doc.fillColor(textColor).font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(12).text('Sắp hết', pageMargins.left + (statBoxWidth + 10) * 3 + 10, statBoxY + 8);
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(16).text(statistics.lowStockItems.toString(), pageMargins.left + (statBoxWidth + 10) * 3 + 10, statBoxY + 25);
+
+            currentY = statBoxY + statBoxHeight + 20;
+
+            // Total Stock Value
+            addNewPageIfNeeded(40);
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(12).fillColor(textColor)
+               .text(`Tổng giá trị kho: ${formatCurrency(statistics.totalStockValue)}`, pageMargins.left, currentY);
+            currentY += 20;
+            drawLine(doc, currentY);
+            currentY += 12;
+
+            // Products Table Header
+            addNewPageIfNeeded(32);
+            const tableHeaderY = currentY;
+            doc.rect(pageMargins.left, tableHeaderY, contentWidth, 24).fill(darkGreyColor);
+            doc.fillColor(textColor).font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(10);
+            doc.text('Sản phẩm', pageMargins.left + 12, tableHeaderY + 8, { width: contentWidth * 0.35 - 12 })
+               .text('Danh mục', pageMargins.left + contentWidth * 0.35, tableHeaderY + 8, { width: contentWidth * 0.15, align: 'left' })
+               .text('Giá', pageMargins.left + contentWidth * 0.5, tableHeaderY + 8, { width: contentWidth * 0.15, align: 'right' })
+               .text('Tồn kho', pageMargins.left + contentWidth * 0.65, tableHeaderY + 8, { width: contentWidth * 0.12, align: 'right' })
+               .text('Giá trị', pageMargins.left + contentWidth * 0.77, tableHeaderY + 8, { width: contentWidth * 0.23 - 12, align: 'right' });
+            currentY = tableHeaderY + 26;
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica');
+
+            // Products Table Body
+            let i = 0;
+            products.forEach((product) => {
+                const productName = product.title || 'Unknown product';
+                const category = product.category || 'Chưa phân loại';
+                const price = product.price || 0;
+                const stockQuantity = product.stockQuantity || 0;
+                const stockValue = price * stockQuantity;
+
+                const productNameHeight = doc.fontSize(9).heightOfString(productName, { width: contentWidth * 0.35 - 12, lineGap });
+                const itemHeight = productNameHeight + lineGap * 3;
+                const rowNeededHeight = itemHeight + 4;
+
+                if (addNewPageIfNeeded(rowNeededHeight)) {
+                    // Draw table header again
+                    const newTableHeaderY = currentY;
+                    doc.rect(pageMargins.left, newTableHeaderY, contentWidth, 24).fill(darkGreyColor);
+                    doc.fillColor(textColor).font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(10);
+                    doc.text('Sản phẩm', pageMargins.left + 12, newTableHeaderY + 8, { width: contentWidth * 0.35 - 12 })
+                       .text('Danh mục', pageMargins.left + contentWidth * 0.35, newTableHeaderY + 8, { width: contentWidth * 0.15, align: 'left' })
+                       .text('Giá', pageMargins.left + contentWidth * 0.5, newTableHeaderY + 8, { width: contentWidth * 0.15, align: 'right' })
+                       .text('Tồn kho', pageMargins.left + contentWidth * 0.65, newTableHeaderY + 8, { width: contentWidth * 0.12, align: 'right' })
+                       .text('Giá trị', pageMargins.left + contentWidth * 0.77, newTableHeaderY + 8, { width: contentWidth * 0.23 - 12, align: 'right' });
+                    currentY = newTableHeaderY + 26;
+                    doc.font(useRoboto ? 'Roboto' : 'Helvetica');
+                }
+
+                if (i % 2 !== 0) {
+                     doc.rect(pageMargins.left, currentY, contentWidth, itemHeight).fill(greyColor);
+                }
+
+                const rowY = currentY + lineGap + 2;
+                doc.fillColor(textColor).fontSize(9)
+                   .text(productName, pageMargins.left + 12, rowY, { width: contentWidth * 0.35 - 12, lineGap })
+                   .text(category, pageMargins.left + contentWidth * 0.35, rowY, { width: contentWidth * 0.15, align: 'left' })
+                   .text(formatCurrency(price), pageMargins.left + contentWidth * 0.5, rowY, { width: contentWidth * 0.15, align: 'right' })
+                   .text(stockQuantity.toString(), pageMargins.left + contentWidth * 0.65, rowY, { width: contentWidth * 0.12, align: 'right' })
+                   .text(formatCurrency(stockValue), pageMargins.left + contentWidth * 0.77, rowY, { width: contentWidth * 0.23 - 12, align: 'right' });
+
+                currentY += itemHeight;
+                i++;
+            });
+
+            // Footer
+            addNewPageIfNeeded(40);
+            currentY += 20;
+            drawLine(doc, currentY);
+            currentY += 12;
+            doc.font(useRoboto ? 'Roboto' : 'Helvetica').fontSize(9).fillColor(lightTextColor)
+               .text('Báo cáo được tạo tự động bởi hệ thống quản lý kho', pageMargins.left, currentY, { align: 'center', width: contentWidth });
+
+            doc.end();
+            writeStream.on('finish', () => {
+                resolve(fs.readFileSync(filePath));
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+// --- Hàm chuyển số thành chữ tiếng Việt đơn giản ---
+function convertNumberToVietnameseWords(number) {
+    // Đơn giản hóa, chỉ dùng cho số nhỏ, có thể thay bằng thư viện nếu cần
+    const ChuSo = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
+    function DocSo3ChuSo(baso) {
+        let tram = Math.floor(baso / 100);
+        let chuc = Math.floor((baso % 100) / 10);
+        let donvi = baso % 10;
+        let ketQua = '';
+        if (tram > 0) {
+            ketQua += ChuSo[tram] + ' trăm';
+            if (chuc === 0 && donvi > 0) ketQua += ' linh';
+        }
+        if (chuc > 1) {
+            ketQua += ' ' + ChuSo[chuc] + ' mươi';
+            if (donvi === 1) ketQua += ' mốt';
+            else if (donvi === 5) ketQua += ' lăm';
+            else if (donvi > 0) ketQua += ' ' + ChuSo[donvi];
+        } else if (chuc === 1) {
+            ketQua += ' mười';
+            if (donvi === 1) ketQua += ' một';
+            else if (donvi === 5) ketQua += ' lăm';
+            else if (donvi > 0) ketQua += ' ' + ChuSo[donvi];
+        } else if (donvi > 0) {
+            ketQua += ' ' + ChuSo[donvi];
+        }
+        return ketQua.trim();
+    }
+    if (typeof number !== 'number' || isNaN(number)) return '';
+    if (number === 0) return 'không';
+    let str = '';
+    let ty = Math.floor(number / 1e9);
+    let trieu = Math.floor((number % 1e9) / 1e6);
+    let nghin = Math.floor((number % 1e6) / 1e3);
+    let tram = number % 1e3;
+    if (ty > 0) str += DocSo3ChuSo(ty) + ' tỷ';
+    if (trieu > 0) str += (str ? ', ' : '') + DocSo3ChuSo(trieu) + ' triệu';
+    if (nghin > 0) str += (str ? ', ' : '') + DocSo3ChuSo(nghin) + ' nghìn';
+    if (tram > 0) str += (str ? ', ' : '') + DocSo3ChuSo(tram);
+    return str.trim();
+}
+
 module.exports = {
     generateOrderPDF,
-    generateProductsPDF
+    generateProductsPDF,
+    generateInventoryPDF
 };

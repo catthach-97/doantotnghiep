@@ -1,4 +1,31 @@
-// Main JavaScript for Phương Store
+// Main JavaScript for Shoe Store
+
+// Global function to update cart count in navigation
+function updateCartCount(count) {
+    // Cập nhật cart badge trong desktop navigation
+    const cartBadges = document.querySelectorAll('.cart-badge');
+    cartBadges.forEach(badge => {
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    });
+    
+    // Cập nhật cart badge trong mobile navigation (nếu có)
+    const mobileCartBadges = document.querySelectorAll('.mobile-cart-badge');
+    mobileCartBadges.forEach(badge => {
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    });
+    
+    console.log('🛒 Cart count updated to:', count);
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     // Legacy mobile menu (keep for backward compatibility)
@@ -326,4 +353,53 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('revenue-chart') || document.getElementById('category-chart')) {
         initCharts();
     }
+});
+
+// Xử lý nút Bỏ yêu thích trên trang favorites
+document.querySelectorAll('.favorite-card form').forEach(form => {
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const card = this.closest('.favorite-card');
+    const productId = card.getAttribute('data-product-id');
+    fetch(`/favorites/${productId}?_method=DELETE`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Network error');
+      return res.json();
+    })
+    .then(data => {
+      if (data.success) {
+        card.remove();
+        // Nếu không còn sản phẩm nào, hiển thị thông báo
+        if (document.querySelectorAll('.favorite-card').length === 0) {
+          const main = document.querySelector('main');
+          if (main) main.innerHTML = '<div class="text-center text-gray-500 mt-8">Bạn chưa có sản phẩm yêu thích nào.</div>';
+        }
+      } else {
+        // Không alert lỗi nữa
+      }
+    })
+    .catch(() => {
+      // Không alert lỗi nữa
+    });
+  });
+});
+
+// Wishlist (favorite) button logic for product list
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.favorite-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (window.isAuthenticated === false || window.isAuthenticated === 'false') {
+        window.location.href = 'http://localhost:5000/login';
+        return;
+      }
+      // Nếu đã đăng nhập, không làm gì cả
+    });
+  });
 });

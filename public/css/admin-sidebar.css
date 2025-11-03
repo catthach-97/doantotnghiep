@@ -1,0 +1,83 @@
+/* Admin Sidebar Gradient Blue */
+#sidebar {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+}
+
+#sidebar .bg-gray-800 {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+}
+
+#sidebar .bg-gray-900 {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+}
+
+/* Sidebar header gradient */
+#sidebar .flex.items-center.justify-center.h-16 {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Sidebar navigation items hover effect */
+#sidebar .group:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+#sidebar .group.bg-gray-900 {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Sidebar links hover effect */
+#sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+#sidebar a.active {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Override hover states */
+#sidebar .text-gray-300:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+}
+
+#sidebar .hover\\:bg-gray-700:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Sidebar footer gradient */
+#sidebar .absolute.bottom-0 {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Sidebar footer text color */
+#sidebar .text-gray-400 {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Override any existing sidebar styles */
+.sidebar {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+}
+
+.sidebar-item:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.sidebar-item.active {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* For existing admin layout */
+.navigation-admin .sidebar {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+}
+
+.navigation-admin .sidebar .nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.navigation-admin .sidebar .nav-item.active {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}

@@ -1,11 +1,14 @@
 const getDb = require('../util/database').getDb;
 const mongodb = require('mongodb');
+const bcrypt = require('bcrypt');
 
 class User {
-    constructor(name, email, role = 'user') {
+    constructor(name, email, role = 'user', favorites = []) {
         this.name = name;
         this.email = email;
         this.role = role;
+        this.favorites = favorites; // Thêm trường yêu thích
+        this.isActive = true; // Trạng thái tài khoản: true = hoạt động, false = bị khóa
         this.createdAt = new Date();
         this.cart = { items: [], totalPrice: 0 };
     }
@@ -259,9 +262,13 @@ class User {
     static async updatePassword(userId, newPassword) {
         const db = getDb();
         try {
+            // Hash mật khẩu mới với bcrypt
+            const saltRounds = 12;
+            const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+            
             return await db.collection('users').updateOne(
                 { _id: new mongodb.ObjectId(userId) },
-                { $set: { password: newPassword, updatedAt: new Date() } }
+                { $set: { password: hashedPassword, updatedAt: new Date() } }
             );
         } catch (err) {
             console.error('Lỗi khi cập nhật mật khẩu user:', err);
@@ -269,15 +276,40 @@ class User {
         }
     }
 
+    static async updateProfile(userId, { name, phone, address, email }) {
+        const db = getDb();
+        const updateFields = {};
+        if (name !== undefined) updateFields.name = name;
+        if (phone !== undefined) updateFields.phone = phone;
+        if (address !== undefined) updateFields.address = address;
+        if (email !== undefined) updateFields.email = email;
+        updateFields.updatedAt = new Date();
+        try {
+            return await db.collection('users').updateOne(
+                { _id: new mongodb.ObjectId(userId) },
+                { $set: updateFields }
+            );
+        } catch (err) {
+            console.error('Lỗi khi cập nhật thông tin user:', err);
+            throw err;
+        }
+    }
+
     static async create({ name, email, password, phone, address, role = 'user' }) {
         const db = getDb();
+        
+        // Hash mật khẩu với bcrypt
+        const saltRounds = 12;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        
         const user = {
             name,
             email,
-            password,
+            password: hashedPassword, // Lưu mật khẩu đã hash
             phone,
             address,
             role,
+            isActive: true, // Tài khoản mới mặc định là hoạt động
             createdAt: new Date(),
             cart: { items: [], totalPrice: 0 }
         };
@@ -287,6 +319,167 @@ class User {
             return user;
         } catch (err) {
             console.error('Lỗi khi tạo user:', err);
+            throw err;
+        }
+    }
+
+    // Method để so sánh mật khẩu với bcrypt
+    static async comparePassword(email, password) {
+        try {
+            console.log('🔍 [LOGIN DEBUG] Comparing password for email:', email);
+            
+            const user = await User.findByEmail(email);
+            if (!user) {
+                console.log('❌ [LOGIN DEBUG] User not found');
+                return false;
+            }
+            
+            console.log('✅ [LOGIN DEBUG] User found:', user.email);
+            console.log('🔍 [LOGIN DEBUG] Stored password hash exists:', !!user.password);
+            console.log('🔍 [LOGIN DEBUG] Input password:', password ? '***' : 'empty');
+            
+            // Kiểm tra nếu user không có mật khẩu
+            if (!user.password) {
+                console.log('❌ [LOGIN DEBUG] User has no password stored');
+                return false;
+            }
+            
+            // Kiểm tra nếu input password rỗng
+            if (!password) {
+                console.log('❌ [LOGIN DEBUG] Input password is empty');
+                return false;
+            }
+            
+            // So sánh mật khẩu với bcrypt
+            const isMatch = await bcrypt.compare(password, user.password);
+            console.log('🔍 [LOGIN DEBUG] Password comparison result:', isMatch);
+            
+            return isMatch;
+        } catch (err) {
+            console.error('❌ [LOGIN DEBUG] Error comparing password:', err);
+            return false;
+        }
+    }
+
+    // Thêm sản phẩm vào danh sách yêu thích
+    async addFavorite(productId) {
+        const db = getDb();
+        if (!this._id) return;
+        const user = await db.collection('users').findOne({ _id: this._id });
+        if (!user.favorites) user.favorites = [];
+        if (!user.favorites.map(id => id.toString()).includes(productId.toString())) {
+            user.favorites.push(productId);
+            await db.collection('users').updateOne({ _id: this._id }, { $set: { favorites: user.favorites } });
+        }
+    }
+    // Xóa sản phẩm khỏi danh sách yêu thích
+    async removeFavorite(productId) {
+        const db = getDb();
+        if (!this._id) return;
+        const user = await db.collection('users').findOne({ _id: this._id });
+        console.log('Trước khi xóa:', user.favorites);
+        // So sánh id kiểu string tuyệt đối
+        user.favorites = (user.favorites || []).filter(id => id.toString() !== productId.toString());
+        console.log('Sau khi xóa:', user.favorites);
+        await db.collection('users').updateOne({ _id: this._id }, { $set: { favorites: user.favorites } });
+    }
+    // Lấy danh sách sản phẩm yêu thích
+    async getFavorites() {
+        const db = getDb();
+        if (!this._id) return [];
+        const user = await db.collection('users').findOne({ _id: this._id });
+        return user.favorites || [];
+    }
+
+    // ===== QUẢN LÝ TRẠNG THÁI TÀI KHOẢN =====
+
+    // Cập nhật trạng thái tài khoản (hoạt động/bị khóa)
+    static async updateAccountStatus(userId, isActive) {
+        const db = getDb();
+        try {
+            const result = await db.collection('users').updateOne(
+                { _id: new mongodb.ObjectId(userId) },
+                { 
+                    $set: { 
+                        isActive: isActive,
+                        updatedAt: new Date()
+                    } 
+                }
+            );
+            return result;
+        } catch (err) {
+            console.error('Lỗi khi cập nhật trạng thái tài khoản:', err);
+            throw err;
+        }
+    }
+
+    // Khóa tài khoản
+    static async lockAccount(userId) {
+        return await User.updateAccountStatus(userId, false);
+    }
+
+    // Mở khóa tài khoản
+    static async unlockAccount(userId) {
+        return await User.updateAccountStatus(userId, true);
+    }
+
+    // Toggle trạng thái tài khoản (chuyển đổi giữa hoạt động và bị khóa)
+    static async toggleAccountStatus(userId) {
+        const db = getDb();
+        try {
+            // Lấy trạng thái hiện tại
+            const user = await db.collection('users').findOne({ _id: new mongodb.ObjectId(userId) });
+            if (!user) {
+                throw new Error('Không tìm thấy tài khoản');
+            }
+            
+            // Chuyển đổi trạng thái
+            const newStatus = !user.isActive;
+            return await User.updateAccountStatus(userId, newStatus);
+        } catch (err) {
+            console.error('Lỗi khi toggle trạng thái tài khoản:', err);
+            throw err;
+        }
+    }
+
+    // Kiểm tra tài khoản có hoạt động không
+    static async isAccountActive(userId) {
+        const db = getDb();
+        try {
+            const user = await db.collection('users').findOne({ _id: new mongodb.ObjectId(userId) });
+            return user ? user.isActive !== false : false; // Mặc định là false nếu không tìm thấy
+        } catch (err) {
+            console.error('Lỗi khi kiểm tra trạng thái tài khoản:', err);
+            return false;
+        }
+    }
+
+    // Lấy danh sách tài khoản theo trạng thái
+    static async getUsersByStatus(isActive) {
+        const db = getDb();
+        try {
+            return await db.collection('users').find({ isActive: isActive }).toArray();
+        } catch (err) {
+            console.error('Lỗi khi lấy danh sách tài khoản theo trạng thái:', err);
+            throw err;
+        }
+    }
+
+    // Lấy thống kê trạng thái tài khoản
+    static async getAccountStatusStats() {
+        const db = getDb();
+        try {
+            const totalUsers = await db.collection('users').countDocuments();
+            const activeUsers = await db.collection('users').countDocuments({ isActive: true });
+            const lockedUsers = await db.collection('users').countDocuments({ isActive: false });
+            
+            return {
+                total: totalUsers,
+                active: activeUsers,
+                locked: lockedUsers
+            };
+        } catch (err) {
+            console.error('Lỗi khi lấy thống kê trạng thái tài khoản:', err);
             throw err;
         }
     }

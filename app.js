@@ -3,8 +3,10 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
+const mongoose = require('mongoose');
 
 const mongoConnect = require('./util/database').mongoConnect;
 const User = require('./models/user');
@@ -50,6 +52,10 @@ const vnpayRoutes = require('./routes/vnpay');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json()); // Thêm middleware để parse JSON
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Add method-override middleware để hỗ trợ DELETE từ form
+app.use(methodOverride('_method'));
 
 // Add image handler middleware to handle missing product images
 app.use(imageHandler);
@@ -66,22 +72,34 @@ app.use(session({
     }
 }));
 
-// Middleware để lấy thông tin user từ session
-app.use(asyncHandler(async (req, res, next) => {
-    if (!req.session.user) {
-        return next();
-    }
+// Middleware inject categories cho mọi view
+const categoriesMiddleware = require('./middleware/categories');
+app.use(categoriesMiddleware);
+
+// Middleware quản lý giỏ hàng session
+const cartMiddleware = require('./middleware/cart');
+app.use(cartMiddleware);
+
+// Middleware kiểm tra trạng thái tài khoản
+const checkAccountStatus = require('./middleware/check-account-status');
+app.use(checkAccountStatus);
+
+// Middleware để lấy thông tin user từ session (TẠM THỜI TẮT)
+// app.use(asyncHandler(async (req, res, next) => {
+//     if (!req.session.user) {
+//         return next();
+//     }
     
-    const user = await User.findById(req.session.user._id);
-    if (!user) {
-        // Xóa session nếu user không tồn tại
-        req.session.destroy();
-        return next();
-    }
+//     const user = await User.findById(req.session.user._id);
+//     if (!user) {
+//         // Xóa session nếu user không tồn tại
+//         req.session.destroy();
+//         return next();
+//     }
     
-    req.user = user;
-    next();
-}));
+//     req.user = user;
+//     next();
+// }));
 
 // Request logging middleware
 app.use(requestLogger);
@@ -91,13 +109,15 @@ app.use((req, res, next) => {
     res.locals.isAuthenticated = req.session.user ? true : false;
     res.locals.isAdmin = req.session.user && req.session.user.role === 'admin';
     res.locals.user = req.session.user || null; // Add user information
+    res.locals.cartCount = req.cart ? req.cart.getItemCount() : 0; // Add cart count
     
     logger.debug('Request authentication', {
         url: req.url,
         method: req.method,
         isAuthenticated: res.locals.isAuthenticated,
         isAdmin: res.locals.isAdmin,
-        userId: req.session.user ? req.session.user._id : null
+        userId: req.session.user ? req.session.user._id : null,
+        cartCount: res.locals.cartCount
     });
     
     next();
@@ -121,6 +141,16 @@ const startServer = async () => {
                 logger.info('MongoDB connected successfully');
                 resolve();
             });
+        });
+
+        // Kết nối Mongoose cho các model sử dụng Mongoose (ví dụ: Category)
+        mongoose.connect('mongodb+srv://ITCschool:8GZ4Vs2IufF9uwFY@cluster0.unzei.mongodb.net/Cshop?retryWrites=true&w=majority&appName=Cluster0', {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }).then(() => {
+            console.log('Mongoose connected!');
+        }).catch(err => {
+            console.error('Mongoose connection error:', err);
         });
 
         const port = process.env.PORT || 3000;

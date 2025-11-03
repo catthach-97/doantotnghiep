@@ -3,16 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sản phẩm - Phương Store</title>
+    <title>Sản phẩm - Shoe Store</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Remix Icon -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
-    
-    <!-- ECharts -->
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
@@ -41,192 +38,292 @@
 </head>
 <body class="bg-gray-50">
     <!-- Navigation -->
-    <%- include('../partials/header') %>
+    <%- include('../includes/navigation') %>
 
-<!-- Page Header -->
-<section class="bg-white shadow-sm border-b">
-    <div class="container mx-auto px-4 py-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800 mb-2">Sản phẩm</h1>
-                <p class="text-gray-600">Khám phá các sản phẩm chất lượng cao dành cho thú cưng</p>
-            </div>
-            <div class="mt-4 md:mt-0">
-                <span class="text-sm text-gray-500">Tìm thấy <%= products.length %> sản phẩm</span>
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white py-20 overflow-hidden">
+        <!-- Background decorative elements -->
+        <div class="absolute inset-0">
+            <div class="absolute top-10 left-10 w-32 h-32 bg-blue-400 rounded-full opacity-20 blur-xl"></div>
+            <div class="absolute top-32 right-20 w-24 h-24 bg-indigo-400 rounded-full opacity-30 blur-lg"></div>
+            <div class="absolute bottom-20 left-1/4 w-40 h-40 bg-cyan-300 rounded-full opacity-15 blur-2xl"></div>
+            <div class="absolute bottom-10 right-1/3 w-28 h-28 bg-blue-400 rounded-full opacity-25 blur-xl"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-4xl mx-auto text-center">
+                <!-- Main Title with Script Font -->
+                <h1 class="text-6xl md:text-7xl font-pacifico mb-2">
+                    <span class="bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">
+                        Sản phẩm
+                    </span>
+                </h1>
+                <h2 class="text-5xl md:text-6xl font-pacifico text-white mb-8">
+                    giày đẹp
+                </h2>
+                
+                <!-- Description -->
+                <p class="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
+                    Khám phá bộ sưu tập giày đa dạng với thiết kế thời trang và chất lượng cao
+                </p>
+                
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Filters and Search -->
-<section class="bg-white border-b">
-    <div class="container mx-auto px-4 py-4">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <!-- Search -->
-            <div class="flex-1 max-w-md">
-                <form method="GET" class="relative">
-                    <input type="text" name="search" value="<%= search || '' %>" 
-                           placeholder="Tìm kiếm sản phẩm..." 
-                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <% if (category) { %>
-                        <input type="hidden" name="category" value="<%= category %>">
-                    <% } %>
-                </form>
-            </div>
-            
-            <!-- Category Filter -->
-            <div class="flex flex-wrap gap-2">
-                <a href="/products" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors <%= !category ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' %>">
-                    Tất cả
-                </a>
-                <a href="/products?category=dog" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors <%= category === 'dog' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' %>">
-                    Chó cưng
-                </a>
-                <a href="/products?category=cat" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors <%= category === 'cat' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' %>">
-                    Mèo cưng
-                </a>
-                <a href="/products?category=fish" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors <%= category === 'fish' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' %>">
-                    Cá cảnh
-                </a>
-                <a href="/products?category=small-pets" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors <%= category === 'small-pets' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' %>">
-                    Thú nhỏ
-                </a>
-            </div>
-            
-            <!-- Sort -->
-            <div class="flex items-center gap-2">
-                <label class="text-sm text-gray-600">Sắp xếp:</label>
-                <select onchange="window.location.href = this.value" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="/products<%= category ? '?category=' + category : '' %>">Mặc định</option>
-                    <option value="/products?sort=price_asc<%= category ? '&category=' + category : '' %>" <%= sort === 'price_asc' ? 'selected' : '' %>>Giá thấp đến cao</option>
-                    <option value="/products?sort=price_desc<%= category ? '&category=' + category : '' %>" <%= sort === 'price_desc' ? 'selected' : '' %>>Giá cao đến thấp</option>
-                    <option value="/products?sort=name_asc<%= category ? '&category=' + category : '' %>" <%= sort === 'name_asc' ? 'selected' : '' %>>Tên A-Z</option>
-                    <option value="/products?sort=name_desc<%= category ? '&category=' + category : '' %>" <%= sort === 'name_desc' ? 'selected' : '' %>>Tên Z-A</option>
-                </select>
-            </div>
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b">
+        <div class="container mx-auto px-4 py-4">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="/" class="text-gray-500 hover:text-blue-600 transition-colors">Trang chủ</a>
+                <span class="text-gray-400">/</span>
+                <span class="text-gray-600">Sản phẩm</span>
+            </nav>
         </div>
     </div>
-</section>
 
-<!-- Products Grid -->
-<section class="py-8">
-    <div class="container mx-auto px-4">
-        <% if (products && products.length > 0) { %>
-            <div class="product-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <% products.forEach(product => { %>
-                <div class="product-card bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                    <div class="relative">
-                        <a href="/products/<%= product._id %>">
-                            <img src="<%= product.imageUrl %>" alt="<%= product.title %>" class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300">
-                        </a>
-                        <div class="absolute top-2 right-2">
-                            <% if (product.isNew) { %>
-                                <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">Mới</span>
-                            <% } %>
-                            <% if (product.discount) { %>
-                                <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium ml-1">-<%= product.discount %>%</span>
-                            <% } %>
-                        </div>
-                        <button onclick="toggleWishlist('<%= product._id %>')" class="absolute top-2 left-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-50 transition-colors">
-                            <i class="ri-heart-line text-gray-600 hover:text-red-500 transition-colors"></i>
-                        </button>
-                    </div>
-                    <div class="p-4">
-                        <a href="/products/<%= product._id %>" class="block">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2 hover:text-blue-600 transition-colors"><%= product.title %></h3>
-                        </a>
-                        <p class="text-gray-600 text-sm mb-3 line-clamp-2"><%= product.description %></p>
-                        
-                        <!-- Rating -->
-                        <div class="flex items-center mb-3">
-                            <div class="flex text-yellow-400">
-                                <% for(let i = 1; i <= 5; i++) { %>
-                                    <i class="ri-star-<%= i <= (product.rating || 5) ? 'fill' : 'line' %> text-sm"></i>
-                                <% } %>
-                            </div>
-                            <span class="text-xs text-gray-500 ml-2">(<%= product.reviewCount || 0 %> đánh giá)</span>
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <div class="flex flex-col">
-                                <% if (product.originalPrice && product.originalPrice > product.price) { %>
-                                    <span class="text-sm text-gray-400 line-through"><%= product.originalPrice.toLocaleString('vi-VN') %>đ</span>
-                                <% } %>
-                                <span class="text-xl font-bold text-blue-600"><%= product.price.toLocaleString('vi-VN') %>đ</span>
-                            </div>
-                            <button onclick="addToCart('<%= product._id %>')" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 flex items-center gap-1">
-                                <i class="ri-shopping-cart-line"></i>
-                                <span class="hidden sm:inline">Thêm vào giỏ</span>
-                            </button>
-                        </div>
-                    </div>
+    <!-- Products Introduction Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Bộ sưu tập sản phẩm</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Chọn sản phẩm yêu thích để xem chi tiết</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters and Sort -->
+    <section class="bg-white border-b">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <!-- Results Count and Pagination Info -->
+                <div class="flex items-center gap-4">
+                    <span class="text-sm text-gray-600">
+                        Hiển thị <span class="font-semibold text-blue-600"><%= products ? products.length : 0 %></span> sản phẩm
+                        <% if (typeof totalProducts !== 'undefined' && totalProducts > 0) { %>
+                            trên tổng <span class="font-semibold text-gray-800"><%= totalProducts %></span> sản phẩm
+                        <% } %>
+                    </span>
+                    <% if (typeof currentPage !== 'undefined' && typeof totalPages !== 'undefined' && totalPages > 1) { %>
+                        <span class="text-sm text-gray-500">
+                            Trang <span class="font-semibold text-blue-600"><%= currentPage %></span> / <span class="font-semibold text-gray-800"><%= totalPages %></span>
+                        </span>
+                    <% } %>
                 </div>
-                <% }); %>
-            </div>
-            
-            <!-- Pagination -->
-            <% if (totalPages > 1) { %>
-            <div class="flex justify-center mt-12">
-                <nav class="flex items-center space-x-2">
-                    <% if (currentPage > 1) { %>
-                        <a href="?page=<%= currentPage - 1 %><%= category ? '&category=' + category : '' %><%= search ? '&search=' + search : '' %>" 
-                           class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors">
-                            <i class="ri-arrow-left-line"></i>
-                        </a>
-                    <% } %>
-                    
-                    <% for(let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
-                        <a href="?page=<%= i %><%= category ? '&category=' + category : '' %><%= search ? '&search=' + search : '' %>" 
-                           class="px-3 py-2 rounded-lg <%= i === currentPage ? 'bg-blue-600 text-white' : 'border border-gray-300 text-gray-600 hover:bg-gray-50' %> transition-colors">
-                            <%= i %>
-                        </a>
-                    <% } %>
-                    
-                    <% if (currentPage < totalPages) { %>
-                        <a href="?page=<%= currentPage + 1 %><%= category ? '&category=' + category : '' %><%= search ? '&search=' + search : '' %>" 
-                           class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors">
-                            <i class="ri-arrow-right-line"></i>
-                        </a>
-                    <% } %>
-                </nav>
-            </div>
-            <% } %>
-        <% } else { %>
-            <!-- No Products Found -->
-            <div class="text-center py-16">
-                <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="ri-search-line text-3xl text-gray-400"></i>
+                
+                <!-- Sort -->
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-gray-600 font-medium">Sắp xếp:</label>
+                    <select onchange="window.location.href = this.value" class="px-4 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm">
+                        <option value="/products<%= category ? '?category=' + category : '' %><%= search ? '&search=' + search : '' %>">Mặc định</option>
+                        <option value="/products?sort=price_asc<%= category ? '&category=' + category : '' %><%= search ? '&search=' + search : '' %>" <%= sort === 'price_asc' ? 'selected' : '' %>>Giá thấp đến cao</option>
+                        <option value="/products?sort=price_desc<%= category ? '&category=' + category : '' %><%= search ? '&search=' + search : '' %>" <%= sort === 'price_desc' ? 'selected' : '' %>>Giá cao đến thấp</option>
+                        <option value="/products?sort=name_asc<%= category ? '&category=' + category : '' %><%= search ? '&search=' + search : '' %>" <%= sort === 'name_asc' ? 'selected' : '' %>>Tên A-Z</option>
+                        <option value="/products?sort=name_desc<%= category ? '&category=' + category : '' %><%= search ? '&search=' + search : '' %>" <%= sort === 'name_desc' ? 'selected' : '' %>>Tên Z-A</option>
+                    </select>
                 </div>
-                <h3 class="text-xl font-semibold text-gray-800 mb-2">Không tìm thấy sản phẩm</h3>
-                <p class="text-gray-600 mb-6">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc của bạn</p>
-                <a href="/products" class="btn-primary px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105">
-                    Xem tất cả sản phẩm
-                </a>
             </div>
-        <% } %>
-    </div>
-</section>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-7xl mx-auto">
+                <% if (products && products.length > 0) { %>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        <% products.forEach(product => { %>
+                        <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
+                            <div class="relative overflow-hidden">
+                                <a href="/products/<%= product._id %>" class="block">
+                                    <img src="<%= product.imageUrl %>" alt="<%= product.title %>" 
+                                         class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+                                </a>
+                                
+                                <!-- Badges -->
+                                <div class="absolute top-3 right-3 flex flex-col gap-2">
+                                    <% if (product.isNew) { %>
+                                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">Mới</span>
+                                    <% } %>
+                                    <% if (product.discount) { %>
+                                        <span class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">-<%= product.discount %>%</span>
+                                    <% } %>
+                                </div>
+                                
+                                <!-- Favorite Button -->
+                                <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                                <button class="favorite-btn absolute top-3 left-3 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all duration-300 text-xl z-10 <%= favorites && favorites.includes(product._id.toString()) ? 'text-red-500' : 'text-gray-400' %>"
+                                        data-product-id="<%= product._id %>"
+                                        aria-label="Yêu thích">
+                                    <i class="<%= favorites && favorites.includes(product._id.toString()) ? 'ri-heart-fill' : 'ri-heart-line' %>"></i>
+                                </button>
+                                <% } else { %>
+                                <a href="/login?returnTo=<%= encodeURIComponent(request.originalUrl || '/') %>" 
+                                   class="absolute top-3 left-3 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg text-xl z-10 text-gray-400 hover:bg-white transition-all duration-300" 
+                                   aria-label="Yêu thích">
+                                    <i class="ri-heart-line"></i>
+                                </a>
+                                <% } %>
+                                
+                                <!-- Quick View Overlay -->
+                                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                    <a href="/products/<%= product._id %>" 
+                                       class="bg-white text-gray-800 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors duration-300 transform hover:scale-105">
+                                        <i class="ri-eye-line mr-2"></i>Xem nhanh
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6">
+                                <a href="/products/<%= product._id %>" class="block">
+                                    <h3 class="text-base font-bold text-gray-800 mb-2 hover:text-blue-600 transition-colors group-hover:text-blue-600" style="white-space: nowrap; overflow: visible; word-break: keep-all;">
+                                        <%= product.title %>
+                                    </h3>
+                                </a>
+                                <p class="text-gray-600 text-xs mb-4 leading-relaxed" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-break: keep-all;">
+                                    <%= product.description %>
+                                </p>
+                                
+                                <!-- Rating -->
+                                <div class="flex items-center mb-4">
+                                    <div class="flex text-yellow-400">
+                                        <% 
+                                        const reviewCount = product.reviewCount || 0;
+                                        const avgRating = product.avgRating || 0;
+                                        const hasReviews = reviewCount > 0;
+                                        %>
+                                        <% for(let i = 1; i <= 5; i++) { %>
+                                            <i class="ri-star-<%= hasReviews && i <= avgRating ? 'fill' : 'line' %> text-sm"></i>
+                                        <% } %>
+                                    </div>
+                                    <span class="text-xs text-gray-500 ml-2">(<%= reviewCount %> đánh giá)</span>
+                                </div>
+                                
+                                <!-- Price and Action -->
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col">
+                                        <% if (product.originalPrice && product.originalPrice > product.price) { %>
+                                            <span class="text-sm text-gray-400 line-through"><%= product.originalPrice.toLocaleString('vi-VN') %>đ</span>
+                                        <% } %>
+                                        <span class="text-2xl font-bold text-blue-600"><%= product.price.toLocaleString('vi-VN') %>đ</span>
+                                    </div>
+                                    <a href="/products/<%= product._id %>" 
+                                       class="w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                                        <i class="ri-shopping-cart-line text-xl"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                    </div>
+                    
+                    <!-- Enhanced Pagination -->
+                    <% if (totalPages > 1) { %>
+                    <div class="mt-16">
+                        <!-- Pagination Info -->
+                        <div class="text-center mb-6">
+                        <p class="text-sm text-gray-600">
+                            Hiển thị <span class="font-semibold text-blue-600"><%= (currentPage - 1) * 8 + 1 %></span> - 
+                            <span class="font-semibold text-blue-600"><%= Math.min(currentPage * 8, totalProducts) %></span> 
+                            trong tổng <span class="font-semibold text-gray-800"><%= totalProducts %></span> sản phẩm
+                        </p>
+                        </div>
+                        
+                        <!-- Pagination Navigation -->
+                        <div class="flex justify-center">
+                            <nav class="flex items-center space-x-1">
+                                <!-- First Page -->
+                                <% if (currentPage > 1) { %>
+                                    <a href="?page=1<%= category ? '&category=' + category : '' %><%= search ? '&search=' + search : '' %>" 
+                                       class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 text-sm">
+                                        <i class="ri-arrow-left-double-line"></i>
+                                    </a>
+                                <% } %>
+                                
+                                <!-- Previous Page -->
+                                <% if (currentPage > 1) { %>
+                                    <a href="?page=<%= currentPage - 1 %><%= category ? '&category=' + category : '' %><%= search ? '&search=' + search : '' %>" 
+                                       class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 text-sm">
+                                        <i class="ri-arrow-left-line"></i>
+                                    </a>
+                                <% } %>
+                                
+                                <!-- Page Numbers -->
+                                <% 
+                                let startPage = Math.max(1, currentPage - 2);
+                                let endPage = Math.min(totalPages, currentPage + 2);
+                                
+                                // Adjust if we're near the beginning or end
+                                if (endPage - startPage < 4) {
+                                    if (startPage === 1) {
+                                        endPage = Math.min(totalPages, startPage + 4);
+                                    } else {
+                                        startPage = Math.max(1, endPage - 4);
+                                    }
+                                }
+                                %>
+                                
+                                <% if (startPage > 1) { %>
+                                    <span class="px-3 py-2 text-gray-400">...</span>
+                                <% } %>
+                                
+                                <% for(let i = startPage; i <= endPage; i++) { %>
+                                    <a href="?page=<%= i %><%= category ? '&category=' + category : '' %><%= search ? '&search=' + search : '' %>" 
+                                       class="px-4 py-2 rounded-lg font-semibold transition-all duration-300 text-sm <%= i === currentPage ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'border border-gray-300 text-gray-600 hover:bg-blue-50 hover:border-blue-300' %>">
+                                        <%= i %>
+                                    </a>
+                                <% } %>
+                                
+                                <% if (endPage < totalPages) { %>
+                                    <span class="px-3 py-2 text-gray-400">...</span>
+                                <% } %>
+                                
+                                <!-- Next Page -->
+                                <% if (currentPage < totalPages) { %>
+                                    <a href="?page=<%= currentPage + 1 %><%= category ? '&category=' + category : '' %><%= search ? '&search=' + search : '' %>" 
+                                       class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 text-sm">
+                                        <i class="ri-arrow-right-line"></i>
+                                    </a>
+                                <% } %>
+                                
+                                <!-- Last Page -->
+                                <% if (currentPage < totalPages) { %>
+                                    <a href="?page=<%= totalPages %><%= category ? '&category=' + category : '' %><%= search ? '&search=' + search : '' %>" 
+                                       class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 text-sm">
+                                        <i class="ri-arrow-right-double-line"></i>
+                                    </a>
+                                <% } %>
+                            </nav>
+                        </div>
+                        
+                    </div>
+                    <% } %>
+                <% } else { %>
+                    <!-- No Products Found -->
+                    <div class="text-center py-20">
+                        <div class="w-32 h-32 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                            <i class="ri-search-line text-4xl text-blue-500"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Không tìm thấy sản phẩm</h3>
+                        <p class="text-gray-600 mb-8 max-w-md mx-auto">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc của bạn để tìm thấy sản phẩm phù hợp</p>
+                        <a href="/products" 
+                           class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold transition-all duration-300 hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                            <i class="ri-refresh-line mr-2"></i>
+                            Xem tất cả sản phẩm
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
 
 <script>
 // Wishlist functionality
 function toggleWishlist(productId) {
     // Add wishlist functionality here
-    showToast('Tính năng yêu thích sẽ được cập nhật sớm', 'info');
 }
 
-// Auto-submit search form on input
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.querySelector('input[name="search"]');
-    if (searchInput) {
-        let timeout;
-        searchInput.addEventListener('input', function() {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                this.form.submit();
-            }, 500);
-        });
-    }
     
     // Add fade-in animation to product cards
     const observerOptions = {
@@ -246,12 +343,40 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(card);
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.favorite-btn').forEach(btn => {
+    btn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      const productId = this.dataset.productId;
+      const icon = this.querySelector('i');
+      const isFavorite = icon.classList.contains('ri-heart-fill');
+      try {
+        if (!isFavorite) {
+          const res = await fetch(`/favorites/${productId}`, { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+          if (res.ok) {
+            icon.classList.remove('ri-heart-line', 'text-gray-400');
+            icon.classList.add('ri-heart-fill', 'text-red-500');
+          }
+        } else {
+          const res = await fetch(`/favorites/${productId}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } });
+          if (res.ok) {
+            icon.classList.remove('ri-heart-fill', 'text-red-500');
+            icon.classList.add('ri-heart-line', 'text-gray-400');
+          }
+        }
+      } catch (err) {
+        alert('Có lỗi xảy ra khi thao tác yêu thích!');
+      }
+    });
+  });
+});
 </script>
 
     <!-- Footer -->
-    <%- include('../partials/footer') %>
+    <%- include('../includes/end.ejs') %>
+
     
-    <!-- Custom JavaScript -->
-    <script src="/js/main.js"></script>
-</body>
-</html>
+    <script>
+      window.isAuthenticated = <%= isAuthenticated ? 'true' : 'false' %>;
+    </script>

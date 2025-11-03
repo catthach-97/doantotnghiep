@@ -1,6 +1,7 @@
 const VNPay = require('../util/vnpay');
 const Order = require('../models/order');
 const User = require('../models/user');
+const Product = require('../models/product-mongoose');
 const { sendEmail, sendOrderConfirmation } = require('../util/email');
 
 const vnpay = new VNPay();
@@ -14,20 +15,15 @@ exports.createPayment = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Thông tin đơn hàng không hợp lệ' });
         }
 
-        const userData = await User.findById(req.session.user._id);
-        if (!userData) return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+        // Lấy giỏ hàng từ session (KHÔNG lấy từ database)
+        const cart = req.cart.getCart(); // hoặc: const cart = req.session.cart;
 
-        const user = new User(userData.name, userData.email, userData.role);
-        user._id = userData._id;
-        user.cart = userData.cart || { items: [], totalPrice: 0 };
-
-        const cart = await user.getCart();
         if (!cart.items || cart.items.length === 0) {
             return res.status(400).json({ success: false, message: 'Giỏ hàng trống' });
         }
 
         const products = cart.items.map(item => ({
-            productId: item._id,
+            productId: item.productId, // chú ý: session lưu là productId
             quantity: item.quantity,
             title: item.title,
             price: item.price,
@@ -38,13 +34,11 @@ exports.createPayment = async (req, res, next) => {
         const shippingFee = subtotal >= 500000 ? 0 : 30000;
         const totalAmount = subtotal + shippingFee;
 
-        console.log('🔍 DEBUG - Creating order with userId:', req.session.user._id, 'Type:', typeof req.session.user._id);
-        
         const order = new Order(
             req.session.user._id,
             products,
             totalAmount,
-            { name, phone, email: email || userData.email, address },
+            { name, phone, email: email || req.session.user.email, address },
             'vnpay'
         );
         order.status = 'pending_payment';
@@ -154,12 +148,31 @@ exports.vnpayReturn = async (req, res, next) => {
                 };
                 await order.save();
 
+                // Cập nhật tồn kho khi thanh toán thành công
+                try {
+                    if (orderItems && orderItems.length > 0) {
+                        await Product.updateStockForOrder(orderItems);
+                        console.log('✅ Đã cập nhật tồn kho cho đơn hàng VNPay:', orderId);
+                    } else {
+                        console.warn('⚠️ Không có sản phẩm nào để cập nhật tồn kho cho đơn hàng VNPay:', orderId);
+                    }
+                } catch (err) {
+                    console.error('❌ Lỗi khi cập nhật tồn kho cho đơn hàng VNPay:', err);
+                }
+
                 try {
                     const userData = await User.findById(order.userId);
                     if (userData) {
                         const user = new User(userData.name, userData.email, userData.role);
                         user._id = userData._id;
                         await user.clearCart();
+                    }
+                    
+                    // Xóa giỏ hàng khỏi session nếu user đang đăng nhập
+                    if (req.session.user && req.session.user._id.toString() === order.userId.toString()) {
+                        req.cart.clearCart();
+                        await req.session.save();
+                        console.log('✅ Đã xóa giỏ hàng khỏi session cho user:', order.userId);
                     }
                 } catch (err) {
                     console.error('Lỗi xóa giỏ hàng:', err);
@@ -191,6 +204,18 @@ exports.vnpayReturn = async (req, res, next) => {
                 failureReason: vnpay.getResponseMessage(responseCode)
             };
             await order.save();
+
+            // Hoàn lại tồn kho khi thanh toán thất bại (nếu đã cập nhật trước đó)
+            try {
+                if (orderItems && orderItems.length > 0) {
+                    await Product.restoreStockForOrder(orderItems);
+                    console.log('✅ Đã hoàn lại tồn kho cho đơn hàng VNPay thất bại:', orderId);
+                } else {
+                    console.warn('⚠️ Không có sản phẩm nào để hoàn lại tồn kho cho đơn hàng VNPay thất bại:', orderId);
+                }
+            } catch (err) {
+                console.error('❌ Lỗi khi hoàn lại tồn kho cho đơn hàng VNPay thất bại:', err);
+            }
 
             return res.render('shop/payment-result', {
                 pageTitle: 'Thanh toán thất bại',
@@ -261,6 +286,18 @@ exports.vnpayIPN = async (req, res, next) => {
                     paidAt: new Date()
                 };
                 await order.save();
+                
+                // Cập nhật tồn kho khi thanh toán thành công (IPN)
+                try {
+                    if (orderItems && orderItems.length > 0) {
+                        await Product.updateStockForOrder(orderItems);
+                        console.log('✅ Đã cập nhật tồn kho cho đơn hàng VNPay (IPN):', orderId);
+                    } else {
+                        console.warn('⚠️ Không có sản phẩm nào để cập nhật tồn kho cho đơn hàng VNPay (IPN):', orderId);
+                    }
+                } catch (err) {
+                    console.error('❌ Lỗi khi cập nhật tồn kho cho đơn hàng VNPay (IPN):', err);
+                }
             }
         } else {
             order.status = 'payment_failed';
@@ -271,6 +308,18 @@ exports.vnpayIPN = async (req, res, next) => {
                 failureReason: vnpay.getResponseMessage(responseCode)
             };
             await order.save();
+            
+            // Hoàn lại tồn kho khi thanh toán thất bại (IPN)
+            try {
+                if (orderItems && orderItems.length > 0) {
+                    await Product.restoreStockForOrder(orderItems);
+                    console.log('✅ Đã hoàn lại tồn kho cho đơn hàng VNPay thất bại (IPN):', orderId);
+                } else {
+                    console.warn('⚠️ Không có sản phẩm nào để hoàn lại tồn kho cho đơn hàng VNPay thất bại (IPN):', orderId);
+                }
+            } catch (err) {
+                console.error('❌ Lỗi khi hoàn lại tồn kho cho đơn hàng VNPay thất bại (IPN):', err);
+            }
         }
 
         return res.json({ RspCode: '00', Message: 'Success' });

@@ -1,0 +1,360 @@
+<%- include('../includes/admin-layout.ejs', { 
+    pageTitle: 'Dashboard', 
+    path: '/admin/dashboard',
+    user: user,
+    body: `
+    <!-- Page Header -->
+    <div class="mb-8">
+        <div class="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl p-8 text-white">
+            <h1 class="text-4xl font-bold mb-2">Dashboard</h1>
+            <p class="text-blue-100 text-lg">Tổng quan về cửa hàng giày của bạn</p>
+            <div class="mt-4 flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                    <span class="text-sm text-blue-100">Hệ thống hoạt động bình thường</span>
+                </div>
+                <div class="text-sm text-blue-200">
+                    Cập nhật lần cuối: ${new Date().toLocaleString('vi-VN')}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+        <!-- Total Products -->
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                <i class="ri-shopping-bag-line text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dl>
+                                <dt class="text-sm font-medium text-blue-100 truncate">Tổng sản phẩm</dt>
+                                <dd class="text-2xl font-bold text-white">${totalProducts || 0}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl text-white opacity-20">
+                            <i class="ri-shopping-bag-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                <div class="text-sm">
+                    <a href="/admin/products" class="font-medium text-white hover:text-blue-100 transition-colors duration-200 flex items-center">
+                        Xem chi tiết <i class="ri-arrow-right-line ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Orders -->
+        <div class="bg-gradient-to-br from-green-500 to-emerald-600 overflow-hidden shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                <i class="ri-file-list-3-line text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dl>
+                                <dt class="text-sm font-medium text-green-100 truncate">Tổng đơn hàng</dt>
+                                <dd class="text-2xl font-bold text-white">${totalOrders || 0}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl text-white opacity-20">
+                            <i class="ri-file-list-3-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                <div class="text-sm">
+                    <a href="/admin/orders" class="font-medium text-white hover:text-green-100 transition-colors duration-200 flex items-center">
+                        Xem chi tiết <i class="ri-arrow-right-line ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Revenue -->
+        <div class="bg-gradient-to-br from-yellow-500 to-orange-500 overflow-hidden shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                <i class="ri-money-dollar-circle-line text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dl>
+                                <dt class="text-sm font-medium text-yellow-100 truncate">Doanh thu</dt>
+                                <dd class="text-2xl font-bold text-white">${totalRevenue ? totalRevenue.toLocaleString('vi-VN') + 'đ' : '0đ'}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl text-white opacity-20">
+                            <i class="ri-money-dollar-circle-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                <div class="text-sm">
+                    <a href="/admin/orders" class="font-medium text-white hover:text-yellow-100 transition-colors duration-200 flex items-center">
+                        Xem đơn hàng <i class="ri-arrow-right-line ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Users -->
+        <div class="bg-gradient-to-br from-purple-500 to-pink-500 overflow-hidden shadow-xl rounded-2xl transform hover:scale-105 transition-all duration-300">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                <i class="ri-user-line text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dl>
+                                <dt class="text-sm font-medium text-purple-100 truncate">Tổng khách hàng</dt>
+                                <dd class="text-2xl font-bold text-white">${totalUsers || 0}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl text-white opacity-20">
+                            <i class="ri-user-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                <div class="text-sm">
+                    <a href="/admin/accounts" class="font-medium text-white hover:text-purple-100 transition-colors duration-200 flex items-center">
+                        Xem chi tiết <i class="ri-arrow-right-line ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Revenue Chart -->
+        <div class="bg-gradient-to-br from-white to-blue-50 shadow-xl rounded-2xl p-6 border border-blue-100">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Doanh thu theo tháng</h3>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                    <span class="text-sm text-gray-600">Tăng trưởng</span>
+                </div>
+            </div>
+            <div class="h-64">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Orders Chart -->
+        <div class="bg-gradient-to-br from-white to-green-50 shadow-xl rounded-2xl p-6 border border-green-100">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Đơn hàng theo tháng</h3>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span class="text-sm text-gray-600">Hoạt động</span>
+                </div>
+            </div>
+            <div class="h-64">
+                <canvas id="ordersChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Orders & Top Products -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Recent Orders -->
+        <div class="bg-gradient-to-br from-white to-indigo-50 shadow-xl rounded-2xl border border-indigo-100">
+            <div class="px-6 py-5 border-b border-indigo-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-900">Đơn hàng gần đây</h3>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+                        <span class="text-sm text-gray-600">Cập nhật</span>
+                    </div>
+                </div>
+            </div>
+            <div class="divide-y divide-gray-200">
+                ${recentOrders && recentOrders.length > 0 ? recentOrders.map(order => `
+                    <div class="px-6 py-4 hover:bg-indigo-50 transition-colors duration-200">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center">
+                                        <i class="ri-shopping-bag-line text-white text-sm"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-900">#${order._id.toString().slice(-6)}</p>
+                                    <p class="text-sm text-gray-500">${order.shippingInfo ? order.shippingInfo.name : 'Khách hàng'}</p>
+                                    <p class="text-xs text-gray-400">${new Date(order.createdAt).toLocaleDateString('vi-VN')}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-medium text-gray-900">${order.totalPrice ? order.totalPrice.toLocaleString('vi-VN') + 'đ' : '0đ'}</p>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${order.status === 'completed' ? 'bg-green-100 text-green-800' : order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}">
+                                    ${order.status === 'completed' ? 'Hoàn thành' : order.status === 'pending' ? 'Chờ xử lý' : order.status || 'Chờ xử lý'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('') : `
+                    <div class="px-6 py-4 text-center text-gray-500">
+                        <i class="ri-file-list-3-line text-4xl mb-2"></i>
+                        <p>Chưa có đơn hàng nào</p>
+                    </div>
+                `}
+            </div>
+        </div>
+        
+        <!-- Top Products -->
+        <div class="bg-gradient-to-br from-white to-purple-50 shadow-xl rounded-2xl border border-purple-100">
+            <div class="px-6 py-5 border-b border-purple-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-900">Sản phẩm bán chạy</h3>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                        <span class="text-sm text-gray-600">Hot</span>
+                    </div>
+                </div>
+            </div>
+            <div class="divide-y divide-gray-200">
+                ${topProducts && topProducts.length > 0 ? topProducts.map(product => `
+                    <div class="px-6 py-4 hover:bg-purple-50 transition-colors duration-200">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="relative">
+                                    <img class="w-12 h-12 rounded-lg object-cover" src="${product.imageUrl || '/images/placeholder.jpg'}" alt="${product.title}">
+                                    <div class="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                        <span class="text-xs text-white font-bold">${topProducts.indexOf(product) + 1}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <p class="text-sm font-medium text-gray-900">${product.title}</p>
+                                <p class="text-sm text-gray-500">${product.brand || 'Thương hiệu'}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-medium text-gray-900">${product.price ? product.price.toLocaleString('vi-VN') + 'đ' : '0đ'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('') : `
+                    <div class="px-6 py-4 text-center text-gray-500">
+                        <i class="ri-shopping-bag-line text-4xl mb-2"></i>
+                        <p>Chưa có sản phẩm nào</p>
+                    </div>
+                `}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chart Scripts -->
+    <script>
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['${new Date(new Date().getFullYear(), new Date().getMonth() - 5, 1).toLocaleDateString('vi-VN', {month: 'short'})}', 
+                        '${new Date(new Date().getFullYear(), new Date().getMonth() - 4, 1).toLocaleDateString('vi-VN', {month: 'short'})}', 
+                        '${new Date(new Date().getFullYear(), new Date().getMonth() - 3, 1).toLocaleDateString('vi-VN', {month: 'short'})}', 
+                        '${new Date(new Date().getFullYear(), new Date().getMonth() - 2, 1).toLocaleDateString('vi-VN', {month: 'short'})}', 
+                        '${new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).toLocaleDateString('vi-VN', {month: 'short'})}', 
+                        '${new Date().toLocaleDateString('vi-VN', {month: 'short'})}'],
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: [${monthlyRevenue ? monthlyRevenue.join(',') : '0,0,0,0,0,0'}],
+                    borderColor: 'rgb(59, 130, 246)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 3,
+                    pointBackgroundColor: 'rgb(59, 130, 246)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('vi-VN') + 'đ';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Orders Chart
+        const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+        new Chart(ordersCtx, {
+            type: 'bar',
+            data: {
+                labels: ['${new Date(new Date().getFullYear(), new Date().getMonth() - 5, 1).toLocaleDateString('vi-VN', {month: 'short'})}', 
+                        '${new Date(new Date().getFullYear(), new Date().getMonth() - 4, 1).toLocaleDateString('vi-VN', {month: 'short'})}', 
+                        '${new Date(new Date().getFullYear(), new Date().getMonth() - 3, 1).toLocaleDateString('vi-VN', {month: 'short'})}', 
+                        '${new Date(new Date().getFullYear(), new Date().getMonth() - 2, 1).toLocaleDateString('vi-VN', {month: 'short'})}', 
+                        '${new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).toLocaleDateString('vi-VN', {month: 'short'})}', 
+                        '${new Date().toLocaleDateString('vi-VN', {month: 'short'})}'],
+                datasets: [{
+                    label: 'Số đơn hàng',
+                    data: [${monthlyOrders ? monthlyOrders.join(',') : '0,0,0,0,0,0'}],
+                    backgroundColor: [
+                        'rgba(34, 197, 94, 0.8)',
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(5, 150, 105, 0.8)',
+                        'rgba(4, 120, 87, 0.8)',
+                        'rgba(6, 95, 70, 0.8)',
+                        'rgba(6, 78, 59, 0.8)'
+                    ],
+                    borderColor: 'rgb(34, 197, 94)',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+    ` }) %>

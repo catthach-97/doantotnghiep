@@ -1,0 +1,338 @@
+<%- include('../includes/head.ejs') %>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+  <%- include('../includes/navigation.ejs') %>
+  
+  <!-- Hero Section -->
+  <section class="relative py-20 overflow-hidden bg-gradient-to-r from-blue-900 via-cyan-900 to-teal-900">
+    <div class="absolute inset-0 bg-black opacity-20"></div>
+    <div class="container mx-auto text-center relative z-10 px-4">
+      <h1 class="text-6xl md:text-7xl font-black text-white drop-shadow-2xl mb-6 animate-fade-in">
+        <span class="bg-gradient-to-r from-cyan-400 via-blue-500 to-teal-600 bg-clip-text text-transparent">
+          Shoe Store
+        </span>
+      </h1>
+      <p class="text-2xl md:text-3xl text-gray-200 mb-8 font-light animate-fade-in-up">
+        Nơi đam mê giày dép được thăng hoa
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up">
+        <a href="/products" class="bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-bold px-10 py-4 rounded-full shadow-2xl hover:shadow-blue-500/25 hover:scale-105 transition-all duration-300 text-xl">
+          🛍️ Khám phá bộ sưu tập
+        </a>
+        <a href="#about-content" class="border-2 border-white text-white font-semibold px-8 py-4 rounded-full hover:bg-white hover:text-blue-900 transition-all duration-300 text-lg">
+          Tìm hiểu thêm
+        </a>
+      </div>
+    </div>
+    
+    <!-- Floating shoes animation -->
+    <div class="absolute top-20 left-10 animate-bounce" style="animation-delay: 0s;">
+      <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full opacity-20"></div>
+    </div>
+    <div class="absolute top-32 right-20 animate-bounce" style="animation-delay: 1s;">
+      <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full opacity-20"></div>
+    </div>
+    <div class="absolute bottom-20 left-1/4 animate-bounce" style="animation-delay: 2s;">
+      <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full opacity-20"></div>
+    </div>
+  </section>
+  <main id="about-content" class="container mx-auto px-4 py-16">
+    
+    <!-- Phần 1: Lý do ra đời -->
+    <section class="max-w-4xl mx-auto mb-20">
+      <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-12 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200 to-cyan-200 rounded-full -translate-y-16 translate-x-16 opacity-50"></div>
+        <div class="relative z-10">
+          <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6 text-center">
+            <span class="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              Lý do ra đời
+            </span>
+          </h2>
+          <div class="text-center">
+            <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2012&q=80" 
+                 alt="Sneaker Collection" 
+                 class="w-32 h-32 rounded-full mx-auto mb-6 object-cover shadow-lg">
+            <p class="text-xl text-gray-700 leading-relaxed font-medium">
+              Chúng tôi bắt đầu Shoe Store từ niềm đam mê mãnh liệt với sneaker và mong muốn đem đến những đôi giày bền đẹp, phù hợp cho mọi phong cách hằng ngày. Mỗi đôi giày không chỉ là phụ kiện mà còn là biểu tượng của cá tính và phong cách sống.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Phần 2: Giới thiệu sản phẩm và sự khác biệt -->
+    <section class="max-w-6xl mx-auto mb-20">
+      <h2 class="text-4xl md:text-5xl font-bold text-center text-gray-800 mb-12">
+        <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          Sản phẩm & Sự khác biệt
+        </span>
+      </h2>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="space-y-8">
+          <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border-l-4 border-blue-500">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+              <span class="text-3xl mr-3">👟</span>
+              Bộ sưu tập đa dạng
+            </h3>
+            <p class="text-gray-700 leading-relaxed">
+              Từ sneaker thể thao hiện đại, giày da sang trọng đến giày casual phong cách, chúng tôi mang đến đầy đủ các dòng giày cho nam và nữ. Mỗi sản phẩm đều được chọn lọc kỹ lưỡng từ các thương hiệu uy tín.
+            </p>
+          </div>
+          
+          <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 border-l-4 border-blue-500">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+              <span class="text-3xl mr-3">⭐</span>
+              Chất lượng vượt trội
+            </h3>
+            <p class="text-gray-700 leading-relaxed">
+              Hàng chính hãng 100%, mẫu mã luôn cập nhật theo xu hướng mới nhất với giá cả hợp lý. Chúng tôi cam kết không bán hàng kém chất lượng, đảm bảo mỗi đôi giày đều đạt tiêu chuẩn cao nhất.
+            </p>
+          </div>
+          
+          <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border-l-4 border-green-500">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+              <span class="text-3xl mr-3">🚚</span>
+              Dịch vụ tận tâm
+            </h3>
+            <p class="text-gray-700 leading-relaxed">
+              Giao hàng nhanh chóng, đổi trả dễ dàng trong 30 ngày, hỗ trợ tư vấn 24/7. Chúng tôi luôn lắng nghe và đồng hành cùng khách hàng trong mọi trải nghiệm mua sắm.
+            </p>
+          </div>
+        </div>
+        
+        <div class="relative">
+          <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+               alt="Shoe Collection" 
+               class="rounded-3xl shadow-2xl w-full h-96 object-cover">
+          <div class="absolute -bottom-6 -right-6 bg-gradient-to-r from-yellow-400 to-orange-500 text-white p-4 rounded-2xl shadow-xl">
+            <div class="text-2xl font-bold">100%</div>
+            <div class="text-sm">Chính hãng</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Phần 3: Cam kết với khách hàng -->
+    <section class="max-w-5xl mx-auto mb-20">
+      <div class="bg-gradient-to-r from-blue-900 via-cyan-900 to-teal-900 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10">
+          <div class="absolute top-10 left-10 w-20 h-20 border-2 border-white rounded-full"></div>
+          <div class="absolute top-20 right-20 w-16 h-16 border-2 border-white rounded-full"></div>
+          <div class="absolute bottom-20 left-1/4 w-12 h-12 border-2 border-white rounded-full"></div>
+        </div>
+        
+        <div class="relative z-10 text-center">
+          <h2 class="text-4xl md:text-5xl font-bold mb-8">
+            <span class="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+              Cam kết với khách hàng
+            </span>
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300">
+              <div class="text-4xl mb-4">🛡️</div>
+              <h3 class="text-xl font-bold mb-3">Chất lượng đảm bảo</h3>
+              <p class="text-gray-200 leading-relaxed">
+                Hàng thật 100%, nói không với hàng kém chất lượng. Mỗi sản phẩm đều được kiểm tra kỹ lưỡng trước khi giao đến tay khách hàng.
+              </p>
+            </div>
+            
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300">
+              <div class="text-4xl mb-4">🛒</div>
+              <h3 class="text-xl font-bold mb-3">Trải nghiệm mua sắm</h3>
+              <p class="text-gray-200 leading-relaxed">
+                Đảm bảo trải nghiệm mua sắm an toàn, tiện lợi với giao diện thân thiện, thanh toán bảo mật và giao hàng nhanh chóng.
+              </p>
+            </div>
+            
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-300">
+              <div class="text-4xl mb-4">💝</div>
+              <h3 class="text-xl font-bold mb-3">Hỗ trợ tận tâm</h3>
+              <p class="text-gray-200 leading-relaxed">
+                Luôn lắng nghe và hỗ trợ khách hàng trước, trong và sau khi mua. Đội ngũ chuyên nghiệp sẵn sàng tư vấn 24/7.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Phần 4: Kêu gọi khách hàng & Liên hệ -->
+    <section class="max-w-6xl mx-auto mb-20">
+      <div class="bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 rounded-3xl p-8 md:p-12 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-full -translate-y-20 translate-x-20 opacity-30"></div>
+        <div class="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-blue-200 to-cyan-200 rounded-full translate-y-16 -translate-x-16 opacity-30"></div>
+        
+        <div class="relative z-10 text-center">
+          <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+            <span class="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+              Cảm ơn bạn đã tin tưởng!
+            </span>
+          </h2>
+          
+          <p class="text-xl text-gray-700 mb-8 leading-relaxed max-w-3xl mx-auto">
+            Chúng tôi chân thành cảm ơn sự tin tưởng và ủng hộ của quý khách hàng. Hãy ghé thăm cửa hàng online của chúng tôi để khám phá bộ sưu tập giày mới nhất và tìm cho mình đôi giày hoàn hảo!
+          </p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center justify-center">
+                <span class="text-3xl mr-3">📞</span>
+                Liên hệ ngay
+              </h3>
+              <div class="space-y-3 text-gray-700">
+                <p class="flex items-center justify-center">
+                  <span class="font-semibold mr-2">Hotline:</span>
+                  <a href="tel:0123456789" class="text-blue-600 hover:text-blue-800 font-bold">0123 456 789</a>
+                </p>
+                <p class="flex items-center justify-center">
+                  <span class="font-semibold mr-2">Email:</span>
+                  <a href="mailto:info@shoestore.com" class="text-blue-600 hover:text-blue-800">info@shoestore.com</a>
+                </p>
+                <p class="flex items-center justify-center">
+                  <span class="font-semibold mr-2">Địa chỉ:</span>
+                  <span>123 Đường ABC, Quận XYZ, TP.HCM</span>
+                </p>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center justify-center">
+                <span class="text-3xl mr-3">🛍️</span>
+                Mua sắm ngay
+              </h3>
+              <div class="space-y-4">
+                <a href="/products" class="block w-full bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-bold py-3 px-6 rounded-full hover:shadow-lg hover:scale-105 transition-all duration-300 text-center">
+                  Xem tất cả sản phẩm
+                </a>
+                <a href="/categories" class="block w-full border-2 border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-full hover:border-blue-500 hover:text-blue-500 transition-all duration-300 text-center">
+                  Danh mục sản phẩm
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section đánh giá khách hàng -->
+    <section class="max-w-5xl mx-auto mb-20">
+      <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">
+        <span class="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+          Khách hàng nói gì về chúng tôi?
+        </span>
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-blue-500">
+          <div class="flex items-center mb-4">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-12 h-12 rounded-full mr-4" alt="Avatar">
+            <div>
+              <h4 class="font-bold text-gray-800">Nguyễn Thị Lan</h4>
+              <div class="flex text-yellow-400">
+                ⭐⭐⭐⭐⭐
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-700 italic">"Dịch vụ tuyệt vời, nhân viên thân thiện, sản phẩm đa dạng và chất lượng cao!"</p>
+        </div>
+        
+        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-blue-500">
+          <div class="flex items-center mb-4">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-12 h-12 rounded-full mr-4" alt="Avatar">
+            <div>
+              <h4 class="font-bold text-gray-800">Trần Văn Minh</h4>
+              <div class="flex text-yellow-400">
+                ⭐⭐⭐⭐⭐
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-700 italic">"Mua hàng nhiều lần, luôn hài lòng về chất lượng và giá cả hợp lý."</p>
+        </div>
+        
+        <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-green-500">
+          <div class="flex items-center mb-4">
+            <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-12 h-12 rounded-full mr-4" alt="Avatar">
+            <div>
+              <h4 class="font-bold text-gray-800">Lê Thị Hương</h4>
+              <div class="flex text-yellow-400">
+                ⭐⭐⭐⭐⭐
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-700 italic">"Giao hàng nhanh, đóng gói cẩn thận. Sẽ ủng hộ shop lâu dài!"</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <!-- Custom CSS for animations -->
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 1s ease-out;
+    }
+    
+    .animate-fade-in-up {
+      animation: fadeInUp 1s ease-out;
+    }
+    
+    .animate-slide-in-left {
+      animation: slideInLeft 1s ease-out;
+    }
+    
+    .animate-slide-in-right {
+      animation: slideInRight 1s ease-out;
+    }
+    
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .hover-lift:hover {
+      transform: translateY(-10px);
+      transition: transform 0.3s ease;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, rgba(87, 181, 231, 1), rgba(67, 161, 211, 1));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  </style>
+  
+  <%- include('../includes/end.ejs') %>
+</body> 

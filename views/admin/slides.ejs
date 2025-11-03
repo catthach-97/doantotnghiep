@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý slide banner - Shoe Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .gradient-card {
+            background: linear-gradient(135deg, var(--from-color), var(--to-color));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .gradient-card:hover::before {
+            left: 100%;
+        }
+        
+        .icon-glow {
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 z-50 w-64 bg-blue-900 transform -translate-x-full lg:translate-x-0 transition duration-300 ease-in-out">
+      <div class="flex items-center justify-center h-16 bg-gradient-to-r from-blue-700 to-blue-800 border-b border-blue-600/50">
+                <a href="/admin/dashboard" class="flex items-center space-x-2 text-white">
+                    <i class="ri-store-2-line text-2xl text-blue-200"></i>
+                    <span class="text-2xl font-bold">Shoe Store</span>
+                </a>
+            </div>
+        <nav class="mt-8">
+            <div class="px-4 space-y-2">
+                <a href="/admin/dashboard" class="flex items-center px-4 py-2 text-gray-300 hover:bg-blue-800 hover:text-white rounded-lg transition-colors">
+                    <i class="ri-dashboard-line mr-3"></i>
+                    Dashboard
+                </a>
+                <a href="/admin/products" class="flex items-center px-4 py-2 text-gray-300 hover:bg-blue-800 hover:text-white rounded-lg transition-colors">
+                    <i class="ri-shopping-bag-line mr-3"></i>
+                    Sản phẩm
+                </a>
+                <a href="/admin/orders" class="flex items-center px-4 py-2 text-gray-300 hover:bg-blue-800 hover:text-white rounded-lg transition-colors">
+                    <i class="ri-file-list-3-line mr-3"></i>
+                    Đơn hàng
+                </a>
+                <a href="/admin/accounts" class="flex items-center px-4 py-2 text-gray-300 hover:bg-blue-800 hover:text-white rounded-lg transition-colors">
+                    <i class="ri-user-line mr-3"></i>
+                    Tài khoản
+                </a>
+                <a href="/admin/categories" class="flex items-center px-4 py-2 text-gray-300 hover:bg-blue-800 hover:text-white rounded-lg transition-colors">
+                    <i class="ri-folder-line mr-3"></i>
+                    Danh mục
+                </a>
+                <a href="/admin/brands" class="flex items-center px-4 py-2 text-gray-300 hover:bg-blue-800 hover:text-white rounded-lg transition-colors">
+                    <i class="ri-award-line mr-3"></i>
+                    Thương hiệu
+                </a>
+                <a href="/admin/reviews" class="flex items-center px-4 py-2 text-gray-300 hover:bg-blue-800 hover:text-white rounded-lg transition-colors">
+                    <i class="ri-star-line mr-3"></i>
+                    Đánh giá
+                </a>
+                <a href="/admin/slides" class="flex items-center px-4 py-2 bg-blue-700 text-white rounded-lg">
+                    <i class="ri-image-line mr-3"></i>
+                    Slide Banner
+                </a>
+            </div>
+        </nav>
+        <div class="absolute bottom-0 w-full p-4">
+            <div class="flex items-center text-white">
+                <i class="ri-user-line mr-3"></i>
+                <div>
+                    <p class="text-sm font-medium"><%= user ? user.name : 'Admin' %></p>
+                    <p class="text-xs text-gray-300"><%= user ? user.email : 'admin@example.com' %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:ml-64">
+        <!-- Header -->
+        <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+            <!-- Mobile menu button -->
+            <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" id="sidebar-toggle">
+                <i class="ri-menu-line text-xl"></i>
+            </button>
+
+            <!-- Separator -->
+            <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
+
+            <!-- Page title -->
+            <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+                <div class="flex flex-1 items-center">
+                    <h1 class="text-xl font-semibold text-gray-900">
+                        Quản lý slide banner
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Right side -->
+            <div class="flex items-center gap-x-4 lg:gap-x-6">
+                <!-- Notifications -->
+                <button type="button" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+                    <i class="ri-notification-3-line text-xl"></i>
+                </button>
+
+                <!-- Separator -->
+                <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" aria-hidden="true"></div>
+
+                <!-- Profile dropdown -->
+                <div class="relative">
+                    <button type="button" class="-m-1.5 flex items-center p-1.5" id="user-menu-button">
+                        <span class="sr-only">Open user menu</span>
+                        <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+                            <i class="ri-user-line text-white text-sm"></i>
+                        </div>
+                        <span class="hidden lg:flex lg:items-center">
+                            <span class="ml-4 text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">
+                                <%= user ? user.name : 'Admin' %>
+                            </span>
+                            <i class="ri-arrow-down-s-line ml-2 text-gray-400"></i>
+                        </span>
+                    </button>
+
+                    <!-- Dropdown menu -->
+                    <div class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none hidden"
+                        id="user-menu">
+                        <a href="/admin/profile"
+                            class="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50">
+                            <i class="ri-user-line mr-2"></i>Profile
+                        </a>
+                        <a href="/admin/settings"
+                            class="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50">
+                            <i class="ri-settings-line mr-2"></i>Settings
+                        </a>
+                        <form action="/logout" method="POST" class="block">
+                            <button type="submit"
+                                class="w-full text-left px-3 py-1 text-sm leading-6 text-red-600 hover:bg-gray-50">
+                                <i class="ri-logout-box-line mr-2"></i>Đăng xuất
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6">
+            <!-- Success Messages -->
+            <% if (typeof req !== 'undefined' && req.query.success) { %>
+                <div class="mb-6">
+                    <% if (req.query.success === 'added') { %>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center">
+                            <i class="ri-check-circle-line text-green-500 text-xl mr-3"></i>
+                            <span class="text-green-700 font-medium">Slide đã được thêm thành công!</span>
+                        </div>
+                    <% } else if (req.query.success === 'updated') { %>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center">
+                            <i class="ri-check-circle-line text-blue-500 text-xl mr-3"></i>
+                            <span class="text-blue-700 font-medium">Slide đã được cập nhật thành công!</span>
+                        </div>
+                    <% } else if (req.query.success === 'deleted') { %>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center">
+                            <i class="ri-check-circle-line text-red-500 text-xl mr-3"></i>
+                            <span class="text-red-700 font-medium">Slide đã được xóa thành công!</span>
+                        </div>
+                    <% } else if (req.query.success === 'toggled') { %>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center">
+                            <i class="ri-check-circle-line text-yellow-500 text-xl mr-3"></i>
+                            <span class="text-yellow-700 font-medium">Trạng thái slide đã được thay đổi!</span>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #3b82f6; --to-color: #1d4ed8;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                        <i class="ri-image-line text-white text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-blue-100 truncate">Tổng slide</dt>
+                                        <dd class="text-2xl font-bold text-white"><%= totalSlides || 0 %></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-3xl text-white opacity-20">
+                                    <i class="ri-image-line"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                        <div class="text-sm">
+                            <span class="font-medium text-white">Tất cả slide banner</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #22c55e; --to-color: #16a34a;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                        <i class="ri-check-line text-white text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-green-100 truncate">Đang hoạt động</dt>
+                                        <dd class="text-2xl font-bold text-white"><%= activeSlides || 0 %></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-3xl text-white opacity-20">
+                                    <i class="ri-check-line"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                        <div class="text-sm">
+                            <span class="font-medium text-white">Slide đang hiển thị</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #eab308; --to-color: #ca8a04;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                        <i class="ri-pause-line text-white text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-yellow-100 truncate">Tạm dừng</dt>
+                                        <dd class="text-2xl font-bold text-white"><%= inactiveSlides || 0 %></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-3xl text-white opacity-20">
+                                    <i class="ri-pause-line"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                        <div class="text-sm">
+                            <span class="font-medium text-white">Slide tạm dừng</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #a855f7; --to-color: #9333ea;">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                        <i class="ri-eye-line text-white text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-purple-100 truncate">Lượt xem</dt>
+                                        <dd class="text-2xl font-bold text-white"><%= currentSlides || 0 %></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-3xl text-white opacity-20">
+                                    <i class="ri-eye-line"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                        <div class="text-sm">
+                            <span class="font-medium text-white">Tổng lượt xem</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Bộ lọc & Tìm kiếm</h3>
+                    <form method="GET" action="/admin/slides" class="flex flex-wrap items-center gap-4">
+                        <div class="relative">
+                            <input type="text"
+                                   name="search"
+                                   placeholder="Tìm kiếm slide..."
+                                   value="<%= search || '' %>"
+                                   class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                        <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="active" <%= status === 'active' ? 'selected' : '' %>>Đang hoạt động</option>
+                            <option value="inactive" <%= status === 'inactive' ? 'selected' : '' %>>Tạm dừng</option>
+                        </select>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="ri-filter-line mr-2"></i>Lọc
+                        </button>
+                        <a href="/admin/slides" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                            <i class="ri-refresh-line mr-2"></i>Làm mới
+                        </a>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Slides Table -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-900">Danh sách slide</h3>
+                        <button onclick="openAddSlideModal()"
+                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                            <i class="ri-add-line mr-2"></i>Thêm slide
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">HÌNH ẢNH</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TIÊU ĐỀ</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MÔ TẢ</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TRẠNG THÁI</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">THỨ TỰ</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NGÀY TẠO</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">THAO TÁC</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <% if (slides && slides.length > 0) { %>
+                                <% slides.forEach((slide, index) => { %>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex-shrink-0 h-12 w-12">
+                                                <img class="h-12 w-12 rounded-lg object-cover" src="<%= slide.image %>" alt="<%= slide.title %>">
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900"><%= slide.title %></div>
+                                            <div class="text-sm text-gray-500"><%= slide.subtitle %></div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-sm text-gray-900 max-w-xs truncate"><%= slide.description %></div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 text-xs font-medium rounded-full <%= slide.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                                                <%= slide.isActive ? 'Hoạt động' : 'Tạm dừng' %>
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <%= slide.sortOrder %>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <%= slide.createdAt ? new Date(slide.createdAt).toLocaleDateString('vi-VN') : 'N/A' %>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <div class="flex space-x-2">
+                                                <button onclick="editSlide('<%= slide._id %>')"
+                                                        class="text-blue-600 hover:text-blue-900">
+                                                    <i class="ri-edit-line"></i>
+                                                </button>
+                                                <button onclick="toggleSlideStatus('<%= slide._id %>')"
+                                                        class="<%= slide.isActive ? 'text-yellow-600 hover:text-yellow-900' : 'text-green-600 hover:text-green-900' %>">
+                                                    <i class="<%= slide.isActive ? 'ri-pause-line' : 'ri-play-line' %>"></i>
+                                                </button>
+                                                <button onclick="deleteSlide('<%= slide._id %>')"
+                                                        class="text-red-600 hover:text-red-900">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="7" class="px-6 py-12 text-center">
+                                        <i class="ri-image-line text-6xl text-gray-300 mb-4"></i>
+                                        <h3 class="text-xl font-semibold text-gray-500 mb-2">Chưa có slide nào</h3>
+                                        <p class="text-gray-400 mb-6">Thêm slide mới để bắt đầu quảng cáo</p>
+                                        <button onclick="openAddSlideModal()"
+                                                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                            <i class="ri-add-line mr-2"></i>Thêm slide đầu tiên
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Slide Modal -->
+    <div id="slideModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-gray-900" id="modalTitle">Thêm Slide Mới</h3>
+                <button type="button" onclick="closeSlideModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
+            </div>
+            <form id="slideForm" enctype="multipart/form-data" method="POST" action="/admin/slides">
+                <input type="hidden" name="action" id="slideAction">
+                <input type="hidden" name="slideId" id="slideId">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Tiêu đề <span class="text-red-500">*</span></label>
+                        <input type="text" id="title" name="title" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="subtitle" class="block text-sm font-medium text-gray-700 mb-1">Phụ đề</label>
+                        <input type="text" id="subtitle" name="subtitle"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
+                    <textarea id="description" name="description" rows="3"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Hình ảnh <span class="text-red-500">*</span></label>
+                    <input type="file" id="image" name="image" accept="image/*"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <p class="text-xs text-gray-500 mt-1">Chỉ chấp nhận JPG, PNG, GIF, WebP (tối đa 10MB)</p>
+                </div>
+
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="sortOrder" class="block text-sm font-medium text-gray-700 mb-1">Thứ tự sắp xếp</label>
+                        <input type="number" id="sortOrder" name="sortOrder" value="0"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="flex items-center mt-6">
+                        <input type="checkbox" id="isActive" name="isActive" checked
+                               class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <label for="isActive" class="ml-2 block text-sm text-gray-900">Hoạt động</label>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeSlideModal()"
+                            class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Hủy
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                        Lưu Slide
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const slideModal = document.getElementById('slideModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const slideForm = document.getElementById('slideForm');
+        const slideAction = document.getElementById('slideAction');
+        const slideId = document.getElementById('slideId');
+
+        function openAddSlideModal() {
+            modalTitle.textContent = 'Thêm Slide Mới';
+            slideAction.value = 'add';
+            slideId.value = '';
+            slideForm.reset();
+            slideModal.classList.remove('hidden');
+        }
+
+        async function editSlide(id) {
+            try {
+                const response = await fetch('/admin/slides/' + id);
+                const data = await response.json();
+
+                if (data.success) {
+                    const slide = data.slide;
+                    modalTitle.textContent = 'Chỉnh Sửa Slide';
+                    slideAction.value = 'edit';
+                    slideId.value = slide._id;
+                    document.getElementById('title').value = slide.title;
+                    document.getElementById('subtitle').value = slide.subtitle || '';
+                    document.getElementById('description').value = slide.description || '';
+                    document.getElementById('sortOrder').value = slide.sortOrder;
+                    document.getElementById('isActive').checked = slide.isActive;
+
+                    slideModal.classList.remove('hidden');
+                } else {
+                    alert('Lỗi: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching slide:', error);
+                alert('Lỗi khi tải thông tin slide.');
+            }
+        }
+
+        function closeSlideModal() {
+            slideModal.classList.add('hidden');
+        }
+
+        async function toggleSlideStatus(id) {
+            if (confirm('Bạn có chắc chắn muốn thay đổi trạng thái slide này?')) {
+                // Tìm button toggle để hiển thị loading
+                const toggleButton = event.target.closest('button');
+                const originalContent = toggleButton.innerHTML;
+                
+                // Hiển thị loading state
+                toggleButton.innerHTML = '<i class="ri-loader-4-line animate-spin"></i>';
+                toggleButton.disabled = true;
+                
+                try {
+                    const response = await fetch('/admin/slides/toggle-status', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ slideId: id })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Hiển thị thông báo thành công
+                        showNotification(data.message, 'success');
+                        
+                        // Reload trang sau 1 giây để cập nhật trạng thái
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showNotification('Lỗi: ' + data.message, 'error');
+                        // Khôi phục button
+                        toggleButton.innerHTML = originalContent;
+                        toggleButton.disabled = false;
+                    }
+                } catch (error) {
+                    console.error('Error toggling slide status:', error);
+                    showNotification('Lỗi khi thay đổi trạng thái slide: ' + error.message, 'error');
+                    // Khôi phục button
+                    toggleButton.innerHTML = originalContent;
+                    toggleButton.disabled = false;
+                }
+            }
+        }
+
+        async function deleteSlide(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa slide này?')) {
+                // Tìm button xóa để hiển thị loading
+                const deleteButton = event.target.closest('button');
+                const originalContent = deleteButton.innerHTML;
+                
+                // Hiển thị loading state
+                deleteButton.innerHTML = '<i class="ri-loader-4-line animate-spin"></i>';
+                deleteButton.disabled = true;
+                
+                try {
+                    const response = await fetch('/admin/slides/delete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ slideId: id })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Hiển thị thông báo thành công
+                        showNotification('Xóa slide thành công!', 'success');
+                        
+                        // Xóa slide khỏi DOM với animation
+                        const slideRow = deleteButton.closest('tr');
+                        if (slideRow) {
+                            slideRow.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                            slideRow.style.opacity = '0';
+                            slideRow.style.transform = 'translateX(-100%)';
+                            
+                            setTimeout(() => {
+                                slideRow.remove();
+                                // Reload trang sau 1 giây để cập nhật danh sách
+                                window.location.reload();
+                            }, 300);
+                        } else {
+                            // Nếu không tìm thấy row, reload trang
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        }
+                    } else {
+                        showNotification('Lỗi: ' + data.message, 'error');
+                        // Khôi phục button
+                        deleteButton.innerHTML = originalContent;
+                        deleteButton.disabled = false;
+                    }
+                } catch (error) {
+                    console.error('Error deleting slide:', error);
+                    showNotification('Lỗi khi xóa slide: ' + error.message, 'error');
+                    // Khôi phục button
+                    deleteButton.innerHTML = originalContent;
+                    deleteButton.disabled = false;
+                }
+            }
+        }
+
+        // Function hiển thị thông báo
+        function showNotification(message, type = 'info') {
+            // Tạo notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 ease-in-out translate-x-full`;
+            
+            // Thiết lập màu sắc theo type
+            if (type === 'success') {
+                notification.className += ' bg-green-500 text-white';
+            } else if (type === 'error') {
+                notification.className += ' bg-red-500 text-white';
+            } else if (type === 'warning') {
+                notification.className += ' bg-yellow-500 text-white';
+            } else {
+                notification.className += ' bg-blue-500 text-white';
+            }
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="ri-${type === 'success' ? 'check-line' : type === 'error' ? 'close-line' : type === 'warning' ? 'alert-line' : 'information-line'} mr-2"></i>
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-white hover:text-gray-200">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Thêm vào body
+            document.body.appendChild(notification);
+            
+            // Hiển thị notification
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Tự động ẩn sau 3 giây
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // User menu dropdown
+        document.addEventListener('DOMContentLoaded', function () {
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', function () {
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // Close user menu when clicking outside
+                document.addEventListener('click', function (event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

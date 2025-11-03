@@ -1,8 +1,12 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
-// Cấu hình lưu trữ file
-const storage = multer.diskStorage({
+// Cấu hình lưu trữ file trong memory (không tạo file ngay lập tức)
+const memoryStorage = multer.memoryStorage();
+
+// Cấu hình lưu trữ file trên disk (chỉ dùng khi cần)
+const diskStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/images/products');
     },
@@ -23,13 +27,33 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// Cấu hình multer
+// Cấu hình multer với memory storage (không tạo file ngay lập tức)
 const upload = multer({
-    storage: storage,
+    storage: memoryStorage,
     fileFilter: fileFilter,
     limits: {
         fileSize: 5 * 1024 * 1024 // Giới hạn 5MB
     }
 });
 
-module.exports = upload; 
+// Cấu hình multer với disk storage (chỉ dùng khi cần)
+const uploadDisk = multer({
+    storage: diskStorage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // Giới hạn 5MB
+    }
+});
+
+// Helper function để lưu file từ memory buffer
+const saveFileFromBuffer = (buffer, filename) => {
+    const filePath = path.join(__dirname, '..', 'public', 'images', 'products', filename);
+    fs.writeFileSync(filePath, buffer);
+    return filePath;
+};
+
+module.exports = {
+    upload,
+    uploadDisk,
+    saveFileFromBuffer
+}; 

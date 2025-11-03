@@ -1,364 +1,496 @@
+<!DOCTYPE html>
+<html lang="vi">
 <%- include('../includes/head.ejs') %>
-    </head>
+    <title>Đơn hàng của tôi - Shoe Store</title>
+    <style>
+        .orders-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .order-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .order-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+        
+        .order-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+        }
+        
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .status-completed {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .status-processing {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        
+        .status-cancelled {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+        
+        .status-pending {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        /* CSS đơn giản cho sản phẩm */
+        .product-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+        
+        .payment-card {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(107, 114, 128, 0.4);
+        }
+        
+        .btn-pdf {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        
+        .btn-pdf:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            background: white;
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stagger-animation {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        .stagger-animation:nth-child(1) { animation-delay: 0.1s; }
+        .stagger-animation:nth-child(2) { animation-delay: 0.2s; }
+        .stagger-animation:nth-child(3) { animation-delay: 0.3s; }
+        .stagger-animation:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
 
-    <body class="bg-gray-50">
-        <%- include('../includes/navigation.ejs') %>
+<body class="orders-container">
+    <%- include('../includes/navigation.ejs') %>
 
-        <main class="container mx-auto px-4 py-8">
-            <% if (success) { %>
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 flex items-center">
-                    <i class="ri-checkbox-circle-line text-xl mr-3"></i>
+    <main class="container mx-auto px-4 py-8">
+            <% if (success === 'order_created') { %>
+                <div class="bg-gradient-to-r from-green-400 to-green-600 text-white px-6 py-4 rounded-2xl mb-8 flex items-center shadow-lg fade-in">
+                    <i class="ri-checkbox-circle-line text-3xl mr-4"></i>
                     <div>
-                        <strong>Đặt hàng thành công!</strong> Đơn hàng của bạn đã được tạo. Chúng tôi sẽ gửi email xác nhận
-                        cho bạn trong thời gian sớm nhất.
+                        <h3 class="text-lg font-bold">Đặt hàng thành công!</h3>
+                        <p class="text-green-100">Đơn hàng của bạn đã được tạo. Chúng tôi sẽ gửi email xác nhận cho bạn trong thời gian sớm nhất.</p>
+                    </div>
+                </div>
+            <% } %>
+
+            <% if (success === 'cancelled') { %>
+                <div class="bg-gradient-to-r from-orange-400 to-orange-600 text-white px-6 py-4 rounded-2xl mb-8 flex items-center shadow-lg fade-in">
+                    <i class="ri-close-circle-line text-3xl mr-4"></i>
+                    <div>
+                        <h3 class="text-lg font-bold">Hủy đơn hàng thành công!</h3>
+                        <p class="text-orange-100">Đơn hàng của bạn đã được hủy. Số lượng sản phẩm đã được hoàn lại tồn kho.</p>
+                    </div>
+                </div>
+            <% } %>
+
+            <% if (success === 'deleted') { %>
+                <div class="bg-gradient-to-r from-red-400 to-red-600 text-white px-6 py-4 rounded-2xl mb-8 flex items-center shadow-lg fade-in">
+                    <i class="ri-delete-bin-line text-3xl mr-4"></i>
+                    <div>
+                        <h3 class="text-lg font-bold">Xóa đơn hàng thành công!</h3>
+                        <p class="text-red-100">Đơn hàng của bạn đã được xóa khỏi hệ thống.</p>
                     </div>
                 </div>
             <% } %>
 
             <% if (error) { %>
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 flex items-center">
-                    <i class="ri-error-warning-line text-xl mr-3"></i>
+                <div class="bg-gradient-to-r from-red-400 to-red-600 text-white px-6 py-4 rounded-2xl mb-8 flex items-center shadow-lg fade-in">
+                    <i class="ri-error-warning-line text-3xl mr-4"></i>
                     <div>
-                        <strong>Thanh toán thất bại:</strong>
-                        <%= error %>
+                        <h3 class="text-lg font-bold">Thanh toán thất bại</h3>
+                        <p class="text-red-100"><%= error %></p>
                     </div>
                 </div>
             <% } %>
 
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-3">Đơn hàng của bạn</h1>
-                <p class="text-gray-600">Quản lý và theo dõi các đơn hàng của bạn</p>
+            <div class="text-center mb-12 fade-in">
+                <h1 class="text-4xl font-bold text-white mb-4 tracking-tight">Đơn hàng của bạn</h1>
+                <p class="text-blue-100 text-lg">Quản lý và theo dõi các đơn hàng của bạn một cách dễ dàng</p>
             </div>
 
-                            <% if (orders && orders.length > 0) { %>
-                                <form action="/orders/delete-all" method="POST" class="mb-4">
-                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors" onclick="return confirm('Bạn có chắc muốn xóa tất cả đơn hàng?');">Xóa tất cả đơn hàng</button>
-                                </form>
-                                <div class="space-y-6">
-                                    <% orders.forEach((order, index)=> { %>
-                                        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                                            <div class="bg-gray-50 px-6 py-4 border-b">
-                                                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                                                    <div class="mb-2 md:mb-0">
-                                                        <h5 class="text-lg font-semibold text-gray-900 flex items-center">
-                                                            <i class="ri-shopping-bag-line text-xl text-blue-600 mr-2"></i>
-                                                            Đơn hàng #<%= order._id ? order._id.toString().slice(-8).toUpperCase() : 'N/A' %>
-                                                        </h5>
-                                                        <p class="text-sm text-gray-600 flex items-center mt-1">
-                                                            <i class="ri-calendar-line mr-1"></i>
-                                                            Ngày đặt: <%= new Date(order.createdAt).toLocaleDateString('vi-VN', {
-                                                                year: 'numeric' , month: 'long' , day: 'numeric' }) %>
-                                                        </p>
-                                                        <p class="text-sm text-gray-600 flex items-center mt-1">
-                                                            <i class="ri-mail-line mr-1"></i>
-                                                            Email: <%= order.shippingInfo && order.shippingInfo.email ? order.shippingInfo.email : (user && user.email ? user.email : 'N/A') %>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
+            <% if (orders && orders.length > 0) { %>
+                <div class="mb-8 flex justify-end fade-in">
+                    <form action="/orders/delete-all" method="POST">
+                        <button type="submit" class="action-btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa tất cả đơn hàng?');">
+                            <i class="ri-delete-bin-6-line"></i> Xóa tất cả đơn hàng
+                        </button>
+                    </form>
+                </div>
+                <div class="space-y-8">
+                    <% orders.forEach((order, index)=> { %>
+                        <div class="order-card stagger-animation">
+                            <div class="order-header flex flex-col md:flex-row md:items-center md:justify-between">
+                                <div>
+                                    <h5 class="text-xl font-bold text-white flex items-center gap-3 mb-2">
+                                        <i class="ri-shopping-bag-line text-2xl"></i>
+                                        Đơn hàng #<%= order._id ? order._id.toString().slice(-8).toUpperCase() : (order.id ? order.id.toString().slice(-8).toUpperCase() : 'N/A') %>
+                                        <!-- Debug: _id=<%= order._id %>, id=<%= order.id %> -->
+                                    </h5>
+                                    <div class="flex flex-wrap gap-6 text-blue-100">
+                                        <span class="flex items-center gap-2">
+                                            <i class="ri-calendar-line text-lg"></i> 
+                                            <%= new Date(order.createdAt).toLocaleDateString('vi-VN', { year: 'numeric' , month: 'long' , day: 'numeric' }) %>
+                                        </span>
+                                        <span class="flex items-center gap-2">
+                                            <i class="ri-mail-line text-lg"></i> 
+                                            <%= order.shippingInfo && order.shippingInfo.email ? order.shippingInfo.email : (user && user.email ? user.email : 'N/A') %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mt-4 md:mt-0">
+                                    <% let statusClass, statusText; switch(order.status) {
+                                        case 'completed' : statusClass='status-completed' ; statusText='Đã hoàn thành' ; break;
+                                        case 'processing' : statusClass='status-processing' ; statusText='Đang xử lý' ; break;
+                                        case 'cancelled' : statusClass='status-cancelled' ; statusText='Đã hủy' ; break;
+                                        default: statusClass='status-pending' ; statusText='Chờ xác nhận' ;
+                                    } %>
+                                    <span class="status-badge <%= statusClass %>">
+                                        <i class="ri-circle-fill text-xs"></i>
+                                        <%= statusText %>
+                                    </span>
+                                </div>
+                            </div>
 
-                                            <div class="p-6">
-                                                <div class="mb-4">
-                                                    <% let statusClass, statusText; switch(order.status) {
-                                                        case 'completed' : statusClass='bg-green-100 text-green-800' ;
-                                                        statusText='Đã hoàn thành' ; break; case 'processing' :
-                                                        statusClass='bg-blue-100 text-blue-800' ; statusText='Đang xử lý' ; break;
-                                                        case 'cancelled' : statusClass='bg-red-100 text-red-800' ; statusText='Đã hủy' ;
-                                                        break; default: statusClass='bg-yellow-100 text-yellow-800' ;
-                                                        statusText='Chờ xác nhận' ; } %>
-                                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= statusClass %>">
-                                                            <i class="ri-circle-fill text-xs mr-1"></i>
-                                                            <%= statusText %>
-                                                        </span>
-                                                </div>
-
-                                                <% if (order.items && Array.isArray(order.items)) { %>
-                                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                                        <div class="lg:col-span-2">
-                                                            <h6 class="text-gray-700 font-medium mb-4 flex items-center">
-                                                                <i class="ri-box-3-line text-lg mr-2"></i>Sản phẩm trong đơn hàng:
-                                                            </h6>
-                                                            <div class="space-y-4">
-                                                                <% order.items.forEach(product=> { %>
-                                                                    <div class="flex items-center p-4 bg-gray-50 rounded-lg">
-                                                                        <img src="<%= product.imageUrl %>" alt="<%= product.title %>" class="w-20 h-20 object-cover rounded-lg mr-4">
-                                                                        <div class="flex-1">
-                                                                            <h6 class="font-medium text-gray-900 mb-1">
-                                                                                <%= product.title %>
-                                                                            </h6>
-                                                                            <p class="text-sm text-gray-600 mb-1 flex items-center">
-                                                                                <i class="ri-price-tag-3-line mr-1"></i>Giá:
-                                                                                <%= product.price ? product.price.toLocaleString('vi-VN') : '0' %> ₫
-                                                                            </p>
-                                                                            <p class="text-sm text-gray-600 flex items-center">
-                                                                                <i class="ri-stack-line mr-1"></i>Số lượng:
-                                                                                <%= product.quantity %>
-                                                                            </p>
-                                                                        </div>
-                                                                        <div class="text-right">
-                                                                            <strong class="text-blue-600 text-lg">
-                                                                                <%= product.price && product.quantity ? (product.price * product.quantity).toLocaleString('vi-VN') : '0' %> ₫
-                                                                            </strong>
-                                                                        </div>
-                                                                    </div>
-                                                                    <% }) %>
+                            <div class="p-8">
+                                <% if (order.items && Array.isArray(order.items)) { %>
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                        <div class="lg:col-span-2">
+                                            <h6 class="text-gray-800 font-bold text-lg mb-6 flex items-center gap-3">
+                                                <i class="ri-box-3-line text-xl text-blue-600"></i>
+                                                Sản phẩm trong đơn hàng
+                                            </h6>
+                                            <div class="space-y-4">
+                                                <% order.items.forEach(item=> { %>
+                                                    <div class="border border-gray-200 rounded-lg p-4 mb-3">
+                                                        <div class="flex items-center gap-4">
+                                                            <!-- Hình ảnh sản phẩm -->
+                                                            <div class="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border border-gray-300">
+                                                                <img src="<%= item.imageUrl || '/images/default-product.jpg' %>" alt="<%= item.title || 'Sản phẩm' %>" class="w-full h-full object-cover" />
                                                             </div>
-                                                        </div>
-                                                        <div class="lg:col-span-1">
-                                                            <div class="bg-gray-50 p-4 rounded-lg">
-                                                                <h6 class="font-medium text-gray-900 mb-4 flex items-center">
-                                                                    <i class="ri-calculator-line mr-2"></i>Tóm tắt đơn hàng
+                                                            
+                                                            <!-- Thông tin sản phẩm -->
+                                                            <div class="flex-1">
+                                                                <h6 class="font-semibold text-gray-900 mb-1">
+                                                                    <%= item.title || 'Sản phẩm không xác định' %>
                                                                 </h6>
-                                                                <div class="space-y-3">
-                                                                    <div class="flex justify-between">
-                                                                        <span class="text-gray-600">Tổng tiền hàng:</span>
-                                                                        <span class="text-gray-900"><%= order.totalPrice ? order.totalPrice.toLocaleString('vi-VN') : '0' %> ₫</span>
-                                                                    </div>
-                                                                    <div class="flex justify-between">
-                                                                        <span class="text-gray-600">Phí vận chuyển:</span>
-                                                                        <span class="text-green-600">Miễn phí</span>
-                                                                    </div>
-                                                                    <hr class="border-gray-300">
-                                                                    <div class="flex justify-between">
-                                                                        <strong class="text-gray-900">Tổng cộng:</strong>
-                                                                        <strong class="text-blue-600 text-lg">
-                                                                            <%= order.totalPrice ? order.totalPrice.toLocaleString('vi-VN') : '0' %> ₫
-                                                                        </strong>
-                                                                    </div>
+                                                                <div class="text-xs text-gray-500 mb-2">
+                                                                    Mã SP: <span class="font-mono bg-gray-100 px-2 py-1 rounded"><%= item.sku || (item.productId ? item.productId.toString().slice(-8).toUpperCase() : 'N/A') %></span>
+                                                                </div>
+                                                                <div class="text-sm text-gray-600">
+                                                                    <span>Giá: <strong><%= item.price ? item.price.toLocaleString('vi-VN') : '0' %> ₫</strong></span>
+                                                                    <span class="mx-2">|</span>
+                                                                    <span>Số lượng: <strong><%= parseInt(item.quantity) || 0 %></strong></span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <!-- Thành tiền -->
+                                                            <div class="text-right">
+                                                                <div class="text-sm text-gray-500">Thành tiền</div>
+                                                                <div class="text-lg font-bold text-gray-900">
+                                                                    <%= (parseFloat(item.price) || 0) && (parseInt(item.quantity) || 0) ? ((parseFloat(item.price) || 0) * (parseInt(item.quantity) || 0)).toLocaleString('vi-VN') : '0' %> ₫
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                <% }) %>
+                                            </div>
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <div class="summary-card">
+                                                <h6 class="font-bold text-gray-900 text-lg mb-6 flex items-center gap-3">
+                                                    <i class="ri-calculator-line text-xl text-blue-600"></i>
+                                                    Tóm tắt đơn hàng
+                                                </h6>
+                                                <div class="space-y-4">
+                                                    <div class="flex justify-between items-center py-2">
+                                                        <span class="text-gray-600 font-medium">Tổng tiền hàng:</span>
+                                                        <span class="text-gray-900 font-bold text-lg">
+                                                            <%= order.items.reduce((sum, item) => sum + (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 0), 0).toLocaleString('vi-VN') %> ₫
+                                                        </span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center py-2">
+                                                        <span class="text-gray-600 font-medium">Phí vận chuyển:</span>
+                                                        <span class="<%= order.shippingFee === 0 ? 'text-green-600' : 'text-gray-900' %> font-bold">
+                                                            <%= order.shippingFee === 0 ? 'Miễn phí' : order.shippingFee.toLocaleString('vi-VN') + ' ₫' %>
+                                                        </span>
+                                                    </div>
+                                                    <hr class="border-gray-300 my-4">
+                                                    <div class="flex justify-between items-center py-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl px-4">
+                                                        <strong class="text-gray-900 text-lg">Tổng cộng:</strong>
+                                                        <strong class="text-blue-600 text-2xl font-bold">
+                                                            <%= (parseFloat(order.totalAmount) || 0).toLocaleString('vi-VN') %> ₫
+                                                        </strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
                                         <div>
-                                            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden h-full">
-                                                <div class="bg-green-600 text-white px-4 py-3">
-                                                    <h6 class="font-medium flex items-center">
-                                                        <i class="ri-bank-card-line text-lg mr-2"></i>Thông tin thanh toán
+                                            <div class="payment-card overflow-hidden h-full">
+                                                <div class="px-6 py-4">
+                                                    <h6 class="font-bold text-xl flex items-center gap-3">
+                                                        <i class="ri-bank-card-line text-2xl"></i>
+                                                        Thông tin thanh toán
                                                     </h6>
                                                 </div>
-                                                <div class="p-4">
-                                                    <div class="space-y-3">
-                                                        <p class="flex items-center">
-                                                            <i class="ri-money-dollar-circle-line text-gray-500 mr-2"></i>
-                                                            <strong class="mr-2">Phương thức:</strong>
-                                                            <% let paymentMethodLabelA, paymentMethodLabelB, paymentStatusClassA, paymentStatusTextA, paymentStatusClassB, paymentStatusTextB; %>
-                                                            <% switch(order.paymentMethod) {
-                                                                case 'cod': paymentMethodLabelA = 'Thanh toán khi nhận hàng (COD)'; break;
-                                                                case 'bank': paymentMethodLabelA = 'Chuyển khoản ngân hàng'; break;
-                                                                case 'ewallet': paymentMethodLabelA = 'Ví điện tử'; break;
-                                                                case 'credit': paymentMethodLabelA = 'Thẻ tín dụng/ghi nợ'; break;
-                                                                case 'vnpay': paymentMethodLabelA = 'Thanh toán qua VNPay'; break;
-                                                                default: paymentMethodLabelA = 'Thanh toán khi nhận hàng (COD)';
-                                                            } %>
-                                                            <span><%= paymentMethodLabelA %></span>
-                                                        </p>
-                                                        <p class="flex items-center">
-                                                            <i class="ri-checkbox-circle-line text-gray-500 mr-2"></i>
-                                                            <strong class="mr-2">Trạng thái thanh toán:</strong>
+                                                <div class="px-6 pb-6 space-y-4">
+                                                    <div class="flex items-center gap-3">
+                                                        <i class="ri-money-dollar-circle-line text-2xl text-green-200"></i>
+                                                        <div>
+                                                            <div class="text-green-100 font-medium">Phương thức thanh toán</div>
+                                                            <div class="text-white font-bold text-lg">
+                                                                <% let paymentMethodLabelA, paymentStatusClassA, paymentStatusTextA; %>
+                                                                <% switch(order.paymentMethod) {
+                                                                    case 'cod': paymentMethodLabelA = 'Thanh toán khi nhận hàng (COD)'; break;
+                                                                    case 'bank': paymentMethodLabelA = 'Chuyển khoản ngân hàng'; break;
+                                                                    case 'ewallet': paymentMethodLabelA = 'Ví điện tử'; break;
+                                                                    case 'credit': paymentMethodLabelA = 'Thẻ tín dụng/ghi nợ'; break;
+                                                                    case 'vnpay': paymentMethodLabelA = 'Thanh toán qua VNPay'; break;
+                                                                    default: paymentMethodLabelA = 'Thanh toán khi nhận hàng (COD)';
+                                                                } %>
+                                                                <%= paymentMethodLabelA %>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-3">
+                                                        <i class="ri-checkbox-circle-line text-2xl text-green-200"></i>
+                                                        <div>
+                                                            <div class="text-green-100 font-medium">Trạng thái thanh toán</div>
                                                             <% switch(order.paymentStatus) {
                                                                 case 'completed':
-                                                                case 'paid': paymentStatusClassA = 'bg-green-100 text-green-800'; paymentStatusTextA = 'Đã thanh toán'; break;
-                                                                case 'awaiting_payment': paymentStatusClassA = 'bg-yellow-100 text-yellow-800'; paymentStatusTextA = 'Chờ chuyển khoản'; break;
-                                                                case 'processing': paymentStatusClassA = 'bg-blue-100 text-blue-800'; paymentStatusTextA = 'Đang xử lý'; break;
-                                                                case 'failed': paymentStatusClassA = 'bg-red-100 text-red-800'; paymentStatusTextA = 'Thanh toán thất bại'; break;
-                                                                case 'refunded': paymentStatusClassA = 'bg-gray-100 text-gray-800'; paymentStatusTextA = 'Đã hoàn tiền'; break;
-                                                                default: paymentStatusClassA = 'bg-yellow-100 text-yellow-800'; paymentStatusTextA = 'Chờ thanh toán';
+                                                                case 'paid': paymentStatusClassA = 'bg-green-500 text-white'; paymentStatusTextA = 'Đã thanh toán'; break;
+                                                                case 'awaiting_payment': paymentStatusClassA = 'bg-yellow-500 text-white'; paymentStatusTextA = 'Chờ chuyển khoản'; break;
+                                                                case 'processing': paymentStatusClassA = 'bg-blue-500 text-white'; paymentStatusTextA = 'Đang xử lý'; break;
+                                                                case 'failed': paymentStatusClassA = 'bg-red-500 text-white'; paymentStatusTextA = 'Thanh toán thất bại'; break;
+                                                                case 'refunded': paymentStatusClassA = 'bg-gray-500 text-white'; paymentStatusTextA = 'Đã hoàn tiền'; break;
+                                                                default: paymentStatusClassA = 'bg-yellow-500 text-white'; paymentStatusTextA = 'Chờ thanh toán';
                                                             } %>
-                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= paymentStatusClassA %>">
-                                                                <i class="ri-circle-fill text-xs mr-1"></i>
+                                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold <%= paymentStatusClassA %>">
+                                                                <i class="ri-circle-fill text-xs mr-2"></i>
                                                                 <%= paymentStatusTextA %>
                                                             </span>
-                                                        </p>
+                                                        </div>
                                                     </div>
-                                                    <% if (order.paymentMethod==='bank' &&
-                                                        order.paymentStatus==='awaiting_payment' ) { %>
-                                                        <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mt-4">
+                                                    <% if (order.paymentMethod==='bank' && order.paymentStatus==='awaiting_payment' ) { %>
+                                                        <div class="bg-blue-500 bg-opacity-20 border border-blue-300 text-blue-100 px-4 py-3 rounded-xl mt-4">
+                                                            <div class="flex items-center gap-2 mb-2">
+                                                                <i class="ri-information-line text-lg"></i>
+                                                                <strong>Thông tin chuyển khoản:</strong>
+                                                            </div>
                                                             <div class="text-sm">
-                                                                <i class="ri-information-line mr-1"></i>
-                                                                <strong>Thông tin chuyển khoản:</strong><br>
                                                                 Vietcombank - 1234567890<br>
                                                                 Chủ TK: PHUONG STORE
                                                             </div>
                                                         </div>
-                                                        <% } else if (order.paymentMethod==='vnpay' &&
-                                                            order.paymentStatus==='awaiting_payment' && order.paymentUrl) { %>
-                                                            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mt-4">
-                                                                <div class="text-sm">
-                                                                    <i class="ri-bank-card-line mr-1"></i>
-                                                                    <strong>Thanh toán qua VNPay:</strong><br>
-                                                                    Vui lòng hoàn tất thanh toán qua VNPay
-                                                                </div>
+                                                    <% } else if (order.paymentMethod==='vnpay' && order.paymentStatus==='awaiting_payment' && order.paymentUrl) { %>
+                                                        <div class="bg-yellow-500 bg-opacity-20 border border-yellow-300 text-yellow-100 px-4 py-3 rounded-xl mt-4">
+                                                            <div class="flex items-center gap-2 mb-2">
+                                                                <i class="ri-bank-card-line text-lg"></i>
+                                                                <strong>Thanh toán qua VNPay:</strong>
                                                             </div>
-                                                            <a href="<%= order.paymentUrl %>" class="inline-flex items-center px-4 py-2 mt-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors" target="_blank">
-                                                                <i class="ri-external-link-line mr-2"></i>
-                                                                Thanh toán lại qua VNPay
-                                                            </a>
-                                                            <% } else if (order.paymentMethod==='ewallet' &&
-                                                            order.paymentStatus==='awaiting_payment' ) { %>
-                                                            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mt-4">
-                                                                <div class="text-sm">
-                                                                    <i class="ri-smartphone-line mr-1"></i>
-                                                                    <strong>Thông tin ví điện tử:</strong><br>
-                                                                    ZaloPay: 0123456789
-                                                                </div>
+                                                            <div class="text-sm">Vui lòng hoàn tất thanh toán qua VNPay</div>
+                                                        </div>
+                                                        <a href="<%= order.paymentUrl %>" class="action-btn btn-primary mt-3" target="_blank">
+                                                            <i class="ri-external-link-line"></i>
+                                                            Thanh toán lại qua VNPay
+                                                        </a>
+                                                    <% } else if (order.paymentMethod==='ewallet' && order.paymentStatus==='awaiting_payment' ) { %>
+                                                        <div class="bg-yellow-500 bg-opacity-20 border border-yellow-300 text-yellow-100 px-4 py-3 rounded-xl mt-4">
+                                                            <div class="flex items-center gap-2 mb-2">
+                                                                <i class="ri-smartphone-line text-lg"></i>
+                                                                <strong>Thông tin ví điện tử:</strong>
                                                             </div>
-                                                            <% } %>
+                                                            <div class="text-sm">ZaloPay: 0123456789</div>
+                                                        </div>
+                                                    <% } %>
                                                 </div>
                                             </div>
                                         </div>
-                                                        <div class="col-md-6">
-                                                            <h6 class="fw-bold"><i
-                                                                    class="fas fa-credit-card me-2"></i>Thông tin thanh
-                                                                toán</h6>
-                                                            <p class="mb-1">
-                                                                <strong>Phương thức:</strong>
-                                                                <% switch(order.paymentMethod) {
-                                                                    case 'cod': paymentMethodLabelB = 'Thanh toán khi nhận hàng (COD)'; break;
-                                                                    case 'bank': paymentMethodLabelB = 'Chuyển khoản ngân hàng'; break;
-                                                                    case 'ewallet': paymentMethodLabelB = 'Ví điện tử'; break;
-                                                                    case 'credit': paymentMethodLabelB = 'Thẻ tín dụng/ghi nợ'; break;
-                                                                    case 'vnpay': paymentMethodLabelB = 'Thanh toán qua VNPay'; break;
-                                                                    default: paymentMethodLabelB = 'Thanh toán khi nhận hàng (COD)';
-                                                                } %>
-                                                                <%= paymentMethodLabelB %>
-                                                            </p>
-                                                            <p class="mb-0">
-                                                                <strong>Trạng thái thanh toán:</strong>
-                                                                <% switch(order.paymentStatus) {
-                                                                    case 'completed':
-                                                                    case 'paid': paymentStatusClassB = 'success'; paymentStatusTextB = 'Đã thanh toán'; break;
-                                                                    case 'awaiting_payment': paymentStatusClassB = 'warning'; paymentStatusTextB = 'Chờ chuyển khoản'; break;
-                                                                    case 'processing': paymentStatusClassB = 'info'; paymentStatusTextB = 'Đang xử lý'; break;
-                                                                    case 'failed': paymentStatusClassB = 'danger'; paymentStatusTextB = 'Thanh toán thất bại'; break;
-                                                                    case 'refunded': paymentStatusClassB = 'secondary'; paymentStatusTextB = 'Đã hoàn tiền'; break;
-                                                                    default: paymentStatusClassB = 'warning'; paymentStatusTextB = 'Chờ thanh toán';
-                                                                } %>
-                                                                <span
-                                                                    class="badge bg-<%= paymentStatusClassB %> ms-1">
-                                                                    <i class="fas fa-circle me-1 small"></i>
-                                                                    <%= paymentStatusTextB %>
-                                                                </span>
-                                                            </p>
-
-                                                            <% if (order.paymentMethod==='bank' &&
-                                                                order.paymentStatus==='awaiting_payment' ) { %>
-                                                                <div class="alert alert-info mt-2 p-2">
-                                                                    <small>
-                                                                        <i class="fas fa-info-circle me-1"></i>
-                                                                        <strong>Thông tin chuyển khoản:</strong><br>
-                                                                        Vietcombank - 1234567890<br>
-                                                                        Chủ TK: PHUONG STORE
-                                                                    </small>
-                                                                </div>
-                                                                <% } else if (order.paymentMethod==='vnpay' &&
-                                                                    order.paymentStatus==='awaiting_payment' && order.paymentUrl) { %>
-                                                                    <div class="alert alert-warning mt-2 p-2">
-                                                                        <small>
-                                                                            <i class="fas fa-credit-card me-1"></i>
-                                                                            <strong>Thanh toán qua VNPay:</strong><br>
-                                                                            Vui lòng hoàn tất thanh toán qua VNPay
-                                                                        </small>
-                                                                    </div>
-                                                                    <a href="<%= order.paymentUrl %>" class="btn btn-primary mt-2" target="_blank">
-                                                                        Thanh toán lại qua VNPay
-                                                                    </a>
-                                                                    <% } else if (order.paymentMethod==='ewallet' &&
-                                                                    order.paymentStatus==='awaiting_payment' ) { %>
-                                                                    <div class="alert alert-warning mt-2 p-2">
-                                                                        <small>
-                                                                            <i class="fas fa-mobile-alt me-1"></i>
-                                                                            <strong>Thông tin ví điện tử:</strong><br>
-                                                                            ZaloPay: 0123456789
-                                                                        </small>
-                                                                    </div>
-                                                                    <% } %>
-                                                        </div>
-                                                    </div>
-                                                    <% } else { %>
-                                                        <div class="alert alert-warning">
-                                                            <i class="fas fa-exclamation-triangle me-2"></i>
-                                                            Không có sản phẩm nào trong đơn hàng này.
-                                                        </div>
-                                                        <% } %>
-                                            </div>
-
-                                            <div
-                                                class="card-footer bg-white d-flex justify-content-between align-items-center">
-                                                <div class="order-info small text-muted">
+                                        <div class="flex flex-col justify-between">
+                                            <div class="flex flex-col gap-4 md:items-end md:text-right mt-6 md:mt-0">
+                                                <div class="text-gray-500 text-sm flex items-center gap-2 md:justify-end">
                                                     <% if (order.updatedAt) { %>
-                                                        <i class="fas fa-sync me-1"></i> Cập nhật:
-                                                        <%= new Date(order.updatedAt).toLocaleString('vi-VN') %>
-                                                            <% } %>
+                                                        <i class="ri-refresh-line"></i> 
+                                                        <span>Cập nhật: <%= new Date(order.updatedAt).toLocaleString('vi-VN') %></span>
+                                                    <% } %>
                                                 </div>
-                                                <div class="order-actions">
-                                                    <a href="/download-invoice/<%= order._id || '' %>"
-                                                        class="btn btn-outline-primary btn-sm">
-                                                        <i class="fas fa-file-download me-1"></i> Tải hóa đơn
+                                                <div class="flex flex-wrap gap-3 mt-2 md:justify-end">
+                                                    <!-- Nút Xuất PDF -->
+                                                    <a href="/download-invoice/<%= order._id || '' %>" class="action-btn btn-pdf" title="Tải xuống hóa đơn PDF">
+                                                        <i class="ri-file-pdf-line"></i> Xuất PDF
                                                     </a>
-                                                    <button class="btn btn-outline-secondary btn-sm"
-                                                        onclick="window.print()">
-                                                        <i class="fas fa-print me-1"></i> In
-                                                    </button>
+                                                    
+                                                    <!-- Nút Hủy đơn hàng -->
+                                                    <% if(order.status === 'pending' || order.status === 'processing' || order.status === 'confirmed') { %>
+                                                        <form action="/orders/<%= order._id %>/cancel" method="POST" style="display:inline;">
+                                                            <button type="submit" class="action-btn btn-danger" onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này?');" title="Hủy đơn hàng">
+                                                                <i class="ri-close-circle-line"></i> Hủy
+                                                            </button>
+                                                        </form>
+                                                    <% } %>
+                                                    
+                                                    <!-- Nút Xóa đơn hàng -->
                                                     <form action="/orders/<%= order._id %>/delete" method="POST" style="display:inline;">
-                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này?');">Xóa</button>
+                                                        <button type="submit" class="action-btn btn-secondary" onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này?');" title="Xóa đơn hàng">
+                                                            <i class="ri-delete-bin-6-line"></i> Xóa
+                                                        </button>
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
-                                        <% }) %>
-                                </div>
-                                <% } else { %>
-                                    <div class="empty-orders text-center py-5">
-                                        <div class="empty-order-icon">
-                                            <i class="fas fa-shopping-basket fa-5x text-muted mb-3"></i>
-                                        </div>
-                                        <h3>Chưa có đơn hàng nào</h3>
-                                        <p class="text-muted mb-4">Bạn chưa đặt mua sản phẩm nào.</p>
-                                        <a href="/products" class="btn btn-primary">
-                                            <i class="fas fa-shopping-cart me-2"></i> Bắt đầu mua sắm
-                                        </a>
                                     </div>
-                                    <% } %>
+                                <% } else { %>
+                                    <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4 rounded flex items-center gap-2">
+                                        <i class="ri-error-warning-line text-2xl"></i>
+                                        Không có sản phẩm nào trong đơn hàng này.
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <div class="empty-state fade-in">
+                    <div class="mb-8">
+                        <i class="ri-shopping-basket-line text-8xl text-gray-300"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-800 mb-4">Chưa có đơn hàng nào</h3>
+                    <p class="text-gray-500 text-lg mb-8">Bạn chưa đặt mua sản phẩm nào. Hãy bắt đầu mua sắm ngay!</p>
+                    <a href="/products" class="action-btn btn-primary text-lg px-8 py-4">
+                        <i class="ri-shopping-cart-line text-xl"></i> 
+                        Bắt đầu mua sắm
+                    </a>
+                </div>
+            <% } %>
         </main>
 
         <style>
-            .product-image-container {
-                width: 60px;
-                height: 60px;
-                overflow: hidden;
-                border-radius: 4px;
-            }
-
-            .product-image {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .product-title {
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                line-height: 1.3;
-            }
-
-            .order-card {
-                transition: transform 0.2s;
-                border-radius: 8px;
-                overflow: hidden;
-            }
-
-            .order-card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
-            }
-
             @media print {
-
                 .order-actions,
                 .empty-order-icon,
                 nav,
@@ -366,17 +498,67 @@
                 footer {
                     display: none !important;
                 }
-
                 .container {
                     width: 100%;
                     max-width: 100%;
                 }
-
-                .card {
-                    border: 1px solid #ddd !important;
-                    box-shadow: none !important;
-                }
             }
         </style>
+
+        <script>
+            // Animation cho các thẻ đơn hàng
+            document.addEventListener('DOMContentLoaded', function() {
+                const orderCards = document.querySelectorAll('.order-card');
+                
+                // Stagger animation cho các thẻ đơn hàng
+                orderCards.forEach((card, index) => {
+                    card.style.animationDelay = `${index * 0.1}s`;
+                });
+                
+                // Hover effect cho các nút hành động
+                const actionBtns = document.querySelectorAll('.action-btn');
+                actionBtns.forEach(btn => {
+                    btn.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-2px) scale(1.05)';
+                    });
+                    
+                    btn.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateY(0) scale(1)';
+                    });
+                });
+                
+                // Xử lý nút xuất PDF
+                const pdfButtons = document.querySelectorAll('a[href*="/download-invoice/"]');
+                pdfButtons.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        // Thêm loading state
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<i class="ri-loader-4-line animate-spin"></i> Đang tạo PDF...';
+                        this.style.pointerEvents = 'none';
+                        
+                        // Reset sau 3 giây nếu không có response
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.style.pointerEvents = 'auto';
+                        }, 3000);
+                    });
+                });
+                
+                // Smooth scroll cho các liên kết
+                const links = document.querySelectorAll('a[href^="#"]');
+                links.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const target = document.querySelector(this.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
 
         <%- include('../includes/end.ejs') %>

@@ -6,13 +6,13 @@
 
 /* General Styles */
 :root {
-  --primary-color: #4CAF50;
-  --primary-light: #81C784;
-  --primary-dark: #388E3C;
-  --text-dark: #2E7D32;
+  --primary-color: #3B82F6;
+  --primary-light: #3B82F6;
+  --primary-dark:#3B82F6;
+  --text-dark: #3B82F6;
   --bg-light: #E8F5E9;
-  --header-bg: #43A047;
-  --footer-bg: #2E7D32;
+  --header-bg: #3B82F6;
+  --footer-bg: #3B82F6;
 }
 
 body {

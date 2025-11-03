@@ -1,459 +1,904 @@
+<!DOCTYPE html>
+<html lang="vi">
 <%- include('../includes/head.ejs') %>
-    <%- include('../includes/navigation.ejs') %>
+    <title><%= pageTitle %></title>
+    <style>
+        /* Container chính */
+        .product-detail-container {
+            background: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
 
-        <style>
-            /* Container chính */
-            .product-detail-container {
-                background: #fff;
-                border-radius: 0.75rem;
-                box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-                padding: 2rem;
-                margin-bottom: 2rem;
-            }
+        /* Phần ảnh sản phẩm */
+        .product-image-section {
+            position: relative;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
 
-            /* Phần ảnh sản phẩm */
+        .product-detail-image {
+            width: 100%;
+            height: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            min-width: 300px;
+            min-height: 300px;
+            object-fit: contain;
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        .product-detail-image:hover {
+            transform: scale(1.05);
+        }
+
+        .product-badges {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .badge-new {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .badge-discount {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        /* Phần thông tin sản phẩm */
+        .product-info-section {
+            padding: 2rem;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .product-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .price-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .original-price {
+            font-size: 1.25rem;
+            color: #9ca3af;
+            text-decoration: line-through;
+            margin-right: 1rem;
+        }
+
+        .current-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stars {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .star {
+            font-size: 1.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .star.filled {
+            color: #fbbf24;
+        }
+
+        .star.empty {
+            color: #d1d5db;
+        }
+
+        .review-count {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* Phần mô tả và thông tin */
+        .product-description {
+            margin-bottom: 2rem;
+            line-height: 1.7;
+            color: #4b5563;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        .product-additional-info {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #bae6fd;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .info-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .info-item i {
+            color: #3b82f6;
+            font-size: 1.25rem;
+            width: 1.5rem;
+            text-align: center;
+        }
+
+        .info-item span {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        /* Phần mua hàng */
+        .purchase-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quantity-input {
+            width: 120px;
+            text-align: center;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .quantity-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .quantity-btn {
+            width: 3rem;
+            height: 3rem;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quantity-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: scale(1.05);
+        }
+
+        .quantity-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .stock-status.in-stock {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .stock-status.low-stock {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+
+        .stock-status.out-of-stock {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            border: 1px solid #f87171;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-add-to-cart {
+            flex: 1;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            font-size: 1.125rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-add-to-cart.primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-add-to-cart.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-add-to-cart-secondary {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-add-to-cart-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-add-to-cart.disabled {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-wishlist {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        .btn-wishlist:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Phần tab chi tiết */
+        .product-tabs {
+            margin-top: 3rem;
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 0;
+        }
+
+        .nav-tabs .nav-link {
+            color: #6b7280;
+            font-weight: 600;
+            border: none;
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+            background: none;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #3b82f6;
+            background: none;
+            border: none;
+        }
+
+        .nav-tabs .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .tab-content {
+            padding: 2rem;
+            background: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Phần sản phẩm liên quan */
+        .related-products {
+            margin-top: 4rem;
+        }
+
+        .related-product-card {
+            border: none;
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+            height: 100%;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .related-product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .related-product-image {
+            height: 250px;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+        .related-product-card:hover .related-product-image {
+            transform: scale(1.05);
+        }
+
+        .related-product-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #1f2937;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: visible;
+            word-break: keep-all;
+        }
+
+        .related-product-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 1rem;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
             .product-image-section {
-                position: relative;
-                background: #f8f9fa;
-                border-radius: 0.5rem;
-                padding: 1rem;
-                min-height: 400px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                min-height: 50vh;
             }
-
-            .product-detail-image {
-                max-width: 100%;
-                max-height: 400px;
-                object-fit: contain;
-                transition: transform 0.3s ease;
-            }
-
-            .product-detail-image:hover {
-                transform: scale(1.05);
-            }
-
-            .product-badges {
-                position: absolute;
-                top: 1rem;
-                left: 1rem;
-                display: flex;
-                gap: 0.5rem;
-                z-index: 1;
-            }
-
-            /* Phần thông tin sản phẩm */
+            
             .product-info-section {
-                padding: 1.5rem;
+                min-height: auto;
             }
-
+            
+            .product-detail-image {
+                max-height: 50vh;
+            }
+            
             .product-title {
-                font-size: 2rem;
-                font-weight: 600;
-                color: #212529;
-                margin-bottom: 1rem;
-                line-height: 1.3;
+                font-size: 1.75rem;
             }
-
-            .price-section {
-                margin-bottom: 1.5rem;
-                padding-bottom: 1.5rem;
-                border-bottom: 1px solid #e3e6f0;
-            }
-
-            .original-price {
-                font-size: 1.1rem;
-                color: #6c757d;
-                text-decoration: line-through;
-                margin-right: 0.5rem;
-            }
-
+            
             .current-price {
                 font-size: 2rem;
-                font-weight: 700;
-                color: #dc3545;
             }
-
-            .product-rating {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                margin-bottom: 1rem;
-            }
-
-            .review-count {
-                font-size: 0.9rem;
-                color: #6c757d;
-            }
-
-            /* Phần mô tả và thông tin */
-            .product-description {
-                margin-bottom: 2rem;
-            }
-
-            .section-title {
-                font-size: 1.1rem;
-                font-weight: 600;
-                color: #495057;
-                margin-bottom: 1rem;
-            }
-
-            .product-additional-info {
-                background: #f8f9fa;
-                border-radius: 0.5rem;
-                padding: 1.5rem;
-                margin-bottom: 2rem;
-            }
-
-            .info-item {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                margin-bottom: 0.75rem;
-            }
-
-            .info-item i {
-                color: #4e73df;
-                font-size: 1.1rem;
-            }
-
-            /* Phần mua hàng */
-            .purchase-section {
-                background: #f8f9fa;
-                border-radius: 0.5rem;
-                padding: 1.5rem;
-                margin-top: 2rem;
-            }
-
-            .quantity-control {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .quantity-input {
-                width: 100px;
-                text-align: center;
-            }
-
-            .stock-info {
-                font-size: 0.9rem;
-                color: #6c757d;
-            }
-
+            
             .action-buttons {
-                display: flex;
-                gap: 1rem;
-                margin-top: 1.5rem;
+                flex-direction: column;
             }
-
-            .btn-add-to-cart {
-                flex: 1;
-                padding: 0.75rem 1.5rem;
-                font-weight: 500;
-            }
-
-            .btn-wishlist {
-                padding: 0.75rem 1.5rem;
-            }
-
-            /* Phần tab chi tiết */
-            .product-tabs {
-                margin-top: 2rem;
-            }
-
+            
             .nav-tabs {
-                border-bottom: 2px solid #e3e6f0;
-                margin-bottom: 1.5rem;
+                flex-direction: column;
             }
-
+            
             .nav-tabs .nav-link {
-                color: #6c757d;
-                font-weight: 500;
-                border: none;
-                padding: 1rem 1.5rem;
-                transition: all 0.2s;
+                border-bottom: 1px solid #e5e7eb;
             }
+        }
+    </style>
+</head>
 
-            .nav-tabs .nav-link:hover {
-                color: #4e73df;
-                border-bottom: 2px solid #4e73df;
-            }
+<body class="bg-gray-50 min-h-screen">
+    <%- include('../includes/navigation.ejs') %>
+    <% const approvedReviews = reviews ? reviews.filter(r => r.approved === true) : []; %>
 
-            .nav-tabs .nav-link.active {
-                color: #4e73df;
-                background: none;
-                border: none;
-                border-bottom: 2px solid #4e73df;
-            }
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="/" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+                        <i class="ri-home-line mr-2"></i>
+                        Trang chủ
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="ri-arrow-right-s-line text-gray-400 mx-2"></i>
+                        <a href="/products" class="text-sm font-medium text-gray-700 hover:text-blue-600">Sản phẩm</a>
+                    </div>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <i class="ri-arrow-right-s-line text-gray-400 mx-2"></i>
+                        <span class="text-sm font-medium text-gray-500"><%= product.title %></span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
 
-            .tab-content {
-                padding: 1.5rem;
-                background: #fff;
-                border-radius: 0.5rem;
-            }
+        <div class="product-detail-container">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-screen">
+                <!-- Ảnh sản phẩm -->
+                <div class="product-image-section flex items-center justify-center">
+                    <div class="relative w-full h-full flex items-center justify-center">
+                        <img src="<%= product.imageUrl %>" alt="<%= product.title %>" 
+                             class="product-detail-image transition-transform duration-300 shadow-lg hover:scale-105 hover:shadow-2xl">
+                        
+                        <div class="product-badges">
+                            <% if (product.isNew) { %>
+                                <span class="badge badge-new">Mới</span>
+                            <% } %>
+                            <% if (product.discount > 0) { %>
+                                <span class="badge badge-discount">-<%= product.discount %>%</span>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
 
-            /* Phần sản phẩm liên quan */
-            .related-products {
-                margin-top: 3rem;
-            }
+                <!-- Thông tin sản phẩm -->
+                <div class="product-info-section flex flex-col justify-start">
+                    <h1 class="product-title"><%= product.title %></h1>
 
-            .related-product-card {
-                border: none;
-                border-radius: 0.5rem;
-                transition: transform 0.3s ease;
-                height: 100%;
-            }
-
-            .related-product-card:hover {
-                transform: translateY(-5px);
-            }
-
-            .related-product-image {
-                height: 200px;
-                object-fit: cover;
-                border-radius: 0.5rem 0.5rem 0 0;
-            }
-
-            .related-product-title {
-                font-size: 1.1rem;
-                font-weight: 500;
-                margin-bottom: 0.5rem;
-            }
-
-            .related-product-price {
-                font-size: 1.2rem;
-                font-weight: 600;
-                color: #dc3545;
-            }
-        </style>
-
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
-                    <!-- Ảnh sản phẩm -->
-                    <div class="relative">
-                        <div class="relative overflow-hidden rounded-xl">
-                            <img src="<%= product.imageUrl %>" alt="<%= product.title %>" 
-                                 class="w-full h-96 object-cover hover:scale-105 transition-transform duration-300">
-                            <div class="absolute top-4 left-4 flex flex-col gap-2">
-                                <% if (product.isNew) { %>
-                                    <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Mới</span>
-                                <% } %>
-                                <% if (product.discount > 0) { %>
-                                    <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">-<%= product.discount %>%</span>
+                    <div class="price-section">
+                        <div class="flex items-center gap-4 mb-3">
+                            <% if (product.oldPrice) { %>
+                                <del class="original-price">
+                                    <%= product.oldPrice.toLocaleString('vi-VN') %> ₫
+                                </del>
+                            <% } %>
+                            <span class="current-price">
+                                <%= product.price.toLocaleString('vi-VN') %> ₫
+                            </span>
+                        </div>
+                        
+                        <!-- Rating và đánh giá -->
+                        <div class="product-rating">
+                            <div class="stars">
+                                <% for(let i = 0; i < 5; i++) { %>
+                                    <i class="star <%= i < Math.floor(avgRating || 0) ? 'filled' : 'empty' %> ri-star-fill"></i>
                                 <% } %>
                             </div>
+                            <span class="review-count">
+                                (<%= approvedReviews ? approvedReviews.length : 0 %> đánh giá)
+                            </span>
+                            <% if (avgRating > 0) { %>
+                                <span class="text-sm text-gray-600 ml-2">
+                                    - Đánh giá trung bình: <strong><%= avgRating %></strong>/5
+                                </span>
+                            <% } %>
                         </div>
                     </div>
 
-                    <!-- Thông tin sản phẩm -->
-                    <div class="space-y-6">
-                        <div>
-                            <h1 class="text-3xl font-bold text-gray-900 mb-4"><%= product.title %></h1>
+                    <div class="product-description">
+                        <p class="text-gray-700 leading-relaxed"><%= product.description %></p>
+                    </div>
 
-                            <div class="mb-6">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <% if (product.oldPrice) { %>
-                                        <del class="text-gray-500 text-lg">
-                                            <%= product.oldPrice.toLocaleString('vi-VN') %> ₫
-                                        </del>
-                                    <% } %>
-                                    <span class="text-3xl font-bold text-red-600">
-                                        <%= product.price.toLocaleString('vi-VN') %> ₫
+
+                    <!-- Thông tin cơ bản sản phẩm -->
+                    <div class="product-additional-info">
+                        <h5 class="section-title">Thông tin cơ bản</h5>
+                        <div class="space-y-3">
+                            <!-- Tên sản phẩm -->
+                            <div class="info-item">
+                                <i class="ri-product-hunt-line"></i>
+                                <span><strong>Tên sản phẩm:</strong> <%= product.title %></span>
+                            </div>
+                            
+                            <!-- Mã sản phẩm (SKU) -->
+                            <div class="info-item">
+                                <i class="ri-barcode-line"></i>
+                                <span><strong>Mã sản phẩm (SKU):</strong> 
+                                    <span class="font-mono bg-gray-100 px-2 py-1 rounded text-sm">
+                                        <%= product.sku || 'Chưa có SKU' %>
                                     </span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <div class="flex">
-                                        <% for(let i = 0; i < 5; i++) { %>
-                                            <i class="ri-star-fill text-lg <%= i < product.rating ? 'text-yellow-400' : 'text-gray-300' %>"></i>
-                                        <% } %>
-                                    </div>
-                                    <span class="text-gray-600">(<%= product.reviews || 0 %> đánh giá)</span>
-                                </div>
+                                </span>
                             </div>
-
-                            <div class="bg-gray-50 rounded-lg p-4">
-                                <h5 class="text-lg font-semibold text-gray-900 mb-3">Mô tả sản phẩm</h5>
-                                <p class="text-gray-700"><%= product.description %></p>
-                            </div>
-
-                            <div class="bg-blue-50 rounded-lg p-4">
-                                <h5 class="text-lg font-semibold text-gray-900 mb-4">Thông tin thêm</h5>
-                                <div class="space-y-3">
-                                    <div class="flex items-center gap-3">
-                                        <i class="ri-checkbox-circle-line text-blue-600"></i>
-                                        <span class="text-gray-700">Tình trạng: 
-                                            <% if (product.inStock) { %>
-                                                <span class="text-green-600 font-bold">Còn hàng</span>
-                                            <% } else { %>
-                                                <span class="text-red-600 font-bold">Hết hàng</span>
-                                            <% } %>
+                            
+                            <!-- Tình trạng hàng -->
+                            <div class="info-item">
+                                <i class="ri-stock-line"></i>
+                                <span><strong>Tình trạng hàng:</strong> 
+                                    <% if (product.stockQuantity > 10) { %>
+                                        <span class="stock-status in-stock">
+                                            <i class="ri-checkbox-circle-line"></i> Còn hàng
                                         </span>
-                                    </div>
-                                    <div class="flex items-center gap-3">
-                                        <i class="ri-truck-line text-blue-600"></i>
-                                        <span class="text-gray-700">Giao hàng: 2-3 ngày</span>
-                                    </div>
-                                    <div class="flex items-center gap-3">
-                                        <i class="ri-shield-check-line text-blue-600"></i>
-                                        <span class="text-gray-700">Bảo hành: 12 tháng</span>
-                                    </div>
-                                    <div class="flex items-center gap-3">
-                                        <i class="ri-arrow-go-back-line text-blue-600"></i>
-                                        <span class="text-gray-700">Đổi trả: 30 ngày</span>
-                                    </div>
-                                </div>
+                                    <% } else if (product.stockQuantity > 0) { %>
+                                        <span class="stock-status low-stock">
+                                            <i class="ri-error-warning-line"></i> Sắp hết
+                                        </span>
+                                    <% } else { %>
+                                        <span class="stock-status out-of-stock">
+                                            <i class="ri-close-circle-line"></i> Hết hàng
+                                        </span>
+                                    <% } %>
+                                </span>
                             </div>
+                            
+                            <!-- Thương hiệu -->
+                            <div class="info-item">
+                                <i class="ri-award-line"></i>
+                                <span><strong>Thương hiệu:</strong> 
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-medium">
+                                        <%= product.brand || 'Chưa xác định' %>
+                                    </span>
+                                </span>
+                            </div>
+                            
+                            <!-- Danh mục -->
+                            <div class="info-item">
+                                <i class="ri-folder-line"></i>
+                                <span><strong>Danh mục:</strong> 
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">
+                                        <%= product.category || 'Chưa phân loại' %>
+                                    </span>
+                                </span>
+                            </div>
+                            
+                        </div>
+                    </div>
 
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="quantity" class="block text-sm font-medium text-gray-700 mb-2">Số lượng:</label>
-                                    <div class="flex items-center border border-gray-300 rounded-lg w-32">
-                                        <button type="button" class="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-l-lg transition-colors" onclick="decreaseQuantity()">-</button>
-                                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" class="w-16 text-center border-0 focus:ring-0 focus:outline-none">
-                                        <button type="button" class="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-r-lg transition-colors" onclick="increaseQuantity()">+</button>
-                                    </div>
-                                </div>
 
-                                <% if (product.inStock) { %>
-                                    <form action="/add-to-cart" method="POST">
-                                        <input type="hidden" name="productId" value="<%= product._id %>">
-                                        <input type="hidden" name="quantity" id="hiddenQuantity" value="1">
-                                        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
-                                            <i class="ri-shopping-cart-line text-lg"></i>
-                                            Thêm vào giỏ hàng
-                                        </button>
-                                    </form>
+                    <div class="purchase-section">
+                        <div class="quantity-control">
+                            <label class="text-sm font-medium text-gray-700">Số lượng:</label>
+                            <div class="flex items-center gap-3">
+                                <button type="button" class="quantity-btn" id="decreaseBtn">
+                                    <i class="ri-subtract-line"></i>
+                                </button>
+                                <input type="number" id="quantity" name="quantity" value="1" min="1" 
+                                       max="<%= product.stockQuantity %>" class="quantity-input">
+                                <button type="button" class="quantity-btn" id="increaseBtn">
+                                    <i class="ri-add-line"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <% if (product.stockQuantity > 0) { %>
+                                <button type="button" class="btn-add-to-cart-secondary" id="addToCartOnlyBtn">
+                                    <i class="ri-shopping-cart-line"></i>
+                                    <span>Thêm vào giỏ hàng</span>
+                                </button>
+                            <% } else { %>
+                                <button class="btn-add-to-cart disabled" disabled>
+                                    <i class="ri-close-circle-line"></i>
+                                    Hết hàng
+                                </button>
+                            <% } %>
+                            
+                            <div class="flex gap-2">
+                                <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                                <% const isFavorite = favorites && favorites.includes(product._id.toString()); %>
+                                <button type="button" class="btn-wishlist flex-1" id="wishlistBtn" title="<%= isFavorite ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích' %>">
+                                    <i class="<%= isFavorite ? 'ri-heart-fill text-red-500' : 'ri-heart-line' %> text-xl"></i>
+                                    <span class="ml-2"><%= isFavorite ? 'Đã yêu thích' : 'Yêu thích' %></span>
+                                </button>
                                 <% } else { %>
-                                    <button class="w-full bg-red-100 text-red-600 py-3 px-6 rounded-lg font-semibold border border-red-300 cursor-not-allowed flex items-center justify-center gap-2" disabled>
-                                        <i class="ri-close-circle-line text-lg"></i>
-                                        Hết hàng
-                                    </button>
+                                <a href="/login?returnTo=<%= encodeURIComponent(request.originalUrl || '/') %>" class="btn-wishlist flex-1" title="Đăng nhập để yêu thích">
+                                    <i class="ri-heart-line text-xl"></i>
+                                    <span class="ml-2">Yêu thích</span>
+                                </a>
                                 <% } %>
+                                <button type="button" class="btn-wishlist flex-1" id="shareBtn" title="Chia sẻ sản phẩm">
+                                    <i class="ri-share-line text-xl"></i>
+                                    <span class="ml-2">Chia sẻ</span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Chi tiết sản phẩm -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div class="border-b border-gray-200">
-                    <nav class="flex space-x-8" aria-label="Tabs">
-                        <button class="tab-button active py-4 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600 whitespace-nowrap" 
-                                onclick="showTab('description')" id="description-tab">
-                            <i class="ri-information-line mr-2"></i> Mô tả chi tiết
-                        </button>
-                        <button class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap" 
-                                onclick="showTab('specifications')" id="specifications-tab">
-                            <i class="ri-list-check mr-2"></i> Thông số kỹ thuật
-                        </button>
-                        <button class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap" 
-                                onclick="showTab('reviews')" id="reviews-tab">
-                            <i class="ri-star-line mr-2"></i> Đánh giá (<%= product.reviews || 0 %>)
-                        </button>
-                    </nav>
-                </div>
-                <div class="p-6">
-                    <div class="tab-content" id="description" style="display: block;">
-                        <h5 class="text-lg font-semibold text-gray-900 mb-4">Mô tả chi tiết</h5>
-                        <p class="text-gray-700 mb-4"><%= product.description %></p>
-                        <% if (product.features && product.features.length > 0) { %>
-                            <h6 class="text-md font-semibold text-gray-900 mb-3">Tính năng nổi bật:</h6>
-                            <ul class="list-disc list-inside space-y-2 text-gray-700">
-                                <% product.features.forEach(feature => { %>
-                                    <li><%= feature %></li>
-                                <% }); %>
-                            </ul>
-                        <% } %>
-                    </div>
-                    <div class="tab-content" id="specifications" style="display: none;">
-                        <h5 class="text-lg font-semibold text-gray-900 mb-4">Thông số kỹ thuật</h5>
-                        <div class="overflow-hidden bg-white shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-300">
-                                <tbody class="divide-y divide-gray-200">
-                                    <tr class="bg-gray-50">
-                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">Danh mục:</td>
-                                        <td class="px-6 py-4 text-sm text-gray-700"><%= product.category %></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">Thương hiệu:</td>
-                                        <td class="px-6 py-4 text-sm text-gray-700"><%= product.brand || 'Không xác định' %></td>
-                                    </tr>
-                                    <tr class="bg-gray-50">
-                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">Xuất xứ:</td>
-                                        <td class="px-6 py-4 text-sm text-gray-700"><%= product.origin || 'Không xác định' %></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">Bảo hành:</td>
-                                        <td class="px-6 py-4 text-sm text-gray-700">12 tháng</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="tab-content" id="reviews" style="display: none;">
-                        <h5 class="text-lg font-semibold text-gray-900 mb-4">Đánh giá khách hàng</h5>
-                        <div class="bg-gray-50 rounded-lg p-4 mb-6">
-                            <div class="flex items-center gap-4">
-                                <span class="text-3xl font-bold text-gray-900"><%= product.rating || 0 %></span>
-                                <div>
-                                    <div class="flex mb-1">
-                                        <% for(let i = 0; i < 5; i++) { %>
-                                            <i class="ri-star-fill text-lg <%= i < product.rating ? 'text-yellow-400' : 'text-gray-300' %>"></i>
-                                        <% } %>
-                                    </div>
-                                    <span class="text-gray-600">(<%= product.reviews || 0 %> đánh giá)</span>
+        <!-- Chi tiết sản phẩm -->
+        <div class="product-tabs">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="tab-content" id="description" style="display: block;">
+                    <h5 class="section-title">Mô tả chi tiết</h5>
+                    <p class="product-description"><%= product.description %></p>
+                    <% if (product.features && product.features.length > 0) { %>
+                        <h6 class="text-lg font-semibold text-gray-900 mb-3">Tính năng nổi bật:</h6>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <% product.features.forEach(feature => { %>
+                                <li><%= feature %></li>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+
+                    <!-- Đánh giá sản phẩm -->
+                    <div class="mt-10">
+                        <h5 class="section-title mb-4">Đánh giá sản phẩm</h5>
+                        <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                        <form id="reviewForm" class="mb-8 bg-gray-50 rounded-xl p-6 shadow flex flex-col gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Chọn số sao:</label>
+                                <div id="starRating" class="flex gap-1 text-2xl cursor-pointer">
+                                    <% for(let i = 1; i <= 5; i++) { %>
+                                        <i class="ri-star-line" data-value="<%= i %>"></i>
+                                    <% } %>
                                 </div>
+                                <input type="hidden" id="ratingInput" name="rating" value="5">
                             </div>
+                            <div>
+                                <label for="commentInput" class="block text-sm font-medium text-gray-700 mb-2">Nội dung đánh giá</label>
+                                <textarea id="commentInput" name="comment" rows="3" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" placeholder="Nhập nhận xét của bạn..." required></textarea>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Gửi đánh giá</button>
+                                <span id="reviewMsg" class="text-sm"></span>
+                            </div>
+                        </form>
+                        <% } else { %>
+                        <div class="mb-8 bg-gray-50 rounded-xl p-6 shadow flex flex-col items-center">
+                            <p class="mb-3 text-gray-700">Bạn cần đăng nhập để đánh giá sản phẩm.</p>
+                            <a href="/login?returnTo=<%= encodeURIComponent(request.originalUrl || '/') %>" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Đăng nhập</a>
                         </div>
-                        <div class="text-center py-8">
-                            <i class="ri-chat-3-line text-4xl text-gray-400 mb-4"></i>
-                            <p class="text-gray-500">Chưa có đánh giá nào cho sản phẩm này.</p>
+                        <% } %>
+                        <div class="">
+                            <h6 class="font-semibold text-gray-900 mb-3">Đánh giá gần đây</h6>
+                            <% if (approvedReviews && approvedReviews.length > 0) { %>
+                                <div class="space-y-6">
+                                    <% approvedReviews.forEach(function(review) { %>
+                                        <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                                            <div class="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                                                <%= review.userName || 'Ẩn danh' %>
+                                                <!-- Có thể thêm icon xác thực nếu cần -->
+                                            </div>
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <div class="flex text-yellow-400">
+                                                    <% for(let i = 1; i <= 5; i++) { %>
+                                                        <i class="ri-star-<%= i <= review.rating ? 'fill' : 'line' %> text-lg"></i>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                            <div class="text-gray-800 font-medium mb-1"><%= review.comment %></div>
+                                            <div class="text-xs text-gray-500"><%= new Date(review.createdAt).toLocaleDateString('vi-VN') %></div>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            <% } else { %>
+                                <div class="text-gray-500 italic">Chưa có đánh giá nào cho sản phẩm này.</div>
+                            <% } %>
                         </div>
                     </div>
+                    <!-- End Đánh giá sản phẩm -->
                 </div>
             </div>
+        </div>
 
-            <!-- Sản phẩm liên quan -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 class="text-2xl font-bold text-gray-900 mb-6">Sản phẩm liên quan</h3>
+        <!-- Sản phẩm liên quan -->
+        <div class="related-products">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h3 class="text-3xl font-bold text-gray-900 mb-8">Sản phẩm liên quan</h3>
                 <% if (relatedProducts && relatedProducts.length > 0) { %>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <% relatedProducts.forEach(relatedProduct => { %>
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                            <div class="related-product-card">
                                 <div class="relative">
                                     <img src="<%= relatedProduct.imageUrl %>" 
-                                         class="w-full h-48 object-cover" 
+                                         class="related-product-image" 
                                          alt="<%= relatedProduct.title %>">
                                     <% if (relatedProduct.isNew) { %>
-                                        <span class="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">Mới</span>
+                                        <span class="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Mới</span>
                                     <% } %>
                                     <% if (relatedProduct.discount) { %>
-                                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-<%= relatedProduct.discount %>%</span>
+                                        <span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">-<%= relatedProduct.discount %>%</span>
                                     <% } %>
                                 </div>
-                                <div class="p-4">
-                                    <h5 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2"><%= relatedProduct.title %></h5>
+                                <div class="p-6">
+                                    <h5 class="related-product-title"><%= relatedProduct.title %></h5>
+                                    
+                                    <!-- Thông tin sản phẩm liên quan -->
+                                    <div class="mb-3 space-y-2">
+                                        <!-- SKU -->
+                                        <div class="text-xs text-gray-500">
+                                            <i class="ri-barcode-line mr-1"></i>
+                                            SKU: <span class="font-mono"><%= relatedProduct.sku || 'N/A' %></span>
+                                        </div>
+                                        
+                                        <!-- Thương hiệu -->
+                                        <% if (relatedProduct.brand) { %>
+                                            <div class="text-xs">
+                                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                                    <%= relatedProduct.brand %>
+                                                </span>
+                                            </div>
+                                        <% } %>
+                                        
+                                        <!-- Tình trạng tồn kho -->
+                                        <div class="text-xs">
+                                            <% if (relatedProduct.stockQuantity > 10) { %>
+                                                <span class="text-green-600 font-medium">
+                                                    <i class="ri-checkbox-circle-line"></i> Còn hàng
+                                                </span>
+                                            <% } else if (relatedProduct.stockQuantity > 0) { %>
+                                                <span class="text-yellow-600 font-medium">
+                                                    <i class="ri-error-warning-line"></i> Sắp hết
+                                                </span>
+                                            <% } else { %>
+                                                <span class="text-red-600 font-medium">
+                                                    <i class="ri-close-circle-line"></i> Hết hàng
+                                                </span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Giá -->
                                     <div class="mb-3">
                                         <% if (relatedProduct.oldPrice) { %>
                                             <del class="text-gray-500 text-sm mr-2">
                                                 <%= relatedProduct.oldPrice.toLocaleString('vi-VN') %> ₫
                                             </del>
                                         <% } %>
-                                        <span class="text-lg font-bold text-red-600">
+                                        <span class="related-product-price">
                                             <%= relatedProduct.price.toLocaleString('vi-VN') %> ₫
                                         </span>
                                     </div>
-                                    <div class="flex items-center mb-3">
-                                        <% for(let i = 0; i < 5; i++) { %>
-                                            <i class="ri-star-fill text-sm <%= i < relatedProduct.rating ? 'text-yellow-400' : 'text-gray-300' %>"></i>
-                                        <% } %>
+                                    
+                                    <!-- Rating -->
+                                    <div class="flex items-center mb-4">
+                                        <div class="stars">
+                                            <% for(let i = 0; i < 5; i++) { %>
+                                                <i class="star <%= i < (relatedProduct.rating || 0) ? 'filled' : 'empty' %> ri-star-fill text-sm"></i>
+                                            <% } %>
+                                        </div>
+                                        <span class="text-xs text-gray-500 ml-2">(<%= relatedProduct.reviews ? relatedProduct.reviews.length : 0 %>)</span>
                                     </div>
-                                    <a href="/products/<%= relatedProduct._id %>" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                                    
+                                    <!-- Nút xem chi tiết -->
+                                    <a href="/products/<%= relatedProduct._id %>" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
                                         <i class="ri-eye-line"></i> Xem chi tiết
                                     </a>
                                 </div>
@@ -461,63 +906,72 @@
                         <% }); %>
                     </div>
                 <% } else { %>
-                    <div class="text-center py-8">
-                        <i class="ri-shopping-bag-line text-4xl text-gray-400 mb-4"></i>
-                        <p class="text-gray-500">Không có sản phẩm liên quan.</p>
+                    <div class="text-center py-12">
+                        <i class="ri-shopping-bag-line text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500 text-lg">Không có sản phẩm liên quan.</p>
                     </div>
                 <% } %>
             </div>
-        </main>
+        </div>
+    </main>
 
+    <!-- Data attributes for JavaScript -->
+    <div data-product-id="<%= product._id %>" data-max-stock="<%= product.stockQuantity %>" style="display: none;"></div>
     <script>
-        function increaseQuantity() {
-            const quantityInput = document.getElementById('quantity');
-            const hiddenQuantity = document.getElementById('hiddenQuantity');
-            let currentValue = parseInt(quantityInput.value);
-            if (currentValue < parseInt(quantityInput.max)) {
-                quantityInput.value = currentValue + 1;
-                hiddenQuantity.value = quantityInput.value;
-            }
-        }
-
-        function decreaseQuantity() {
-            const quantityInput = document.getElementById('quantity');
-            const hiddenQuantity = document.getElementById('hiddenQuantity');
-            let currentValue = parseInt(quantityInput.value);
-            if (currentValue > parseInt(quantityInput.min)) {
-                quantityInput.value = currentValue - 1;
-                hiddenQuantity.value = quantityInput.value;
-            }
-        }
-
-        // Cập nhật hidden input khi thay đổi quantity
-        document.getElementById('quantity').addEventListener('change', function() {
-            document.getElementById('hiddenQuantity').value = this.value;
-        });
-
-        // Xử lý tab switching
-        function showTab(tabName) {
-            // Ẩn tất cả tab content
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(content => {
-                content.style.display = 'none';
-            });
-
-            // Loại bỏ active class từ tất cả tab buttons
-            const tabButtons = document.querySelectorAll('.tab-button');
-            tabButtons.forEach(button => {
-                button.classList.remove('active', 'border-blue-500', 'text-blue-600');
-                button.classList.add('border-transparent', 'text-gray-500');
-            });
-
-            // Hiển thị tab được chọn
-            document.getElementById(tabName).style.display = 'block';
-
-            // Thêm active class cho tab button được chọn
-            const activeButton = document.getElementById(tabName + '-tab');
-            activeButton.classList.add('active', 'border-blue-500', 'text-blue-600');
-            activeButton.classList.remove('border-transparent', 'text-gray-500');
-        }
+      window.isAuthenticated = '<%= isAuthenticated %>';
     </script>
+    <!-- Product Detail JavaScript -->
+    <script src="/js/product-detail.js"></script>
 
     <%- include('../includes/end.ejs') %>
+
+    <!-- Scroll to Top Button -->
+<script>
+// Đánh giá sản phẩm
+if (document.getElementById('reviewForm')) {
+    const stars = document.querySelectorAll('#starRating i');
+    const ratingInput = document.getElementById('ratingInput');
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const value = this.getAttribute('data-value');
+            ratingInput.value = value;
+            stars.forEach((s, idx) => {
+                if (idx < value) {
+                    s.classList.add('ri-star-fill', 'text-yellow-400');
+                    s.classList.remove('ri-star-line');
+                } else {
+                    s.classList.remove('ri-star-fill', 'text-yellow-400');
+                    s.classList.add('ri-star-line');
+                }
+            });
+        });
+    });
+    document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const rating = ratingInput.value;
+        const comment = document.getElementById('commentInput').value;
+        const productId = '<%= product._id %>';
+        const msg = document.getElementById('reviewMsg');
+        msg.textContent = '';
+        try {
+            const res = await fetch(`/products/${productId}/review`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rating, comment })
+            });
+            const data = await res.json();
+            if (data.success) {
+                msg.textContent = 'Cảm ơn bạn đã đánh giá!';
+                msg.className = 'text-green-600';
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                msg.textContent = data.message || 'Có lỗi xảy ra.';
+                msg.className = 'text-red-600';
+            }
+        } catch (err) {
+            msg.textContent = 'Có lỗi xảy ra khi gửi đánh giá!';
+            msg.className = 'text-red-600';
+        }
+    });
+}
+</script>

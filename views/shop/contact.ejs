@@ -1,0 +1,348 @@
+<%- include('../includes/head.ejs') %>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+  <%- include('../includes/navigation.ejs') %>
+  
+  <!-- Hero Section -->
+  <section class="relative py-20 overflow-hidden bg-gradient-to-r from-blue-900 via-cyan-900 to-teal-900">
+    <div class="absolute inset-0 bg-black opacity-20"></div>
+    <div class="container mx-auto text-center relative z-10 px-4">
+      <h1 class="text-5xl md:text-6xl font-black text-white drop-shadow-2xl mb-6 animate-fade-in">
+        <span class="bg-gradient-to-r from-cyan-400 via-blue-500 to-teal-600 bg-clip-text text-transparent">
+          Liên hệ với chúng tôi
+        </span>
+      </h1>
+      <p class="text-xl md:text-2xl text-gray-200 mb-8 font-light animate-fade-in-up max-w-4xl mx-auto">
+        Nếu bạn có thắc mắc hoặc cần hỗ trợ, hãy liên hệ ngay với Shop Giày qua thông tin dưới đây hoặc điền form để chúng tôi phản hồi nhanh nhất.
+      </p>
+      
+      <!-- Floating contact icons -->
+      <div class="flex justify-center space-x-8 mt-12 animate-fade-in-up">
+        <div class="bg-white/20 backdrop-blur-sm rounded-full p-4 hover:bg-white/30 transition-all duration-300">
+          <span class="text-3xl">📞</span>
+        </div>
+        <div class="bg-white/20 backdrop-blur-sm rounded-full p-4 hover:bg-white/30 transition-all duration-300">
+          <span class="text-3xl">✉️</span>
+        </div>
+        <div class="bg-white/20 backdrop-blur-sm rounded-full p-4 hover:bg-white/30 transition-all duration-300">
+          <span class="text-3xl">📍</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Floating elements -->
+    <div class="absolute top-20 left-10 animate-bounce" style="animation-delay: 0s;">
+      <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full opacity-20"></div>
+    </div>
+    <div class="absolute top-32 right-20 animate-bounce" style="animation-delay: 1s;">
+      <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full opacity-20"></div>
+    </div>
+    <div class="absolute bottom-20 left-1/4 animate-bounce" style="animation-delay: 2s;">
+      <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full opacity-20"></div>
+    </div>
+  </section>
+  <main class="container mx-auto px-4 py-16">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Thông tin liên hệ -->
+      <section class="mb-16">
+        <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">
+          <span class="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            Thông tin liên hệ
+          </span>
+        </h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- Thông tin chi tiết -->
+          <div class="space-y-8">
+            <div class="bg-white rounded-3xl shadow-2xl p-8 hover:shadow-3xl transition-all duration-300 border-l-4 border-blue-500">
+              <div class="flex items-center mb-4">
+                <div class="bg-blue-100 p-3 rounded-full mr-4">
+                  <span class="text-2xl">📍</span>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">Địa chỉ cửa hàng</h3>
+              </div>
+              <p class="text-gray-700 text-lg">
+                123 Đường Nguyễn Văn A, Phường 1, Quận 1, TP. Hồ Chí Minh<br>
+                <span class="text-sm text-gray-500">Gần trung tâm thương mại, dễ dàng tìm kiếm</span>
+              </p>
+            </div>
+            
+            <div class="bg-white rounded-3xl shadow-2xl p-8 hover:shadow-3xl transition-all duration-300 border-l-4 border-green-500">
+              <div class="flex items-center mb-4">
+                <div class="bg-green-100 p-3 rounded-full mr-4">
+                  <span class="text-2xl">📞</span>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">Hotline & Điện thoại</h3>
+              </div>
+              <div class="space-y-2">
+                <p class="text-gray-700 text-lg">
+                  <span class="font-semibold">Hotline:</span> 
+                  <a href="tel:0123456789" class="text-green-600 hover:text-green-800 font-bold text-xl">0123 456 789</a>
+                </p>
+                <p class="text-gray-700 text-lg">
+                  <span class="font-semibold">Điện thoại:</span> 
+                  <a href="tel:0987654321" class="text-green-600 hover:text-green-800 font-bold">0987 654 321</a>
+                </p>
+                <p class="text-sm text-gray-500">Hỗ trợ 24/7, tư vấn miễn phí</p>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-3xl shadow-2xl p-8 hover:shadow-3xl transition-all duration-300 border-l-4 border-blue-500">
+              <div class="flex items-center mb-4">
+                <div class="bg-blue-100 p-3 rounded-full mr-4">
+                  <span class="text-2xl">✉️</span>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">Email hỗ trợ</h3>
+              </div>
+              <div class="space-y-2">
+                <p class="text-gray-700 text-lg">
+                  <span class="font-semibold">Email chính:</span> 
+                  <a href="mailto:info@shoestore.com" class="text-blue-600 hover:text-blue-800 font-bold">info@shoestore.com</a>
+                </p>
+                <p class="text-gray-700 text-lg">
+                  <span class="font-semibold">Hỗ trợ:</span> 
+                  <a href="mailto:support@shoestore.com" class="text-blue-600 hover:text-blue-800 font-bold">support@shoestore.com</a>
+                </p>
+                <p class="text-sm text-gray-500">Phản hồi trong vòng 2 giờ</p>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-3xl shadow-2xl p-8 hover:shadow-3xl transition-all duration-300 border-l-4 border-orange-500">
+              <div class="flex items-center mb-4">
+                <div class="bg-orange-100 p-3 rounded-full mr-4">
+                  <span class="text-2xl">🕒</span>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">Giờ làm việc</h3>
+              </div>
+              <div class="space-y-2 text-gray-700">
+                <p class="text-lg"><span class="font-semibold">Thứ 2 - Thứ 6:</span> 8:00 - 22:00</p>
+                <p class="text-lg"><span class="font-semibold">Thứ 7 - Chủ nhật:</span> 9:00 - 21:00</p>
+                <p class="text-sm text-gray-500">Mở cửa tất cả các ngày trong tuần</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Bản đồ -->
+          <div class="bg-white rounded-3xl shadow-2xl p-8 hover:shadow-3xl transition-all duration-300">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Vị trí cửa hàng</h3>
+            <div class="rounded-2xl overflow-hidden">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.502234567!2d106.700423315334!3d10.776889992322!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f1baf1baf1b%3A0x1baf1baf1baf1baf1!2zMTIzIMSQxrDhu51uZyBQZXRzaG9wLCBRdeG6rW4gMSwgVFAuIEhD!5e0!3m2!1svi!2s!4v1680000000000!5m2!1svi!2s" 
+                width="100%" 
+                height="400" 
+                style="border:0; border-radius: 12px;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+            </div>
+            <p class="text-center text-gray-600 mt-4">
+              <span class="text-2xl mr-2">🚗</span>
+              Có chỗ đậu xe miễn phí
+            </p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Mạng xã hội -->
+      <section class="mb-16">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">
+          <span class="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            Kết nối với chúng tôi
+          </span>
+        </h2>
+        
+        <div class="flex justify-center space-x-8">
+          <a href="#" class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 rounded-full hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl">
+            <span class="text-2xl">📘</span>
+            <span class="ml-2 font-semibold">Facebook</span>
+          </a>
+          <a href="#" class="bg-gradient-to-r from-blue-500 to-cyan-700 text-white p-4 rounded-full hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl">
+            <span class="text-2xl">📷</span>
+            <span class="ml-2 font-semibold">Instagram</span>
+          </a>
+          <a href="#" class="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-4 rounded-full hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl">
+            <span class="text-2xl">💬</span>
+            <span class="ml-2 font-semibold">Zalo</span>
+          </a>
+          <a href="#" class="bg-gradient-to-r from-red-500 to-red-700 text-white p-4 rounded-full hover:scale-110 transition-all duration-300 shadow-lg hover:shadow-xl">
+            <span class="text-2xl">📺</span>
+            <span class="ml-2 font-semibold">YouTube</span>
+          </a>
+        </div>
+      </section>
+      
+      <!-- Form liên hệ -->
+      <section class="max-w-4xl mx-auto">
+        <div class="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl p-8 md:p-12">
+          <h2 class="text-4xl font-bold text-center text-gray-800 mb-8">
+            <span class="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              Form liên hệ nhanh
+            </span>
+          </h2>
+          
+          <% if (typeof error !== 'undefined' && error) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+              <span class="font-semibold">Lỗi:</span> <%= error %>
+            </div>
+          <% } %>
+          
+          <% if (typeof success !== 'undefined' && success) { %>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
+              <span class="font-semibold">Thành công:</span> <%= success %>
+            </div>
+          <% } %>
+          
+          <form class="space-y-6" action="/contact" method="POST">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-gray-700 font-semibold mb-2 text-lg">
+                  <span class="text-2xl mr-2">👤</span>
+                  Họ tên
+                </label>
+                <input 
+                  type="text" 
+                  name="name" 
+                  class="w-full border-2 border-gray-300 rounded-xl px-6 py-4 text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300" 
+                  placeholder="Nhập họ và tên của bạn" 
+                  required
+                >
+              </div>
+              
+              <div>
+                <label class="block text-gray-700 font-semibold mb-2 text-lg">
+                  <span class="text-2xl mr-2">📧</span>
+                  Email hoặc số điện thoại
+                </label>
+                <input 
+                  type="text" 
+                  name="email" 
+                  class="w-full border-2 border-gray-300 rounded-xl px-6 py-4 text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300" 
+                  placeholder="Nhập email hoặc số điện thoại" 
+                  required
+                >
+              </div>
+            </div>
+            
+            <div>
+              <label class="block text-gray-700 font-semibold mb-2 text-lg">
+                <span class="text-2xl mr-2">💬</span>
+                Nội dung cần hỗ trợ
+              </label>
+              <textarea 
+                name="message" 
+                class="w-full border-2 border-gray-300 rounded-xl px-6 py-4 text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300" 
+                rows="6" 
+                placeholder="Hãy mô tả chi tiết vấn đề hoặc câu hỏi của bạn..." 
+                required
+              ></textarea>
+            </div>
+            
+            <div class="text-center">
+              <button 
+                type="submit" 
+                class="bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-bold py-4 px-12 rounded-full text-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 shadow-lg"
+              >
+                <span class="text-2xl mr-2">🚀</span>
+                Gửi ngay
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+  
+  <!-- Custom CSS for animations -->
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 1s ease-out;
+    }
+    
+    .animate-fade-in-up {
+      animation: fadeInUp 1s ease-out;
+    }
+    
+    .animate-slide-in-left {
+      animation: slideInLeft 1s ease-out;
+    }
+    
+    .animate-slide-in-right {
+      animation: slideInRight 1s ease-out;
+    }
+    
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .animate-pulse {
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .hover-lift:hover {
+      transform: translateY(-10px);
+      transition: transform 0.3s ease;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, rgba(87, 181, 231, 1), rgba(67, 161, 211, 1));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .form-input:focus {
+      transform: scale(1.02);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .contact-card {
+      transition: all 0.3s ease;
+    }
+    
+    .contact-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+  </style>
+  
+  <%- include('../includes/end.ejs') %>
+</body> 

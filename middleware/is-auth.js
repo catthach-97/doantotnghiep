@@ -5,13 +5,25 @@ module.exports = (req, res, next) => {
         console.log('🔐 Session user:', !!req.session?.user);
         
         if (!req.session.user) {
-            console.log('Chưa đăng nhập, chuyển hướng đến trang tạo user mặc định');
-            return res.redirect('/create-default-user');
+            console.log('Chưa đăng nhập');
+            // Kiểm tra nếu là API request
+            if (req.xhr || req.headers.accept?.includes('application/json') || req.path.startsWith('/admin/')) {
+                return res.status(401).json({ success: false, message: 'Chưa đăng nhập' });
+            }
+            // Lưu URL hiện tại để redirect sau khi đăng nhập
+            req.session.returnTo = req.originalUrl;
+            return res.redirect('/login');
         }
 
         if (!req.session.user._id) {
-            console.log('User không có _id, chuyển hướng đến trang tạo user mặc định');
-            return res.redirect('/create-default-user');
+            console.log('User không có _id');
+            // Kiểm tra nếu là API request
+            if (req.xhr || req.headers.accept?.includes('application/json') || req.path.startsWith('/admin/')) {
+                return res.status(401).json({ success: false, message: 'Session không hợp lệ' });
+            }
+            // Lưu URL hiện tại để redirect sau khi đăng nhập
+            req.session.returnTo = req.originalUrl;
+            return res.redirect('/login');
         }
 
         console.log('🔐 Auth passed for user:', req.session.user._id);

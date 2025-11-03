@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle || 'Thương hiệu - Shoe Store' %></title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'rgba(87, 181, 231, 1)',
+                        'primary-dark': 'rgba(67, 161, 211, 1)',
+                        secondary: '#8b5cf6',
+                        accent: '#06b6d4',
+                        'gray-50': '#f8fafc',
+                        'gray-100': '#f1f5f9',
+                        'gray-200': '#e2e8f0',
+                        'gray-300': '#cbd5e1',
+                        'gray-400': '#94a3b8',
+                        'gray-500': '#64748b',
+                        'gray-600': '#475569',
+                        'gray-700': '#334155',
+                        'gray-800': '#1e293b',
+                        'gray-900': '#0f172a'
+                    },
+                    fontFamily: {
+                        'pacifico': ['Pacifico', 'cursive']
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'scale-in': 'scaleIn 0.4s ease-out',
+                        'bounce-gentle': 'bounceGentle 2s infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        scaleIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.9)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' }
+                        },
+                        bounceGentle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        }
+                    },
+                    backdropBlur: {
+                        xs: '2px'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .brand-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        
+        .brand-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .brand-logo {
+            transition: all 0.3s ease;
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+        
+        .brand-logo:hover {
+            transform: scale(1.1) rotate(2deg);
+        }
+        
+        .search-input {
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+        
+        .filter-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .filter-btn.active {
+            transform: translateY(-2px) scale(1.05);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, rgba(87, 181, 231, 1), rgba(67, 161, 211, 1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .parallax-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        
+        .brand-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .brand-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <%- include('../includes/navigation', { user, isAdmin, isAuthenticated, path, cartCount }) %>
+
+    <!-- Hero Section with Parallax Effect -->
+    <section class="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+        <!-- Background with gradient overlay -->
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900"></div>
+        <div class="absolute inset-0 bg-black/20"></div>
+        
+        <!-- Floating elements -->
+        <div class="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full animate-float"></div>
+        <div class="absolute top-40 right-20 w-16 h-16 bg-white/5 rounded-full animate-bounce-gentle"></div>
+        <div class="absolute bottom-20 left-1/4 w-12 h-12 bg-white/10 rounded-full animate-pulse-slow"></div>
+        
+        <!-- Content -->
+        <div class="relative z-10 text-center text-white px-4 max-w-4xl mx-auto animate-fade-in">
+            <h1 class="text-5xl md:text-7xl font-bold font-pacifico mb-6 leading-tight">
+                <span class="gradient-text">Thương hiệu</span>
+                <br>
+                <span class="text-4xl md:text-5xl font-light">nổi tiếng</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed">
+                Khám phá các thương hiệu giày hàng đầu thế giới với chất lượng và thiết kế đỉnh cao
+            </p>
+            
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <!-- Total Brands -->
+                <div class="text-center group animate-scale-in">
+                    <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="ri-award-line text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-2"><%= totalBrands || 0 %></h3>
+                    <p class="text-gray-600 font-medium">Thương hiệu</p>
+                </div>
+                
+                <!-- Brands with Logo -->
+                <div class="text-center group animate-scale-in" style="animation-delay: 0.1s">
+                    <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="ri-image-line text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-2"><%= brandsWithLogo || 0 %></h3>
+                    <p class="text-gray-600 font-medium">Có logo</p>
+                </div>
+                
+                <!-- Products Count -->
+                <div class="text-center group animate-scale-in" style="animation-delay: 0.2s">
+                    <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="ri-shopping-bag-line text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-2">
+                        <%= Object.values(brandCounts).reduce((a, b) => a + b, 0) || 0 %>
+                    </h3>
+                    <p class="text-gray-600 font-medium">Sản phẩm</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="py-8 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-lg p-6 glass-effect">
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                        <h3 class="text-xl font-semibold text-gray-900">Bộ lọc & Sắp xếp</h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-500">Hiển thị:</span>
+                            <span class="font-semibold text-indigo-600"><%= brands ? brands.length : 0 %> thương hiệu</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Sort by Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Sắp xếp theo tên</label>
+                            <select name="sort" onchange="updateFilters()" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                                <option value="name" <%= sortBy === 'name' && sortOrder === 'asc' ? 'selected' : '' %>>A → Z</option>
+                                <option value="name_desc" <%= sortBy === 'name' && sortOrder === 'desc' ? 'selected' : '' %>>Z → A</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Sort by Date -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Sắp xếp theo ngày</label>
+                            <select name="date_sort" onchange="updateFilters()" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                                <option value="newest" <%= sortBy === 'createdAt' && sortOrder === 'desc' ? 'selected' : '' %>>Mới nhất</option>
+                                <option value="oldest" <%= sortBy === 'createdAt' && sortOrder === 'asc' ? 'selected' : '' %>>Cũ nhất</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Filter by Logo -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Lọc theo logo</label>
+                            <select name="logo_filter" onchange="updateFilters()" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                                <option value="all">Tất cả</option>
+                                <option value="with_logo">Có logo</option>
+                                <option value="without_logo">Không có logo</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Clear Filters -->
+                        <div class="flex items-end">
+                            <button onclick="clearFilters()" class="w-full px-4 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-colors filter-btn">
+                                <i class="ri-refresh-line mr-2"></i>Xóa bộ lọc
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brands Grid Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-7xl mx-auto">
+                <!-- Section Header -->
+                <div class="text-center mb-12 animate-fade-in">
+                    <h2 class="text-4xl font-bold text-gray-900 mb-4 font-pacifico">
+                        Danh sách thương hiệu
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                        <% if (search) { %>
+                            Kết quả tìm kiếm cho "<%= search %>"
+                        <% } else { %>
+                            Chọn thương hiệu yêu thích để khám phá sản phẩm
+                        <% } %>
+                    </p>
+                </div>
+                
+                <!-- Brands Grid -->
+                <div class="brand-grid">
+                    <% if (brands && brands.length > 0) { %>
+                        <% brands.forEach((brand, index) => { %>
+                            <div class="brand-card bg-white rounded-2xl shadow-lg p-6 text-center group animate-scale-in cursor-pointer" 
+                                 style="animation-delay: <%= (index * 0.1) %>s"
+                                 onclick="viewBrand('<%= brand.name %>')">
+                                
+                                <!-- Logo Container -->
+                                <div class="relative mb-6">
+                                    <div class="w-24 h-24 mx-auto rounded-2xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center group-hover:shadow-xl transition-all duration-300">
+                                        <% if (brand.logo && brand.logo !== '') { %>
+                                            <img src="<%= brand.logo %>" 
+                                                 alt="<%= brand.name %>" 
+                                                 class="brand-logo w-full h-full object-cover">
+                                        <% } else { %>
+                                            <div class="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-200 rounded-xl flex items-center justify-center">
+                                                <i class="ri-award-line text-indigo-500 text-3xl"></i>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                    
+                                    <!-- Status Badge -->
+                                    <div class="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+                                        <i class="ri-check-line text-white text-sm"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Brand Info -->
+                                <div class="mb-4">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
+                                        <%= brand.name %>
+                                    </h3>
+                                    <p class="text-gray-600 text-sm leading-relaxed line-clamp-2">
+                                        <%= brand.description || 'Thương hiệu nổi tiếng với chất lượng cao' %>
+                                    </p>
+                                </div>
+                                
+                                <!-- Stats -->
+                                <div class="flex items-center justify-between text-sm">
+                                    <div class="flex items-center text-indigo-600">
+                                        <i class="ri-shopping-bag-line mr-1"></i>
+                                        <span class="font-semibold"><%= brandCounts[brand.name] || 0 %> sản phẩm</span>
+                                    </div>
+                                    <div class="flex items-center text-gray-500">
+                                        <i class="ri-calendar-line mr-1"></i>
+                                        <span><%= brand.createdAt ? new Date(brand.createdAt).toLocaleDateString('vi-VN') : 'N/A' %></span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Hover Effect -->
+                                <div class="absolute inset-0 bg-gradient-to-t from-indigo-500/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <!-- Empty State -->
+                        <div class="col-span-full text-center py-20 animate-fade-in">
+                            <div class="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center">
+                                <i class="ri-award-line text-gray-400 text-6xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-500 mb-4">
+                                <% if (search) { %>
+                                    Không tìm thấy thương hiệu
+                                <% } else { %>
+                                    Chưa có thương hiệu nào
+                                <% } %>
+                            </h3>
+                            <p class="text-gray-400 mb-8 max-w-md mx-auto">
+                                <% if (search) { %>
+                                    Thử tìm kiếm với từ khóa khác hoặc xóa bộ lọc
+                                <% } else { %>
+                                    Thương hiệu sẽ xuất hiện ở đây khi được thêm vào
+                                <% } %>
+                            </p>
+                            <% if (search) { %>
+                                <button onclick="clearFilters()" class="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors">
+                                    <i class="ri-refresh-line mr-2"></i>Xóa bộ lọc
+                                </button>
+                            <% } %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <%- include('../includes/footer') %>
+
+    <script>
+        // Update filters function
+        function updateFilters() {
+            const form = document.createElement('form');
+            form.method = 'GET';
+            form.action = '/brands';
+            
+            
+            // Get sort selection
+            const sortSelect = document.querySelector('select[name="sort"]');
+            if (sortSelect && sortSelect.value) {
+                const sortField = document.createElement('input');
+                sortField.type = 'hidden';
+                sortField.name = 'sort';
+                sortField.value = sortSelect.value === 'name_desc' ? 'name' : 'name';
+                form.appendChild(sortField);
+                
+                const orderField = document.createElement('input');
+                orderField.type = 'hidden';
+                orderField.name = 'order';
+                orderField.value = sortSelect.value === 'name_desc' ? 'desc' : 'asc';
+                form.appendChild(orderField);
+            }
+            
+            // Get date sort selection
+            const dateSortSelect = document.querySelector('select[name="date_sort"]');
+            if (dateSortSelect && dateSortSelect.value) {
+                const sortField = document.createElement('input');
+                sortField.type = 'hidden';
+                sortField.name = 'sort';
+                sortField.value = 'createdAt';
+                form.appendChild(sortField);
+                
+                const orderField = document.createElement('input');
+                orderField.type = 'hidden';
+                orderField.name = 'order';
+                orderField.value = dateSortSelect.value === 'newest' ? 'desc' : 'asc';
+                form.appendChild(orderField);
+            }
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+        
+        // Clear filters function
+        function clearFilters() {
+            window.location.href = '/brands';
+        }
+        
+        // View brand function - chuyển đến trang sản phẩm của thương hiệu
+        function viewBrand(brandName) {
+            // Chuyển đến trang sản phẩm với filter theo thương hiệu
+            window.location.href = `/products?brand=${encodeURIComponent(brandName)}`;
+        }
+        
+        
+        // Add loading animation for brand cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const brandCards = document.querySelectorAll('.brand-card');
+            brandCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle || 'Trang chủ - Shoe Store' %></title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'rgba(87, 181, 231, 1)',
+                        'primary-dark': 'rgba(67, 161, 211, 1)',
+                        secondary: '#8b5cf6',
+                        accent: '#06b6d4'
+                    },
+                    fontFamily: {
+                        'pacifico': ['Pacifico', 'cursive']
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                        'slide-up': 'slideUp 0.8s ease-out',
+                        'scale-in': 'scaleIn 0.6s ease-out',
+                        'bounce-gentle': 'bounceGentle 2s infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-in-left': 'slideInLeft 0.8s ease-out',
+                        'slide-in-right': 'slideInRight 0.8s ease-out'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(50px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        scaleIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.8)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' }
+                        },
+                        bounceGentle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        slideInLeft: {
+                            '0%': { opacity: '0', transform: 'translateX(-50px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' }
+                        },
+                        slideInRight: {
+                            '0%': { opacity: '0', transform: 'translateX(50px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .hero-slide {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 80vh;
+        }
+        
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .product-image {
+            aspect-ratio: 1;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+        
+        .product-image:hover {
+            transform: scale(1.1);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, rgba(87, 181, 231, 1), rgba(67, 161, 211, 1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .parallax-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        
+        .swiper-pagination-bullet {
+            background: white !important;
+            opacity: 0.5 !important;
+        }
+        
+        .swiper-pagination-bullet-active {
+            opacity: 1 !important;
+            background: #6366f1 !important;
+        }
+        
+        .swiper-button-next,
+        .swiper-button-prev {
+            color: white !important;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            width: 50px !important;
+            height: 50px !important;
+            margin-top: -25px !important;
+        }
+        
+        .swiper-button-next:after,
+        .swiper-button-prev:after {
+            font-size: 20px !important;
+        }
+        
+        .category-card {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .category-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .floating-elements::before,
+        .floating-elements::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .floating-elements::before {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-elements::after {
+            top: 60%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+        
+        /* Category Card Styles */
+        .category-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+            z-index: 1;
+        }
+        
+        .category-card:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .category-card .content-overlay {
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Enhanced hover effects */
+        .category-card:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Text glow effect */
+        .category-card h3 {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .category-card:hover h3 {
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <%- include('../includes/navigation', { user, isAdmin, isAuthenticated, path, cartCount }) %>
+
+    <!-- Hero Slider Section -->
+    <section class="hero-slider-section relative overflow-hidden w-full">
+        <div class="swiper hero-swiper w-full">
+            <div class="swiper-wrapper">
+                <% if (slides && slides.length > 0) { %>
+                    <% slides.forEach((slide, index) => { %>
+                        <div class="swiper-slide">
+                            <div class="hero-slide relative" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('<%= slide.image %>');">
+                                <div class="floating-elements"></div>
+                                <div class="w-full max-w-7xl mx-auto px-4 h-full flex items-start justify-start pt-48">
+                                    <div class="max-w-4xl text-white animate-fade-in text-left">
+                                        <h1 class="text-6xl md:text-8xl font-bold font-pacifico mb-6 leading-tight">
+                                            <span class="gradient-text"><%= slide.title %></span>
+                                            <% if (slide.subtitle) { %>
+                                                <br>
+                                                <span class="text-4xl md:text-5xl font-light"><%= slide.subtitle %></span>
+                                            <% } %>
+                                        </h1>
+                                        <% if (slide.description) { %>
+                                            <p class="text-xl md:text-2xl mb-8 leading-relaxed text-gray-200">
+                                                <%= slide.description %>
+                                            </p>
+                                        <% } %>
+                                        <% if (slide.link) { %>
+                                            <div class="flex flex-col sm:flex-row gap-4">
+                                                <a href="<%= slide.link %>" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                                    <i class="ri-shopping-cart-line mr-2"></i>
+                                                    <%= slide.buttonText || 'Xem ngay' %>
+                                                </a>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <!-- Fallback slides nếu không có slides từ database -->
+                    <div class="swiper-slide" style="display: block;">
+                        <div class="hero-slide relative" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2012&q=80');">
+                            <div class="floating-elements"></div>
+                            <div class="w-full max-w-7xl mx-auto px-4 h-full flex items-start justify-start pt-32">
+                                <div class="max-w-4xl text-white animate-fade-in text-left">
+                                    <h1 class="text-6xl md:text-8xl font-bold font-pacifico mb-6 leading-tight">
+                                        <span class="gradient-text">Giày Thể Thao</span>
+                                        <br>
+                                        <span class="text-4xl md:text-5xl font-light">Cao Cấp</span>
+                                    </h1>
+                                    <p class="text-xl md:text-2xl mb-8 leading-relaxed text-gray-200">
+                                        Khám phá bộ sưu tập giày thể thao mới nhất với công nghệ tiên tiến và thiết kế đỉnh cao
+                                    </p>
+                                    <div class="flex flex-col sm:flex-row gap-4">
+                                        <a href="/products" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                            <i class="ri-shopping-cart-line mr-2"></i>
+                                            Mua ngay
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+
+
+    <!-- Categories Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16 animate-fade-in">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 font-pacifico">
+                        Danh mục sản phẩm
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        Khám phá các danh mục giày đa dạng phù hợp với mọi nhu cầu
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <% if (categories && categories.length > 0) { %>
+                        <% categories.forEach((category, index) => { %>
+                            <% if (category.imageUrl) { %>
+                                <div class="category-card group relative rounded-2xl overflow-hidden shadow-xl cursor-pointer animate-scale-in transform transition-all duration-500 hover:scale-105 hover:shadow-2xl" 
+                                     style="height: 300px;"
+                                     data-animation-delay="<%= (index * 0.1) %>"
+                                     onclick="window.location.href='/products?category=<%= category.slug || category.name %>'">
+                                    
+                                    <!-- Background Image -->
+                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-500 group-hover:scale-110"
+                                         style="background-image: url('<%= category.imageUrl %>');">
+                                    </div>
+                                
+                                <!-- Dark Overlay -->
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 transition-all duration-500 group-hover:from-black/70 group-hover:via-black/30 group-hover:to-black/10"></div>
+                                
+                                <!-- Content -->
+                                <div class="content-overlay h-full flex flex-col justify-end p-8 text-white">
+                                    <!-- Title -->
+                                    <h3 class="text-2xl font-bold mb-3 group-hover:text-3xl transition-all duration-300 leading-tight">
+                                        <%= category.name %>
+                                    </h3>
+                                    
+                                    <!-- Description -->
+                                    <p class="text-sm opacity-90 group-hover:opacity-100 group-hover:text-base transition-all duration-300 leading-relaxed">
+                                        <%= category.description || 'Danh mục sản phẩm chất lượng cao' %>
+                                    </p>
+                                    
+                                    <!-- Hover Arrow -->
+                                    <div class="mt-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                        <i class="ri-arrow-right-line text-xl"></i>
+                                    </div>
+                                </div>
+                                
+                                    <!-- Shine Effect -->
+                                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <!-- Simple card for categories without images -->
+                                <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl p-8 text-center text-gray-700 hover:from-gray-200 hover:to-gray-300 transition-all duration-300 cursor-pointer animate-scale-in" 
+                                     style="height: 300px;"
+                                     data-animation-delay="<%= (index * 0.1) %>"
+                                     onclick="window.location.href='/products?category=<%= category.slug || category.name %>'">
+                                    
+                                    <div class="h-full flex flex-col justify-center items-center">
+                                        <h3 class="text-2xl font-bold mb-3 leading-tight">
+                                            <%= category.name %>
+                                        </h3>
+                                        
+                                        <p class="text-sm opacity-80 leading-relaxed">
+                                            <%= category.description || 'Danh mục sản phẩm chất lượng cao' %>
+                                        </p>
+                                    </div>
+                                </div>
+                            <% } %>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="col-span-full text-center py-12">
+                            <i class="ri-folder-line text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-500 mb-2">Chưa có danh mục nào</h3>
+                            <p class="text-gray-400">Danh mục sẽ xuất hiện ở đây khi được thêm vào</p>
+                        </div>
+                    <% } %>
+                </div>
+                
+                <!-- View All Categories Button -->
+                <div class="text-center mt-12 animate-fade-in">
+                    <a href="/categories" class="inline-flex items-center px-8 py-4 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <i class="ri-arrow-right-line mr-2 text-lg"></i>
+                        Xem tất cả danh mục
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16 animate-fade-in">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 font-pacifico">
+                        Sản phẩm nổi bật
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        Những sản phẩm được yêu thích nhất với giá cả hợp lý
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <% if (featuredProducts && featuredProducts.length > 0) { %>
+                        <% featuredProducts.forEach((product, index) => { %>
+                            <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden animate-scale-in" 
+                                 data-animation-delay="<%= (index * 0.1) %>">
+                                <div class="relative">
+                                    <% if (product.imageUrl) { %>
+                                        <img src="<%= product.imageUrl %>" 
+                                             alt="<%= product.title %>" 
+                                             class="product-image w-full">
+                                    <% } else { %>
+                                        <div class="product-image w-full bg-gray-200 flex items-center justify-center">
+                                            <i class="ri-image-line text-4xl text-gray-400"></i>
+                                        </div>
+                                    <% } %>
+                                    
+                                    <% if (product.discount && product.discount > 0) { %>
+                                        <div class="absolute top-4 right-4">
+                                            <span class="px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded-full">-<%= product.discount %>%</span>
+                                        </div>
+                                    <% } else if (index === 0) { %>
+                                        <div class="absolute top-4 right-4">
+                                            <span class="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-full">Mới</span>
+                                        </div>
+                                    <% } else if (index === 1) { %>
+                                        <div class="absolute top-4 right-4">
+                                            <span class="px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded-full">Hot</span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="text-base font-semibold text-gray-900 mb-2" style="white-space: nowrap; overflow: visible; word-break: keep-all;"><%= product.title %></h3>
+                                    <p class="text-gray-600 text-xs mb-4" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-break: keep-all;"><%= product.description || 'Sản phẩm chất lượng cao' %></p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-2">
+                                            <% if (product.discount && product.discount > 0) { %>
+                                                <% const discountedPrice = product.price * (1 - product.discount / 100); %>
+                                                <span class="text-2xl font-bold text-primary"><%= discountedPrice.toLocaleString('vi-VN') %>đ</span>
+                                                <span class="text-sm text-gray-500 line-through"><%= product.price.toLocaleString('vi-VN') %>đ</span>
+                                            <% } else { %>
+                                                <span class="text-2xl font-bold text-primary"><%= product.price ? product.price.toLocaleString('vi-VN') : '0' %>đ</span>
+                                            <% } %>
+                                        </div>
+                                        <button class="w-10 h-10 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors" 
+                                                onclick="addToCart('<%= product._id %>')">
+                                            <i class="ri-shopping-cart-line"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="col-span-full text-center py-12">
+                            <i class="ri-shopping-bag-line text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-500 mb-2">Chưa có sản phẩm nào</h3>
+                            <p class="text-gray-400">Sản phẩm sẽ xuất hiện ở đây khi được thêm vào</p>
+                        </div>
+                    <% } %>
+                </div>
+                
+                <div class="text-center mt-12 animate-fade-in">
+                    <a href="/products" class="inline-flex items-center px-8 py-4 bg-primary text-white rounded-xl hover:bg-primary-dark transition-all duration-300 transform hover:scale-105 font-semibold text-lg">
+                        <i class="ri-arrow-right-line mr-2"></i>
+                        Xem tất cả sản phẩm
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section - Moved to bottom -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16 animate-fade-in">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 font-pacifico">
+                        Tại sao chọn chúng tôi?
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        Chúng tôi cam kết mang đến những sản phẩm chất lượng cao nhất với dịch vụ tốt nhất
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="feature-card bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8 text-center animate-slide-in-left">
+                        <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center">
+                            <i class="ri-shield-check-line text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Chất lượng đảm bảo</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Tất cả sản phẩm đều được kiểm tra kỹ lưỡng và đảm bảo chất lượng 100%
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl p-8 text-center animate-fade-in" style="animation-delay: 0.2s">
+                        <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center">
+                            <i class="ri-truck-line text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Giao hàng nhanh</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Giao hàng miễn phí trong 24h cho đơn hàng trên 500k, toàn quốc
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card bg-gradient-to-br from-purple-50 to-pink-100 rounded-2xl p-8 text-center animate-slide-in-right" style="animation-delay: 0.4s">
+                        <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center">
+                            <i class="ri-customer-service-2-line text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Hỗ trợ 24/7</h3>
+                        <p class="text-gray-600 leading-relaxed">
+                            Đội ngũ chăm sóc khách hàng chuyên nghiệp, sẵn sàng hỗ trợ mọi lúc
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <%- include('../includes/footer') %>
+
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <script>
+        // Initialize Swiper
+        const swiper = new Swiper('.hero-swiper', {
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.animate-fade-in, .animate-slide-up, .animate-scale-in, .animate-slide-in-left, .animate-slide-in-right').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add loading animation
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+
+        // Set animation delay from data attributes
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('[data-animation-delay]');
+            elements.forEach(element => {
+                const delay = element.getAttribute('data-animation-delay');
+                element.style.animationDelay = delay + 's';
+            });
+        });
+
+        // Add to cart function - chuyển đến trang chi tiết sản phẩm
+        function addToCart(productId) {
+            // Chuyển đến trang chi tiết sản phẩm
+            window.location.href = `/products/${productId}`;
+        }
+    </script>
+</body>
+</html>

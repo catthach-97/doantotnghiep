@@ -1,0 +1,231 @@
+<%- include('../includes/admin-layout.ejs', { 
+    pageTitle: 'Thêm sản phẩm', 
+    path: '/admin/add-product',
+    user: user,
+    body: `
+    <!-- Page Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Thêm sản phẩm mới</h1>
+                <p class="mt-2 text-gray-600">Thêm sản phẩm mới vào cửa hàng</p>
+            </div>
+            <a href="/admin/products" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <i class="ri-arrow-left-line mr-2"></i>
+                Quay lại
+            </a>
+        </div>
+    </div>
+    
+    <!-- Add Product Form -->
+    <div class="bg-white shadow rounded-lg">
+        <form action="/admin/add-product" method="POST" enctype="multipart/form-data" class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Left Column -->
+                <div class="space-y-6">
+                    <!-- Product Name -->
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Tên sản phẩm *</label>
+                        <input type="text" id="title" name="title" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nhập tên sản phẩm">
+                    </div>
+                    
+                    
+                    <!-- Product Image -->
+                    <div>
+                        <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Hình ảnh sản phẩm *</label>
+                        <input type="file" id="image" name="image" accept="image/*" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <p class="mt-1 text-sm text-gray-500">Chỉ chấp nhận file ảnh (JPEG, PNG, JPG) tối đa 5MB</p>
+                    </div>
+                    
+                    <!-- Price -->
+                    <div>
+                        <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Giá sản phẩm *</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">₫</span>
+                            </div>
+                            <input type="number" id="price" name="price" step="0.01" required class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0.00">
+                        </div>
+                    </div>
+                    
+                    <!-- Brand -->
+                    <div>
+                        <label for="brand" class="block text-sm font-medium text-gray-700 mb-2">Thương hiệu</label>
+                        <select id="brand" name="brand" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">-- Chọn thương hiệu --</option>
+                            ${brands && brands.length > 0 ? brands.map(brand => 
+                                '<option value="' + brand.name + '">' + brand.name + '</option>'
+                            ).join('') : ''}
+                        </select>
+                    </div>
+                    
+                    <!-- Category -->
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Danh mục *</label>
+                        <select id="category" name="category" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">-- Chọn danh mục --</option>
+                            ${categories && categories.length > 0 ? categories.map(cat => 
+                                '<option value="' + (cat.slug || cat._id) + '">' + (cat.name || 'Danh mục không tên') + '</option>'
+                            ).join('') : ''}
+                        </select>
+                    </div>
+                    
+                </div>
+                
+                <!-- Right Column -->
+                <div class="space-y-6">
+                    <!-- Description -->
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Mô tả sản phẩm *</label>
+                        <textarea id="description" name="description" rows="6" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nhập mô tả chi tiết về sản phẩm"></textarea>
+                    </div>
+                    
+                    
+                    <!-- Stock Quantity -->
+                    <div>
+                        <label for="stockQuantity" class="block text-sm font-medium text-gray-700 mb-2">Số lượng tồn kho *</label>
+                        <input type="number" id="stockQuantity" name="stockQuantity" min="0" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0" onchange="updateStockStatus()">
+                        <div id="stockStatusDisplay" class="mt-2 p-2 rounded-md text-sm font-medium hidden">
+                            <span id="stockStatusText"></span>
+                        </div>
+                        <p class="mt-1 text-sm text-gray-500">
+                            <strong>Trạng thái:</strong><br>
+                            • 0 sản phẩm → Hết hàng<br>
+                            • 1-4 sản phẩm → Sắp hết hàng<br>
+                            • 5-10 sản phẩm → Ít hàng<br>
+                            • >10 sản phẩm → Còn hàng
+                        </p>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="mt-8 flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a href="/admin/products" class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Hủy
+                </a>
+                <button type="submit" class="px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <i class="ri-save-line mr-2"></i>
+                    Thêm sản phẩm
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Form Validation Script -->
+    <script>
+        function updateStockStatus() {
+            const stockInput = document.getElementById('stockQuantity');
+            const statusDisplay = document.getElementById('stockStatusDisplay');
+            const statusText = document.getElementById('stockStatusText');
+            
+            const quantity = parseInt(stockInput.value) || 0;
+            let status = '';
+            let statusClass = '';
+            
+            if (quantity === 0) {
+                status = 'Hết hàng';
+                statusClass = 'bg-red-100 text-red-800 border border-red-200';
+            } else if (quantity >= 1 && quantity <= 4) {
+                status = 'Sắp hết hàng';
+                statusClass = 'bg-orange-100 text-orange-800 border border-orange-200';
+            } else if (quantity >= 5 && quantity <= 10) {
+                status = 'Ít hàng';
+                statusClass = 'bg-yellow-100 text-yellow-800 border border-yellow-200';
+            } else {
+                status = 'Còn hàng';
+                statusClass = 'bg-green-100 text-green-800 border border-green-200';
+            }
+            
+            statusText.textContent = status;
+            statusDisplay.className = 'mt-2 p-2 rounded-md text-sm font-medium ' + statusClass;
+            statusDisplay.classList.remove('hidden');
+        }
+
+        function updateSkuPreview() {
+            const brandSelect = document.getElementById('brand');
+            const categorySelect = document.getElementById('category');
+            const skuDisplay = document.getElementById('generatedSku');
+            
+            const brand = brandSelect.value || '';
+            const category = categorySelect.value || '';
+            
+            let prefix = 'SP'; // Mặc định
+            
+            if (brand) {
+                // Ưu tiên brand trước
+                prefix = brand.substring(0, 3).toUpperCase();
+            } else if (category) {
+                // Nếu không có brand thì dùng category
+                prefix = category.substring(0, 3).toUpperCase();
+            }
+            
+            const previewSku = prefix + '-XXXX';
+            skuDisplay.textContent = previewSku;
+            skuDisplay.className = 'text-blue-600 font-mono';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const titleInput = document.getElementById('title');
+            const priceInput = document.getElementById('price');
+            const categorySelect = document.getElementById('category');
+            const brandSelect = document.getElementById('brand');
+            const descriptionTextarea = document.getElementById('description');
+            const stockInput = document.getElementById('stockQuantity');
+            
+            // Cập nhật trạng thái tồn kho và SKU preview khi trang load
+            updateStockStatus();
+            updateSkuPreview();
+            
+            // Thêm event listeners cho brand và category để cập nhật SKU preview
+            brandSelect.addEventListener('change', updateSkuPreview);
+            categorySelect.addEventListener('change', updateSkuPreview);
+            
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                
+                // Clear previous error styles
+                [titleInput, priceInput, categorySelect, descriptionTextarea, stockInput].forEach(input => {
+                    input.classList.remove('border-red-500');
+                });
+                
+                // Validate title
+                if (!titleInput.value.trim()) {
+                    titleInput.classList.add('border-red-500');
+                    isValid = false;
+                }
+                
+                // Validate price
+                if (!priceInput.value || parseFloat(priceInput.value) <= 0) {
+                    priceInput.classList.add('border-red-500');
+                    isValid = false;
+                }
+                
+                // Validate category
+                if (!categorySelect.value) {
+                    categorySelect.classList.add('border-red-500');
+                    isValid = false;
+                }
+                
+                // Validate description
+                if (!descriptionTextarea.value.trim()) {
+                    descriptionTextarea.classList.add('border-red-500');
+                    isValid = false;
+                }
+                
+                // Validate stock
+                if (!stockInput.value || parseInt(stockInput.value) < 0) {
+                    stockInput.classList.add('border-red-500');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Vui lòng điền đầy đủ thông tin bắt buộc');
+                }
+            });
+        });
+    </script>
+    ` }) %>

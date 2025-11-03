@@ -1,105 +1,92 @@
-<%- include('../includes/head.ejs') %>
-<link rel="stylesheet" href="/css/error.css">
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lỗi Server - 500</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        .error-animation {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-30px);
+            }
+            60% {
+                transform: translateY(-15px);
+            }
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
 </head>
-
-<body>
-    <%- include('../includes/navigation.ejs') %>
-    
-    <main class="error-container">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 col-md-10 text-center">
-                    <div class="error-content">
-                        <div class="error-icon">
-                            <i class="fas fa-exclamation-triangle fa-5x text-warning mb-4"></i>
-                        </div>
-                        
-                        <h1 class="error-code display-1 fw-bold text-danger mb-3">500</h1>
-                        
-                        <h2 class="error-title h3 mb-3">Lỗi máy chủ nội bộ</h2>
-                        
-                        <p class="error-message text-muted mb-4">
-                            <%= message || 'Đã xảy ra lỗi không mong muốn. Chúng tôi đang khắc phục sự cố này.' %>
-                        </p>
-                        
-                        <div class="error-actions mb-5">
-                            <a href="/" class="btn btn-primary btn-lg me-3">
-                                <i class="fas fa-home me-2"></i>
-                                Về trang chủ
-                            </a>
-                            
-                            <button onclick="location.reload()" class="btn btn-outline-secondary btn-lg me-3">
-                                <i class="fas fa-redo me-2"></i>
-                                Thử lại
-                            </button>
-                            
-                            <a href="/contact" class="btn btn-outline-info btn-lg">
-                                <i class="fas fa-envelope me-2"></i>
-                                Báo lỗi
-                            </a>
-                        </div>
-                        
-                        <div class="error-info">
-                            <div class="alert alert-light" role="alert">
-                                <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Thông tin hữu ích:</h6>
-                                <ul class="mb-0 text-start">
-                                    <li>Vui lòng thử lại sau vài phút</li>
-                                    <li>Kiểm tra kết nối internet của bạn</li>
-                                    <li>Nếu lỗi vẫn tiếp tục, hãy liên hệ với chúng tôi</li>
-                                    <li>Bạn có thể quay lại trang trước đó</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <% if (typeof error !== 'undefined' && process.env.NODE_ENV === 'development') { %>
-                            <div class="error-debug mt-4">
-                                <div class="card">
-                                    <div class="card-header bg-danger text-white">
-                                        <h6 class="mb-0"><i class="fas fa-bug me-2"></i>Debug Information (Development Only)</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <h6>Error Message:</h6>
-                                        <pre class="bg-light p-2 rounded"><%= error.message %></pre>
-                                        
-                                        <% if (typeof stack !== 'undefined') { %>
-                                            <h6 class="mt-3">Stack Trace:</h6>
-                                            <pre class="bg-light p-2 rounded small"><%= stack %></pre>
-                                        <% } %>
-                                    </div>
-                                </div>
-                            </div>
-                        <% } %>
-                    </div>
+<body class="gradient-bg min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full mx-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 text-center">
+            <!-- Error Icon -->
+            <div class="error-animation mb-6">
+                <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                    <i class="ri-error-warning-line text-red-500 text-4xl"></i>
                 </div>
             </div>
-        </div>
-    </main>
-    
-    <%- include('../includes/end.ejs') %>
-    
-    <script>
-        // Tự động reload trang sau 60 giây
-        let countdown = 60;
-        const countdownElement = document.createElement('div');
-        countdownElement.className = 'mt-3 text-muted';
-        countdownElement.innerHTML = `<small>Trang sẽ tự động tải lại sau <span id="countdown">${countdown}</span> giây</small>`;
-        document.querySelector('.error-actions').appendChild(countdownElement);
-        
-        const timer = setInterval(() => {
-            countdown--;
-            document.getElementById('countdown').textContent = countdown;
             
-            if (countdown <= 0) {
-                clearInterval(timer);
-                location.reload();
-            }
-        }, 1000);
+            <!-- Error Title -->
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Lỗi Server 500</h1>
+            
+            <!-- Error Message -->
+            <p class="text-gray-600 mb-6">
+                Xin lỗi, đã xảy ra lỗi nội bộ server. Chúng tôi đang khắc phục sự cố này.
+            </p>
+            
+            <!-- Error Details (if available) -->
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-2">Chi tiết lỗi:</h3>
+                    <code class="text-xs text-red-600 break-all"><%= error %></code>
+                </div>
+            <% } %>
+            
+            <!-- Action Buttons -->
+            <div class="space-y-3">
+                <button onclick="window.history.back()" 
+                        class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+                    <i class="ri-arrow-left-line mr-2"></i>
+                    Quay lại
+                </button>
+                
+                <a href="/" 
+                   class="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center">
+                    <i class="ri-home-line mr-2"></i>
+                    Về trang chủ
+                </a>
+                
+                <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                    <a href="/admin/dashboard" 
+                       class="w-full bg-green-100 text-green-700 py-3 px-6 rounded-lg hover:bg-green-200 transition-colors flex items-center justify-center">
+                        <i class="ri-dashboard-line mr-2"></i>
+                        Admin Dashboard
+                    </a>
+                <% } %>
+            </div>
+            
+            <!-- Help Text -->
+            <div class="mt-6 text-sm text-gray-500">
+                <p>Nếu lỗi vẫn tiếp tục xảy ra, vui lòng liên hệ với chúng tôi.</p>
+            </div>
+        </div>
         
-        // Dừng countdown khi user tương tác
-        document.addEventListener('click', () => {
-            clearInterval(timer);
-            countdownElement.style.display = 'none';
-        });
-    </script>
+        <!-- Footer -->
+        <div class="text-center mt-6">
+            <p class="text-white text-sm">
+                © 2024 Shop Admin. Tất cả quyền được bảo lưu.
+            </p>
+        </div>
+    </div>
 </body>
 </html>

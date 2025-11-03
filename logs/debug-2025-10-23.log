@@ -1,0 +1,8 @@
+[15:00:26 23/10/2025] [DEBUG] Request authentication | Meta: {"url":"/","method":"GET","isAuthenticated":true,"isAdmin":true,"userId":"68ccdf9b7eea2d6be5a2f41b","cartCount":0}
+[15:00:36 23/10/2025] [DEBUG] Request authentication | Meta: {"url":"/","method":"GET","isAuthenticated":true,"isAdmin":true,"userId":"68ccdf9b7eea2d6be5a2f41b","cartCount":0}
+[15:00:40 23/10/2025] [DEBUG] Request authentication | Meta: {"url":"/favicon.ico","method":"GET","isAuthenticated":true,"isAdmin":true,"userId":"68ccdf9b7eea2d6be5a2f41b","cartCount":0}
+[15:00:57 23/10/2025] [DEBUG] Request authentication | Meta: {"url":"/admin/dashboard","method":"GET","isAuthenticated":true,"isAdmin":true,"userId":"68ccdf9b7eea2d6be5a2f41b","cartCount":0}
+[15:01:02 23/10/2025] [DEBUG] Request authentication | Meta: {"url":"/logout","method":"POST","isAuthenticated":true,"isAdmin":true,"userId":"68ccdf9b7eea2d6be5a2f41b","cartCount":0}
+[15:01:02 23/10/2025] [DEBUG] Request authentication | Meta: {"url":"/","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[15:24:45 23/10/2025] [DEBUG] Request authentication | Meta: {"url":"/login","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[16:36:14 23/10/2025] [DEBUG] Request authentication | Meta: {"url":"/signup","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin cá nhân - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin-sidebar.css">
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-64 text-white flex flex-col">
+            <!-- Logo -->
+            <div class="p-6 border-b border-blue-600">
+                <h1 class="text-2xl font-bold">Shoe Store</h1>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="flex-1 p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="/admin/dashboard" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/dashboard' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                            <i class="ri-dashboard-line mr-3 <%= path === '/admin/dashboard' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/products" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/products' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                            <i class="ri-shopping-bag-line mr-3 <%= path === '/admin/products' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                            Quản lý sản phẩm
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/orders" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/orders' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                            <i class="ri-file-list-line mr-3 <%= path === '/admin/orders' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                            Đơn hàng
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/accounts" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/accounts' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                            <i class="ri-user-line mr-3 <%= path === '/admin/accounts' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                            Tài khoản
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/categories" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/categories' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                            <i class="ri-folder-line mr-3 <%= path === '/admin/categories' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                            Danh mục
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/brands" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/brands' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                            <i class="ri-price-tag-3-line mr-3"></i>
+                            Thương hiệu
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/reviews" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/reviews' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                            <i class="ri-star-line mr-3"></i>
+                            Đánh giá
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/slides" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors <%= path === '/admin/slides' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' %>">
+                            <i class="ri-image-line mr-3"></i>
+                            Slide Banner
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- User Profile -->
+            <div class="p-4 border-t border-blue-600">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                        <i class="ri-user-line text-white"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm font-medium"><%= user ? user.name : 'Admin' %></div>
+                        <div class="text-xs text-blue-200"><%= user ? user.email : 'admin@example.com' %></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Thông tin cá nhân</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="p-2 text-gray-500 hover:text-gray-700">
+                            <i class="ri-notification-line text-xl"></i>
+                        </button>
+                        <!-- User Dropdown -->
+                        <div class="relative">
+                            <button id="user-menu-button" class="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md px-3 py-2 transition-colors">
+                                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                    <i class="ri-user-line text-gray-600"></i>
+                                </div>
+                                <span><%= user ? user.name : 'Admin' %></span>
+                                <i class="ri-arrow-down-s-line text-gray-500"></i>
+                            </button>
+                            
+                            <!-- Dropdown Menu -->
+                            <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                                <a href="/admin/profile" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="ri-user-line mr-3 text-gray-400"></i>
+                                    Profile
+                                </a>
+                                <a href="/admin/settings" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="ri-settings-line mr-3 text-gray-400"></i>
+                                    Settings
+                                </a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <a href="/logout" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                    <i class="ri-logout-box-line mr-3 text-red-500"></i>
+                                    Đăng xuất
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+                <!-- Page Header -->
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Thông tin cá nhân</h2>
+                    <p class="text-gray-600">Quản lý thông tin tài khoản của bạn</p>
+                </div>
+
+                <!-- Profile Card -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="flex items-center space-x-6">
+                        <!-- Avatar -->
+                        <div class="flex-shrink-0">
+                            <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="ri-user-line text-blue-600 text-3xl"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- User Info -->
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">
+                                <%= user ? user.name : 'Admin User' %>
+                            </h3>
+                            <p class="text-gray-600 mb-1">
+                                <i class="ri-mail-line mr-2"></i>
+                                <%= user ? user.email : 'admin@example.com' %>
+                            </p>
+                            <p class="text-gray-600 mb-1">
+                                <i class="ri-shield-user-line mr-2"></i>
+                                <%= user && user.role === 'admin' ? 'Quản trị viên' : 'Người dùng' %>
+                            </p>
+                            <p class="text-gray-600">
+                                <i class="ri-calendar-line mr-2"></i>
+                                Tham gia từ: <%= user ? new Date(user.createdAt).toLocaleDateString('vi-VN') : 'Không xác định' %>
+                            </p>
+                        </div>
+                        
+                        <!-- Edit Button -->
+                        <div class="flex-shrink-0">
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="ri-edit-line mr-2"></i>
+                                Chỉnh sửa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Statistics -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-green-100 rounded-lg">
+                                <i class="ri-shopping-bag-line text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Sản phẩm đã tạo</p>
+                                <p class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-blue-100 rounded-lg">
+                                <i class="ri-file-list-line text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Đơn hàng đã xử lý</p>
+                                <p class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-purple-100 rounded-lg">
+                                <i class="ri-star-line text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Đánh giá đã duyệt</p>
+                                <p class="text-2xl font-bold text-gray-900">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-lg shadow-sm mt-6">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Hoạt động gần đây</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-center py-8">
+                            <i class="ri-time-line text-gray-400 text-4xl mb-4"></i>
+                            <p class="text-gray-500">Chưa có hoạt động nào</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script>
+        // User dropdown menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userMenuButton && userMenu) {
+                // Toggle user menu
+                userMenuButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    userMenu.classList.toggle('hidden');
+                });
+                
+                // Close user menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+                
+                // Close user menu when pressing Escape
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape') {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

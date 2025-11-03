@@ -1,0 +1,875 @@
+<%- include('../includes/admin-layout.ejs', { 
+    pageTitle: 'Quản lý đánh giá', 
+    path: '/admin/reviews',
+    user: user,
+    body: `
+    <!-- Page Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Quản lý đánh giá</h1>
+                <p class="mt-2 text-gray-600">Duyệt và quản lý đánh giá sản phẩm từ khách hàng</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+        <!-- Total Reviews -->
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #3b82f6; --to-color: #1d4ed8;">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                <i class="ri-star-line text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dl>
+                                <dt class="text-sm font-medium text-blue-100 truncate">Tổng đánh giá</dt>
+                                <dd class="text-2xl font-bold text-white">${stats.totalReviews || 0}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl text-white opacity-20">
+                            <i class="ri-star-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                <div class="text-sm">
+                    <span class="font-medium text-white">Tất cả đánh giá</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Approved Reviews -->
+        <div class="bg-gradient-to-br from-green-500 to-emerald-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #10b981; --to-color: #059669;">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                <i class="ri-checkbox-circle-line text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dl>
+                                <dt class="text-sm font-medium text-green-100 truncate">Đã duyệt</dt>
+                                <dd class="text-2xl font-bold text-white">${stats.approvedReviews || 0}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl text-white opacity-20">
+                            <i class="ri-checkbox-circle-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                <div class="text-sm">
+                    <span class="font-medium text-white">Đã được phê duyệt</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pending Reviews -->
+        <div class="bg-gradient-to-br from-yellow-500 to-orange-500 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #f59e0b; --to-color: #ea580c;">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                <i class="ri-time-line text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dl>
+                                <dt class="text-sm font-medium text-yellow-100 truncate">Chờ duyệt</dt>
+                                <dd class="text-2xl font-bold text-white">${stats.pendingReviews || 0}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl text-white opacity-20">
+                            <i class="ri-time-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                <div class="text-sm">
+                    <span class="font-medium text-white">Cần xem xét</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Average Rating -->
+        <div class="bg-gradient-to-br from-purple-500 to-pink-500 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #8b5cf6; --to-color: #ec4899;">
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                <i class="ri-star-fill text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <dl>
+                                <dt class="text-sm font-medium text-purple-100 truncate">Điểm TB</dt>
+                                <dd class="text-2xl font-bold text-white">${stats.averageRating || 0}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl text-white opacity-20">
+                            <i class="ri-star-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                <div class="text-sm">
+                    <span class="font-medium text-white">Đánh giá trung bình</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow mb-6">
+        <div class="p-6">
+            <form method="GET" class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm</label>
+                    <input type="text" name="search" value="${search || ''}" 
+                           placeholder="Tên, email, nội dung..." 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sản phẩm</label>
+                    <input type="text" name="product" value="${product || ''}" 
+                           placeholder="Tên sản phẩm..." 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Đánh giá</label>
+                    <select name="rating" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Tất cả</option>
+                        <option value="5" ${rating === '5' ? 'selected' : ''}>5 sao</option>
+                        <option value="4" ${rating === '4' ? 'selected' : ''}>4 sao</option>
+                        <option value="3" ${rating === '3' ? 'selected' : ''}>3 sao</option>
+                        <option value="2" ${rating === '2' ? 'selected' : ''}>2 sao</option>
+                        <option value="1" ${rating === '1' ? 'selected' : ''}>1 sao</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                    <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Tất cả</option>
+                        <option value="approved" ${status === 'approved' ? 'selected' : ''}>Đã duyệt</option>
+                        <option value="pending" ${status === 'pending' ? 'selected' : ''}>Chờ duyệt</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Từ ngày</label>
+                    <input type="date" name="dateFrom" value="${dateFrom || ''}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Đến ngày</label>
+                    <input type="date" name="dateTo" value="${dateTo || ''}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div class="md:col-span-6 flex gap-2">
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="ri-search-line mr-2"></i>
+                        Tìm kiếm
+                    </button>
+                    <a href="/admin/reviews" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <i class="ri-refresh-line mr-2"></i>
+                        Làm mới
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+
+    <!-- Reviews Table -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Danh sách đánh giá</h3>
+            <p class="text-sm text-gray-500">Tổng: ${totalReviews || 0} đánh giá</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-40">Khách hàng</th>
+                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-40">Sản phẩm</th>
+                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Đánh giá</th>
+                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">Nội dung</th>
+                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Trạng thái</th>
+                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Ngày tạo</th>
+                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    ${reviews && reviews.length > 0 ? reviews.map((review, index) => `
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-2 py-3 w-40">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-8 w-8">
+                                        <div class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center">
+                                            <span class="text-xs font-medium text-gray-700">
+                                                ${(review.userName || 'N/A').charAt(0).toUpperCase()}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="ml-2">
+                                        <div class="text-xs font-medium text-gray-900 truncate">${review.userName || 'N/A'}</div>
+                                        <div class="text-xs text-gray-500 truncate">${review.userEmail || 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-2 py-3 w-40">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-8 w-8">
+                                        <img class="h-8 w-8 rounded-lg object-cover" 
+                                             src="${review.productImage || '/images/default-product.jpg'}" 
+                                             alt="${review.productTitle}">
+                                    </div>
+                                    <div class="ml-2 min-w-0 flex-1">
+                                        <div class="text-xs font-medium text-gray-900 truncate">${review.productTitle}</div>
+                                        <div class="text-xs text-gray-500 truncate">${review.productBrand || 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-2 py-3 w-20 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    ${Array.from({length: 5}, (_, i) => 
+                                        `<svg class="w-3 h-3 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}" 
+                                             fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                        </svg>`
+                                    ).join('')}
+                                    <span class="ml-1 text-xs text-gray-600">(${review.rating}/5)</span>
+                                </div>
+                            </td>
+                            <td class="px-2 py-3 w-48">
+                                <div class="text-xs text-gray-900 max-w-xs truncate" title="${review.comment}">
+                                    ${review.comment || 'Không có bình luận'}
+                                </div>
+                            </td>
+                            <td class="px-2 py-3 w-24 whitespace-nowrap">
+                                ${review.approved ? 
+                                    '<span class="inline-flex px-1 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">Đã duyệt</span>' :
+                                    '<span class="inline-flex px-1 py-0.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Chờ duyệt</span>'
+                                }
+                            </td>
+                            <td class="px-2 py-3 w-24 whitespace-nowrap text-xs text-gray-500">
+                                ${new Date(review.createdAt).toLocaleDateString('vi-VN')}
+                            </td>
+                            <td class="px-2 py-3 w-20 whitespace-nowrap text-xs font-medium">
+                                <div class="flex space-x-1">
+                                    <button onclick="viewReview('${review._id}')" 
+                                            class="text-blue-600 hover:text-blue-900" title="Xem chi tiết">
+                                        <i class="ri-eye-line text-sm"></i>
+                                    </button>
+                                    
+                                    <button onclick="deleteReview('${review._id}')" 
+                                            class="text-red-600 hover:text-red-900" title="Xóa">
+                                        <i class="ri-delete-bin-line text-sm"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('') : `
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                <i class="ri-star-line text-4xl text-gray-300 mb-4"></i>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">Không có đánh giá</h3>
+                                <p class="text-gray-500">Chưa có đánh giá nào phù hợp với bộ lọc hiện tại.</p>
+                            </td>
+                        </tr>
+                    `}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    ${totalPages > 1 ? `
+        <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 mt-6">
+            <div class="flex-1 flex justify-between sm:hidden">
+                ${currentPage > 1 ? `
+                    <a href="?page=${currentPage - 1}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Trước
+                    </a>
+                ` : ''}
+                ${currentPage < totalPages ? `
+                    <a href="?page=${currentPage + 1}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Sau
+                    </a>
+                ` : ''}
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700">
+                        Hiển thị <span class="font-medium">${(currentPage - 1) * 10 + 1}</span> đến 
+                        <span class="font-medium">${Math.min(currentPage * 10, totalReviews)}</span> 
+                        trong <span class="font-medium">${totalReviews}</span> kết quả
+                    </p>
+                </div>
+                <div>
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        ${currentPage > 1 ? `
+                            <a href="?page=${currentPage - 1}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <i class="ri-arrow-left-line"></i>
+                            </a>
+                        ` : ''}
+                        
+                        ${Array.from({length: Math.min(5, totalPages)}, (_, i) => {
+                            const page = Math.max(1, currentPage - 2) + i;
+                            if (page > totalPages) return '';
+                            return page === currentPage ? `
+                                <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-50 text-sm font-medium text-blue-600">
+                                    ${page}
+                                </span>
+                            ` : `
+                                <a href="?page=${page}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                    ${page}
+                                </a>
+                            `;
+                        }).join('')}
+                        
+                        ${currentPage < totalPages ? `
+                            <a href="?page=${currentPage + 1}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <i class="ri-arrow-right-line"></i>
+                            </a>
+                        ` : ''}
+                    </nav>
+                </div>
+            </div>
+        </div>
+    ` : ''}
+
+    <!-- Review Detail Modal -->
+    <div id="reviewModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">Chi tiết đánh giá</h3>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="ri-close-line text-xl"></i>
+                    </button>
+                </div>
+                <div id="reviewDetailContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Response Modal -->
+    <div id="responseModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">Phản hồi đánh giá</h3>
+                    <button onclick="closeResponseModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="ri-close-line text-xl"></i>
+                    </button>
+                </div>
+                <form id="responseForm">
+                    <input type="hidden" id="responseReviewId">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Phản hồi của admin</label>
+                        <textarea id="adminResponse" rows="4" 
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  placeholder="Nhập phản hồi của bạn..."></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="closeResponseModal()" 
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                            Hủy
+                        </button>
+                        <button type="submit" 
+                                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                            Gửi phản hồi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Ẩn scrollbar ngang */
+        .overflow-hidden {
+            overflow-x: hidden;
+        }
+        
+        /* Gradient Cards Animation */
+        .gradient-card {
+            background: linear-gradient(135deg, var(--from-color), var(--to-color));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .gradient-card:hover::before {
+            left: 100%;
+        }
+        
+        /* Icon glow effect */
+        .icon-glow {
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+        
+        /* Card hover effects */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        /* Tối ưu table responsive */
+        @media (max-width: 768px) {
+            .table-responsive {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+        
+        /* Đảm bảo table hiển thị full màn hình */
+        table {
+            table-layout: fixed;
+            width: 100%;
+            min-width: 100%;
+        }
+        
+        /* Cột có width cố định - tối ưu cho full màn hình */
+        .w-48 { width: 12rem; }
+        .w-40 { width: 10rem; }
+        .w-32 { width: 8rem; }
+        .w-24 { width: 6rem; }
+        .w-20 { width: 5rem; }
+        
+        /* Đảm bảo text không bị cắt */
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Responsive cho mobile - giữ full width */
+        @media (max-width: 1024px) {
+            .w-48 { width: 10rem; }
+            .w-40 { width: 8rem; }
+            .w-32 { width: 6rem; }
+            .w-24 { width: 5rem; }
+            .w-20 { width: 4rem; }
+        }
+        
+        @media (max-width: 768px) {
+            .w-48 { width: 8rem; }
+            .w-40 { width: 6rem; }
+            .w-32 { width: 5rem; }
+            .w-24 { width: 4rem; }
+            .w-20 { width: 3rem; }
+        }
+        
+        /* Animation cho loading */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Smooth transitions */
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+    </style>
+    
+    <script>
+        // Individual Actions
+        function viewReview(reviewId) {
+            fetch(`/admin/reviews/detail/${reviewId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showReviewDetail(data.review);
+                    } else {
+                        alert('Không thể tải chi tiết đánh giá: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Lỗi khi tải chi tiết đánh giá');
+                });
+        }
+
+        function approveReview(reviewId) {
+            if (confirm('Bạn có chắc muốn duyệt đánh giá này?')) {
+                updateReviewStatus(reviewId, true);
+            }
+        }
+
+        function deleteReview(reviewId) {
+            if (confirm('Bạn có chắc muốn xóa đánh giá này?')) {
+                // Thêm loading state
+                const deleteButton = event.target.closest('button');
+                const originalContent = deleteButton.innerHTML;
+                deleteButton.innerHTML = '<i class="ri-loader-4-line animate-spin"></i>';
+                deleteButton.disabled = true;
+                
+                fetch('/admin/reviews/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ reviewId: reviewId })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Xóa row khỏi table thay vì reload toàn trang
+                        const row = deleteButton.closest('tr');
+                        if (row) {
+                            row.style.transition = 'opacity 0.3s ease';
+                            row.style.opacity = '0';
+                            setTimeout(() => {
+                                row.remove();
+                                updateStats();
+                            }, 300);
+                        }
+                        showNotification('Xóa đánh giá thành công', 'success');
+                    } else {
+                        throw new Error(data.message || 'Không thể xóa đánh giá');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Delete error:', error);
+                    console.error('❌ Error message:', error.message);
+                    console.error('❌ Error stack:', error.stack);
+                    
+                    // Kiểm tra loại lỗi
+                    if (error.message.includes('Response is not JSON')) {
+                        showNotification('Lỗi: Server trả về HTML thay vì JSON. Có thể cần đăng nhập lại.', 'error');
+                    } else if (error.message.includes('HTTP 302')) {
+                        showNotification('Lỗi: Đang redirect đến login. Vui lòng đăng nhập lại.', 'error');
+                    } else if (error.message.includes('HTTP 404')) {
+                        showNotification('Lỗi: Không tìm thấy API endpoint.', 'error');
+                    } else if (error.message.includes('HTTP 500')) {
+                        showNotification('Lỗi: Server gặp sự cố. Vui lòng thử lại sau.', 'error');
+                    } else {
+                        showNotification('Lỗi khi xóa đánh giá: ' + error.message, 'error');
+                    }
+                })
+                .finally(() => {
+                    // Khôi phục button
+                    deleteButton.innerHTML = originalContent;
+                    deleteButton.disabled = false;
+                });
+            }
+        }
+
+        function updateReviewStatus(reviewId, approved) {
+            // Thêm loading state
+            const approveButton = event.target.closest('button');
+            const originalContent = approveButton.innerHTML;
+            approveButton.innerHTML = '<i class="ri-loader-4-line animate-spin"></i>';
+            approveButton.disabled = true;
+            
+            fetch('/admin/reviews/update-status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ 
+                    reviewId: reviewId, 
+                    approved: approved.toString() 
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Cập nhật UI thay vì reload
+                    const row = approveButton.closest('tr');
+                    const statusCell = row.querySelector('td:nth-child(6)'); // Status column
+                    if (statusCell) {
+                        statusCell.innerHTML = approved ? 
+                            '<span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Đã duyệt</span>' :
+                            '<span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Chờ duyệt</span>';
+                    }
+                    showNotification(approved ? 'Duyệt đánh giá thành công' : 'Hủy duyệt đánh giá thành công', 'success');
+                } else {
+                    throw new Error(data.message || 'Không thể cập nhật trạng thái');
+                }
+            })
+            .catch(error => {
+                console.error('❌ Update status error:', error);
+                console.error('❌ Error message:', error.message);
+                console.error('❌ Error stack:', error.stack);
+                
+                // Kiểm tra loại lỗi
+                if (error.message.includes('Response is not JSON')) {
+                    showNotification('Lỗi: Server trả về HTML thay vì JSON. Có thể cần đăng nhập lại.', 'error');
+                } else if (error.message.includes('HTTP 302')) {
+                    showNotification('Lỗi: Đang redirect đến login. Vui lòng đăng nhập lại.', 'error');
+                } else if (error.message.includes('HTTP 404')) {
+                    showNotification('Lỗi: Không tìm thấy API endpoint.', 'error');
+                } else if (error.message.includes('HTTP 500')) {
+                    showNotification('Lỗi: Server gặp sự cố. Vui lòng thử lại sau.', 'error');
+                } else {
+                    showNotification('Lỗi khi cập nhật trạng thái: ' + error.message, 'error');
+                }
+            })
+            .finally(() => {
+                // Khôi phục button
+                approveButton.innerHTML = originalContent;
+                approveButton.disabled = false;
+            });
+        }
+
+        function showReviewDetail(review) {
+            const content = `
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-shrink-0 h-12 w-12">
+                            <div class="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center">
+                                <span class="text-lg font-medium text-gray-700">
+                                    ${(review.userName || 'N/A').charAt(0).toUpperCase()}
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-medium text-gray-900">${review.userName || 'N/A'}</h4>
+                            <p class="text-sm text-gray-500">${review.userEmail || 'N/A'}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t pt-4 space-y-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-medium text-gray-700">Sản phẩm:</span>
+                            <span class="text-sm text-gray-900">${review.productTitle || 'N/A'}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm font-medium text-gray-700">Đánh giá:</span>
+                            <div class="flex items-center">
+                                ${Array.from({length: 5}, (_, i) => 
+                                    `<svg class="w-4 h-4 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                    </svg>`
+                                ).join('')}
+                                <span class="ml-2 text-sm text-gray-600">(${review.rating}/5)</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-sm font-medium text-gray-700">Bình luận:</span>
+                            <p class="text-sm text-gray-900 mt-1 whitespace-pre-line">${review.comment || 'Không có bình luận'}</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                            <div>
+                                <label for="approvalStatus" class="block text-sm font-medium text-gray-700 mb-1">Trạng thái duyệt</label>
+                                <select id="approvalStatus" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="true" ${review.approved ? 'selected' : ''}>Duyệt</option>
+                                    <option value="false" ${!review.approved ? 'selected' : ''}>Từ chối</option>
+                                </select>
+                            </div>
+                            <div class="flex gap-2 justify-end">
+                                <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">Hủy</button>
+                                <button type="button" onclick="saveReviewStatus('${review._id}')" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">Cập nhật</button>
+                            </div>
+                        </div>
+                        ${review.adminResponse ? `
+                            <div class="mt-2 p-3 bg-blue-50 rounded-md">
+                                <span class="text-sm font-medium text-blue-700">Phản hồi admin:</span>
+                                <p class="text-sm text-blue-900 mt-1">${review.adminResponse}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('reviewDetailContent').innerHTML = content;
+            document.getElementById('reviewModal').classList.remove('hidden');
+        }
+
+        function saveReviewStatus(reviewId) {
+            const select = document.getElementById('approvalStatus');
+            if (!select) return;
+            const approved = select.value === 'true';
+            fetch('/admin/reviews/update-status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ reviewId: reviewId, approved: approved.toString() })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Cập nhật trạng thái thành công', 'success');
+                    closeModal();
+                    location.reload();
+                } else {
+                    showNotification(data.message || 'Không thể cập nhật trạng thái', 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showNotification('Lỗi khi cập nhật trạng thái', 'error');
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('reviewModal').classList.add('hidden');
+        }
+
+        function closeResponseModal() {
+            document.getElementById('responseModal').classList.add('hidden');
+        }
+
+        // Response form
+        document.getElementById('responseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const reviewId = document.getElementById('responseReviewId').value;
+            const response = document.getElementById('adminResponse').value;
+            
+            fetch('/admin/reviews/add-response', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    reviewId: reviewId, 
+                    adminResponse: response 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Thêm phản hồi thành công');
+                    closeResponseModal();
+                    location.reload();
+                } else {
+                    alert('Lỗi khi thêm phản hồi: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Lỗi khi thêm phản hồi');
+            });
+        });
+
+        // Helper functions
+        function showNotification(message, type = 'info') {
+            // Tạo notification element
+            const notification = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            notification.className = 'fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ' + bgColor + ' text-white';
+            const iconClass = type === 'success' ? 'check' : type === 'error' ? 'error-warning' : 'information';
+            notification.innerHTML = '<div class="flex items-center"><i class="ri-' + iconClass + '-line mr-2"></i><span>' + message + '</span></div>';
+            
+            document.body.appendChild(notification);
+            
+            // Hiển thị notification
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Tự động ẩn sau 3 giây
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        function updateStats() {
+            // Cập nhật số lượng reviews trong stats
+            const totalReviewsElement = document.querySelector('[data-total-reviews]');
+            if (totalReviewsElement) {
+                const currentCount = parseInt(totalReviewsElement.textContent) || 0;
+                totalReviewsElement.textContent = currentCount - 1;
+            }
+        }
+        
+        // Debounce function để tối ưu performance
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        // Close modals when clicking outside
+        document.getElementById('reviewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        document.getElementById('responseModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeResponseModal();
+            }
+        });
+    </script>
+    `
+}) %>

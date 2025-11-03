@@ -19,16 +19,26 @@
                     Mới
                 </div>
             <% } %>
+            <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                <button class="favorite-btn absolute top-2 left-2 text-2xl z-10 <%= favorites && favorites.includes(product._id.toString()) ? 'text-red-500' : 'text-gray-400' %>"
+                        data-product-id="<%= product._id %>"
+                        aria-label="Yêu thích">
+                    <i class="<%= favorites && favorites.includes(product._id.toString()) ? 'ri-heart-fill' : 'ri-heart-line' %>"></i>
+                </button>
+            <% } else { %>
+                <a href="/login?returnTo=<%= encodeURIComponent(request.originalUrl || '/') %>" class="absolute top-2 left-2 text-2xl z-10 text-gray-400" aria-label="Yêu thích">
+                    <i class="ri-heart-line"></i>
+                </a>
+            <% } %>
         </div>
         
         <div class="flex flex-col flex-1 p-4 relative">
-            <h5 class="text-base font-semibold mb-2 line-clamp-2 min-h-[2.6rem]">
+            <h5 class="text-sm font-semibold mb-2" style="white-space: nowrap; overflow: visible; word-break: keep-all;">
                 <%= product.title || 'Sản phẩm không xác định' %>
             </h5>
             
-            <p class="text-sm text-gray-500 mb-2">
-                <%= (product.description || 'Không có mô tả').substring(0, 100) %>
-                <% if (product.description && product.description.length > 100) { %>...<% } %>
+            <p class="text-xs text-gray-500 mb-2" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-break: keep-all;">
+                <%= product.description || 'Không có mô tả' %>
             </p>
             
             <div class="mt-auto flex items-center gap-2">
@@ -81,3 +91,33 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.favorite-btn').forEach(btn => {
+    btn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      const productId = this.dataset.productId;
+      const icon = this.querySelector('i');
+      const isFavorite = icon.classList.contains('ri-heart-fill');
+      try {
+        if (!isFavorite) {
+          const res = await fetch(`/favorites/${productId}`, { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+          if (res.ok) {
+            icon.classList.remove('ri-heart-line', 'text-gray-400');
+            icon.classList.add('ri-heart-fill', 'text-red-500');
+          }
+        } else {
+          const res = await fetch(`/favorites/${productId}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } });
+          if (res.ok) {
+            icon.classList.remove('ri-heart-fill', 'text-red-500');
+            icon.classList.add('ri-heart-line', 'text-gray-400');
+          }
+        }
+      } catch (err) {
+        alert('Có lỗi xảy ra khi thao tác yêu thích!');
+      }
+    });
+  });
+});
+</script>

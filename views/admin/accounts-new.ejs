@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý tài khoản - Shop Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        @keyframes slideInFromTop {
+            0% {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .new-user-row {
+            animation: slideInFromTop 0.5s ease-out;
+        }
+        
+        .highlight-new-user {
+            background-color: #f0f9ff !important;
+            border: 2px solid #3b82f6 !important;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-blue-900 text-white">
+            <!-- Logo -->
+            <div class="flex items-center justify-center h-16 bg-gradient-to-r from-blue-700 to-blue-800 border-b border-blue-600/50">
+                <a href="/admin/dashboard" class="flex items-center space-x-2 text-white">
+                    <i class="ri-store-2-line text-2xl text-blue-200"></i>
+                    <span class="text-2xl font-bold">Shoe Store</span>
+                </a>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="mt-6">
+                <a href="/admin/dashboard" class="flex items-center px-6 py-3 text-gray-300 hover:bg-blue-800 hover:text-white transition-colors">
+                    <i class="ri-dashboard-line mr-3"></i>
+                    Dashboard
+                </a>
+                <a href="/admin/products" class="flex items-center px-6 py-3 text-gray-300 hover:bg-blue-800 hover:text-white transition-colors">
+                    <i class="ri-shopping-bag-line mr-3"></i>
+                    Quản lý sản phẩm
+                </a>
+                <a href="/admin/orders" class="flex items-center px-6 py-3 text-gray-300 hover:bg-blue-800 hover:text-white transition-colors">
+                    <i class="ri-file-list-3-line mr-3"></i>
+                    Đơn hàng
+                </a>
+                <a href="/admin/accounts" class="flex items-center px-6 py-3 bg-blue-800 text-white border-r-4 border-blue-400">
+                    <i class="ri-user-line mr-3"></i>
+                    Tài khoản
+                </a>
+                <a href="/admin/categories" class="flex items-center px-6 py-3 text-gray-300 hover:bg-blue-800 hover:text-white transition-colors">
+                    <i class="ri-folder-line mr-3"></i>
+                    Danh mục
+                </a>
+                <a href="/admin/brands" class="flex items-center px-6 py-3 text-gray-300 hover:bg-blue-800 hover:text-white transition-colors">
+                    <i class="ri-award-line mr-3"></i>
+                    Thương hiệu
+                </a>
+                <a href="/admin/reviews" class="flex items-center px-6 py-3 text-gray-300 hover:bg-blue-800 hover:text-white transition-colors">
+                    <i class="ri-star-line mr-3"></i>
+                    Đánh giá
+                </a>
+                <a href="/admin/slides" class="flex items-center px-6 py-3 text-gray-300 hover:bg-blue-800 hover:text-white transition-colors">
+                    <i class="ri-image-line mr-3"></i>
+                    Slide Banner
+                </a>
+            </nav>
+            
+            <!-- User Info -->
+            <div class="absolute bottom-0 w-64 p-6 border-t border-blue-800">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-blue-700 rounded-full flex items-center justify-center mr-3">
+                        <i class="ri-user-line text-sm"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium"><%= user.name %></p>
+                        <p class="text-xs text-gray-400"><%= user.email %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+                <!-- Mobile menu button -->
+                <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" id="sidebar-toggle">
+                    <i class="ri-menu-line text-xl"></i>
+                </button>
+
+                <!-- Separator -->
+                <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
+
+                <!-- Page title -->
+                <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+                    <div class="flex flex-1 items-center">
+                        <h1 class="text-xl font-semibold text-gray-900">
+                            Quản lý tài khoản
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Right side -->
+                <div class="flex items-center gap-x-4 lg:gap-x-6">
+                    <!-- Notifications -->
+                    <button type="button" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+                        <i class="ri-notification-3-line text-xl"></i>
+                    </button>
+
+                    <!-- Separator -->
+                    <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" aria-hidden="true"></div>
+
+                    <!-- Profile dropdown -->
+                    <div class="relative">
+                        <button type="button" class="-m-1.5 flex items-center p-1.5" id="user-menu-button">
+                            <span class="sr-only">Open user menu</span>
+                            <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+                                <i class="ri-user-line text-white text-sm"></i>
+                            </div>
+                            <span class="hidden lg:flex lg:items-center">
+                                <span class="ml-4 text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">
+                                    <%= user ? user.name : 'Admin' %>
+                                </span>
+                                <i class="ri-arrow-down-s-line ml-2 text-gray-400"></i>
+                            </span>
+                        </button>
+
+                        <!-- Dropdown menu -->
+                        <div class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none hidden"
+                            id="user-menu">
+                            <a href="/admin/profile"
+                                class="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50">
+                                <i class="ri-user-line mr-2"></i>Profile
+                            </a>
+                            <a href="/admin/settings"
+                                class="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50">
+                                <i class="ri-settings-line mr-2"></i>Settings
+                            </a>
+                            <form action="/logout" method="POST" class="block">
+                                <button type="submit"
+                                    class="w-full text-left px-3 py-1 text-sm leading-6 text-red-600 hover:bg-gray-50">
+                                    <i class="ri-logout-box-line mr-2"></i>Đăng xuất
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notification System -->
+            <div id="notification" class="fixed top-4 right-4 z-50 hidden transform transition-all duration-300 ease-in-out translate-x-full">
+                <div class="bg-white rounded-lg shadow-lg border-l-4 p-4 max-w-sm">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i id="notificationIcon" class="text-2xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p id="notificationMessage" class="text-sm font-medium text-gray-900"></p>
+                        </div>
+                        <div class="ml-auto pl-3">
+                            <button onclick="hideNotification()" class="text-gray-400 hover:text-gray-600">
+                                <i class="ri-close-line"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Total Users -->
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #3b82f6; --to-color: #1d4ed8;">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                            <i class="ri-user-line text-white text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <dl>
+                                            <dt class="text-sm font-medium text-blue-100 truncate">Tổng người dùng</dt>
+                                            <dd class="text-2xl font-bold text-white"><%= totalUsers || 0 %></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-3xl text-white opacity-20">
+                                        <i class="ri-user-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                            <div class="text-sm">
+                                <span class="font-medium text-white">Tất cả tài khoản</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Users -->
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #22c55e; --to-color: #16a34a;">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                            <i class="ri-checkbox-circle-line text-white text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <dl>
+                                            <dt class="text-sm font-medium text-green-100 truncate">Đang hoạt động</dt>
+                                            <dd class="text-2xl font-bold text-white"><%= activeUsers || 0 %></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-3xl text-white opacity-20">
+                                        <i class="ri-checkbox-circle-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                            <div class="text-sm">
+                                <span class="font-medium text-white">Tài khoản hoạt động</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Locked Users -->
+                    <div class="bg-gradient-to-br from-red-500 to-red-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #ef4444; --to-color: #dc2626;">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                            <i class="ri-lock-line text-white text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <dl>
+                                            <dt class="text-sm font-medium text-red-100 truncate">Bị khóa</dt>
+                                            <dd class="text-2xl font-bold text-white"><%= lockedUsers || 0 %></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-3xl text-white opacity-20">
+                                        <i class="ri-lock-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                            <div class="text-sm">
+                                <span class="font-medium text-white">Tài khoản bị khóa</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Admin Users -->
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #a855f7; --to-color: #9333ea;">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                            <i class="ri-admin-line text-white text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <dl>
+                                            <dt class="text-sm font-medium text-purple-100 truncate">Quản trị viên</dt>
+                                            <dd class="text-2xl font-bold text-white"><%= adminUsers || 0 %></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-3xl text-white opacity-20">
+                                        <i class="ri-admin-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                            <div class="text-sm">
+                                <span class="font-medium text-white">Tài khoản admin</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Filter & Search -->
+                <div class="bg-white rounded-lg shadow p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Bộ lọc & Tìm kiếm</h3>
+                    <form method="GET" action="/admin/accounts" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm</label>
+                            <div class="relative">
+                                <input type="text" name="search" value="<%= search || '' %>" placeholder="Tìm kiếm tài khoản..." class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <i class="ri-search-line absolute left-3 top-3 text-gray-400"></i>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vai trò</label>
+                            <select name="role" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Tất cả vai trò</option>
+                                <option value="admin" <%= role === 'admin' ? 'selected' : '' %>>Quản trị viên</option>
+                                <option value="user" <%= role === 'user' ? 'selected' : '' %>>Người dùng</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                            <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="active" <%= status === 'active' ? 'selected' : '' %>>Hoạt động</option>
+                                <option value="locked" <%= status === 'locked' ? 'selected' : '' %>>Bị khóa</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex items-end space-x-2">
+                            <button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <i class="ri-filter-line mr-2"></i>Lọc
+                            </button>
+                            <a href="/admin/accounts" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                                <i class="ri-refresh-line"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Users Table -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Danh sách tài khoản</h3>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-500">Hiển thị: <%= users ? users.length : 0 %> / <%= totalUsers || 0 %> tài khoản</span>
+                                <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+                                    <span class="text-xs text-gray-400">(Trang <%= currentPage || 1 %> / <%= totalPages %>)</span>
+                                <% } %>
+                                <button onclick="openCreateModal()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <i class="ri-add-line mr-2"></i>Thêm tài khoản
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Người dùng</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vai trò</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <% if (users && users.length > 0) { %>
+                                    <% users.forEach(user => { %>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="flex-shrink-0 h-10 w-10">
+                                                        <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
+                                                            <i class="ri-user-line text-white text-lg"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900"><%= user.name || 'N/A' %></div>
+                                                        <div class="text-sm text-gray-500">ID: <%= user._id.toString().slice(-6) %></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900"><%= user.email || 'N/A' %></div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800' %>">
+                                                    <i class="ri-<%= user.role === 'admin' ? 'admin' : 'user' %>-line mr-1"></i>
+                                                    <%= user.role === 'admin' ? 'Quản trị viên' : 'Người dùng' %>
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : 'N/A' %>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <% if (user.isActive === false) { %>
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                        <i class="ri-close-circle-line mr-1"></i>
+                                                        Bị khóa
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        <i class="ri-check-circle-line mr-1"></i>
+                                                        Hoạt động
+                                                    </span>
+                                                <% } %>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <div class="flex items-center space-x-2">
+                                                    <% if (user.isActive === false) { %>
+                                                        <button onclick="toggleAccountStatus('<%= user._id %>', false)" 
+                                                                class="text-green-600 hover:text-green-900 p-2 border border-green-300 rounded" 
+                                                                title="Mở khóa tài khoản">
+                                                            <i class="ri-check-line"></i>
+                                                        </button>
+                                                    <% } else { %>
+                                                        <button onclick="toggleAccountStatus('<%= user._id %>', true)" 
+                                                                class="text-red-600 hover:text-red-900 p-2 border border-red-300 rounded" 
+                                                                title="Khóa tài khoản">
+                                                            <i class="ri-lock-line"></i>
+                                                        </button>
+                                                    <% } %>
+                                                    <button onclick="openEditModal('<%= user._id %>', '<%= user.name %>', '<%= user.email %>', '<%= user.role %>')" class="text-blue-600 hover:text-blue-900">
+                                                        <i class="ri-edit-line"></i>
+                                                    </button>
+                                                    <button onclick="deleteUser('<%= user._id %>', '<%= user.name %>')" class="text-red-600 hover:text-red-900">
+                                                        <i class="ri-delete-bin-line"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                            <i class="ri-user-line text-4xl mb-4"></i>
+                                            <p class="text-lg">Chưa có tài khoản nào</p>
+                                            <p class="text-sm">Tài khoản người dùng sẽ xuất hiện ở đây</p>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+                <div class="mt-6 flex justify-center">
+                    <nav class="flex items-center space-x-1">
+                        <% if (currentPage > 1) { %>
+                            <a href="?page=<%= currentPage - 1 %><%= search ? '&search=' + search : '' %><%= role ? '&role=' + role : '' %><%= status ? '&status=' + status : '' %>" 
+                               class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50">
+                                <i class="ri-arrow-left-line"></i>
+                            </a>
+                        <% } %>
+                        
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <% if (i === currentPage) { %>
+                                <span class="px-4 py-2 bg-blue-600 text-white rounded-md"><%= i %></span>
+                            <% } else { %>
+                                <a href="?page=<%= i %><%= search ? '&search=' + search : '' %><%= role ? '&role=' + role : '' %><%= status ? '&status=' + status : '' %>" 
+                                   class="px-4 py-2 border border-gray-300 text-gray-600 rounded-md hover:bg-gray-50">
+                                    <%= i %>
+                                </a>
+                            <% } %>
+                        <% } %>
+                        
+                        <% if (currentPage < totalPages) { %>
+                            <a href="?page=<%= currentPage + 1 %><%= search ? '&search=' + search : '' %><%= role ? '&role=' + role : '' %><%= status ? '&status=' + status : '' %>" 
+                               class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50">
+                                <i class="ri-arrow-right-line"></i>
+                            </a>
+                        <% } %>
+                    </nav>
+                </div>
+                <% } %>
+                
+                <!-- Modal Thêm Tài Khoản -->
+                <div id="addUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+                    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                        <div class="mt-3">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-medium text-gray-900">Thêm tài khoản mới</h3>
+                                <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600">
+                                    <i class="ri-close-line text-xl"></i>
+                                </button>
+                            </div>
+                            <form id="addUserForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tên</label>
+                                    <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <input type="email" name="email" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
+                                    <input type="password" name="password" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Vai trò</label>
+                                    <select name="role" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="user">Người dùng</option>
+                                        <option value="admin">Quản trị viên</option>
+                                    </select>
+                                </div>
+                                <div class="flex justify-end space-x-3 pt-4">
+                                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                                        Hủy
+                                    </button>
+                                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                        Thêm tài khoản
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal Chỉnh Sửa Tài Khoản -->
+                <div id="editUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+                    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                        <div class="mt-3">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-medium text-gray-900">Chỉnh sửa tài khoản</h3>
+                                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                                    <i class="ri-close-line text-xl"></i>
+                                </button>
+                            </div>
+                            <form id="editUserForm" class="space-y-4">
+                                <input type="hidden" name="userId" id="editUserId">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tên</label>
+                                    <input type="text" name="name" id="editUserName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <input type="email" name="email" id="editUserEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Vai trò</label>
+                                    <select name="role" id="editUserRole" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="user">Người dùng</option>
+                                        <option value="admin">Quản trị viên</option>
+                                    </select>
+                                </div>
+                                <div class="flex justify-end space-x-3 pt-4">
+                                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                                        Hủy
+                                    </button>
+                                    <button type="submit" class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
+                                        Cập nhật
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal Xác Nhận Xóa -->
+                <div id="deleteUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+                    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                        <div class="mt-3">
+                            <div class="flex items-center justify-center mb-4">
+                                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                                    <i class="ri-delete-bin-line text-red-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">Xác nhận xóa tài khoản</h3>
+                                <p class="text-sm text-gray-500 mb-4">Bạn có chắc chắn muốn xóa tài khoản <span id="deleteUserName" class="font-medium"></span>?</p>
+                                <p class="text-xs text-red-600 mb-4">Hành động này không thể hoàn tác!</p>
+                                <div class="flex justify-center space-x-3">
+                                    <button onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                                        Hủy
+                                    </button>
+                                    <button onclick="confirmDeleteUser()" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                                        Xóa tài khoản
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        async function toggleAccountStatus(userId, currentStatus) {
+            if (!confirm(currentStatus ? 'Bạn có chắc chắn muốn khóa tài khoản này?' : 'Bạn có chắc chắn muốn mở khóa tài khoản này?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/admin/accounts/toggle-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    body: new URLSearchParams({ userId: userId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(result.message);
+                    window.location.reload();
+                } else {
+                    alert('Lỗi: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Lỗi khi toggle trạng thái tài khoản:', error);
+                alert('Có lỗi xảy ra khi thay đổi trạng thái tài khoản');
+            }
+        }
+        
+        // Variables to store current user data for delete
+        let currentDeleteUserId = null;
+        let currentDeleteUserName = null;
+        
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notificationIcon');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            // Set message
+            messageEl.textContent = message;
+            
+            // Set icon and colors based on type
+            if (type === 'success') {
+                icon.className = 'ri-check-circle-line text-green-500 text-2xl';
+                notification.querySelector('.border-l-4').className = 'border-l-4 border-green-500 bg-white rounded-lg shadow-lg p-4 max-w-sm';
+            } else if (type === 'error') {
+                icon.className = 'ri-error-warning-line text-red-500 text-2xl';
+                notification.querySelector('.border-l-4').className = 'border-l-4 border-red-500 bg-white rounded-lg shadow-lg p-4 max-w-sm';
+            } else if (type === 'info') {
+                icon.className = 'ri-information-line text-blue-500 text-2xl';
+                notification.querySelector('.border-l-4').className = 'border-l-4 border-blue-500 bg-white rounded-lg shadow-lg p-4 max-w-sm';
+            }
+            
+            // Show notification with animation
+            notification.classList.remove('hidden');
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 10);
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                hideNotification();
+            }, 5000);
+        }
+        
+        function hideNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('translate-x-full');
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 300);
+        }
+        
+        // Add new user to the top of the list (newest first)
+        function addUserToList(user) {
+            const tbody = document.querySelector('tbody');
+            if (!tbody) return;
+            
+            // Create new row HTML
+            const newRow = createUserRow(user);
+            
+            // Insert at the very top of the table (first position) - newest users first
+            tbody.insertAdjacentHTML('afterbegin', newRow);
+            
+            // Scroll to top to show the new user
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Update stats if needed
+            updateUserStats();
+            
+            // Highlight the new row briefly to show it's the newest
+            const newRowElement = tbody.querySelector('tr:first-child');
+            if (newRowElement) {
+                newRowElement.classList.add('highlight-new-user');
+                setTimeout(() => {
+                    newRowElement.classList.remove('highlight-new-user');
+                }, 3000);
+            }
+        }
+        
+        // Create user row HTML
+        function createUserRow(user) {
+            const statusBadge = user.isActive === false 
+                ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"><i class="ri-close-circle-line mr-1"></i>Bị khóa</span>'
+                : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="ri-check-circle-line mr-1"></i>Hoạt động</span>';
+            
+            const roleBadge = user.role === 'admin'
+                ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"><i class="ri-admin-line mr-1"></i>Quản trị viên</span>'
+                : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="ri-user-line mr-1"></i>Người dùng</span>';
+            
+            const lockButton = user.isActive === false
+                ? `<button onclick="toggleAccountStatus('${user._id}', false)" class="text-green-600 hover:text-green-900 p-2 border border-green-300 rounded" title="Mở khóa tài khoản"><i class="ri-unlock-line"></i></button>`
+                : `<button onclick="toggleAccountStatus('${user._id}', true)" class="text-red-600 hover:text-red-900 p-2 border border-red-300 rounded" title="Khóa tài khoản"><i class="ri-lock-line"></i></button>`;
+            
+            return `
+                <tr class="hover:bg-gray-50 new-user-row" style="animation: slideInFromTop 0.5s ease-out;">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
+                                    <i class="ri-user-line text-white text-lg"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${user.name || 'N/A'}</div>
+                                <div class="text-sm text-gray-500">ID: ${user._id.toString().slice(-6)}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${user.email || 'N/A'}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        ${roleBadge}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : 'N/A'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        ${statusBadge}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex items-center space-x-2">
+                            ${lockButton}
+                            <button onclick="openEditModal('${user._id}', '${user.name}', '${user.email}', '${user.role}')" class="text-blue-600 hover:text-blue-900">
+                                <i class="ri-edit-line"></i>
+                            </button>
+                            <button onclick="deleteUser('${user._id}', '${user.name}')" class="text-red-600 hover:text-red-900">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        // Update user stats
+        function updateUserStats() {
+            // This would update the stats cards if needed
+            // For now, we'll just increment the total users count
+            const totalUsersElement = document.querySelector('[data-total-users]');
+            if (totalUsersElement) {
+                const currentCount = parseInt(totalUsersElement.textContent) || 0;
+                totalUsersElement.textContent = currentCount + 1;
+            }
+        }
+        
+        // Update user in the list
+        function updateUserInList(user) {
+            const tbody = document.querySelector('tbody');
+            if (!tbody) return;
+            
+            // Find the row with matching user ID
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const userIdCell = row.querySelector('button[onclick*="openEditModal"]');
+                if (userIdCell && userIdCell.getAttribute('onclick').includes(user._id)) {
+                    // Update the user information in this row
+                    const nameCell = row.querySelector('.text-sm.font-medium.text-gray-900');
+                    const emailCell = row.querySelector('.text-sm.text-gray-900');
+                    const roleCell = row.querySelector('.inline-flex.items-center');
+                    
+                    if (nameCell) nameCell.textContent = user.name;
+                    if (emailCell) emailCell.textContent = user.email;
+                    
+                    // Update role badge
+                    if (roleCell) {
+                        const roleBadge = user.role === 'admin'
+                            ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"><i class="ri-admin-line mr-1"></i>Quản trị viên</span>'
+                            : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="ri-user-line mr-1"></i>Người dùng</span>';
+                        roleCell.outerHTML = roleBadge;
+                    }
+                    
+                    // Update onclick attributes for edit and delete buttons
+                    const editButton = row.querySelector('button[onclick*="openEditModal"]');
+                    const deleteButton = row.querySelector('button[onclick*="deleteUser"]');
+                    
+                    if (editButton) {
+                        editButton.setAttribute('onclick', `openEditModal('${user._id}', '${user.name}', '${user.email}', '${user.role}')`);
+                    }
+                    if (deleteButton) {
+                        deleteButton.setAttribute('onclick', `deleteUser('${user._id}', '${user.name}')`);
+                    }
+                }
+            });
+        }
+        
+        // Remove user from the list
+        function removeUserFromList(userId) {
+            const tbody = document.querySelector('tbody');
+            if (!tbody) return;
+            
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const userIdCell = row.querySelector('button[onclick*="openEditModal"]');
+                if (userIdCell && userIdCell.getAttribute('onclick').includes(userId)) {
+                    row.remove();
+                    updateUserStatsAfterDelete();
+                }
+            });
+        }
+        
+        // Update stats after delete
+        function updateUserStatsAfterDelete() {
+            const totalUsersElement = document.querySelector('[data-total-users]');
+            if (totalUsersElement) {
+                const currentCount = parseInt(totalUsersElement.textContent) || 0;
+                totalUsersElement.textContent = Math.max(0, currentCount - 1);
+            }
+        }
+        
+        function openCreateModal() {
+            document.getElementById('addUserModal').classList.remove('hidden');
+        }
+        
+        function closeAddModal() {
+            document.getElementById('addUserModal').classList.add('hidden');
+            document.getElementById('addUserForm').reset();
+        }
+        
+        function openEditModal(userId, name, email, role) {
+            // Fill edit form with user data
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editUserName').value = name;
+            document.getElementById('editUserEmail').value = email;
+            document.getElementById('editUserRole').value = role;
+            
+            // Show edit modal
+            document.getElementById('editUserModal').classList.remove('hidden');
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editUserModal').classList.add('hidden');
+            document.getElementById('editUserForm').reset();
+        }
+        
+        function deleteUser(userId, name) {
+            currentDeleteUserId = userId;
+            currentDeleteUserName = name;
+            document.getElementById('deleteUserName').textContent = name;
+            document.getElementById('deleteUserModal').classList.remove('hidden');
+        }
+        
+        function closeDeleteModal() {
+            document.getElementById('deleteUserModal').classList.add('hidden');
+            currentDeleteUserId = null;
+            currentDeleteUserName = null;
+        }
+        
+        async function confirmDeleteUser() {
+            if (!currentDeleteUserId) return;
+            
+            try {
+                const response = await fetch('/admin/accounts/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    body: new URLSearchParams({ userId: currentDeleteUserId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    removeUserFromList(currentDeleteUserId);
+                } else {
+                    showNotification('Lỗi: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Lỗi khi xóa tài khoản:', error);
+                showNotification('Có lỗi xảy ra khi xóa tài khoản', 'error');
+            } finally {
+                closeDeleteModal();
+            }
+        }
+        
+        // Handle add user form submission
+        document.getElementById('addUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = new URLSearchParams();
+            
+            // Convert FormData to URLSearchParams
+            for (let [key, value] of formData.entries()) {
+                data.append(key, value);
+            }
+            
+            console.log('Sending add user data:', data.toString());
+            
+            try {
+                const response = await fetch('/admin/accounts/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    body: data
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Tài khoản mới đã được thêm vào đầu danh sách (mới nhất)!', 'success');
+                    closeAddModal();
+                    
+                    // Add new user to the top of the list
+                    const newUser = {
+                        _id: result.userId || 'temp-id',
+                        name: formData.get('name'),
+                        email: formData.get('email'),
+                        role: formData.get('role'),
+                        isActive: true,
+                        createdAt: new Date()
+                    };
+                    addUserToList(newUser);
+                } else {
+                    showNotification('Lỗi: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Lỗi khi tạo tài khoản:', error);
+                showNotification('Có lỗi xảy ra khi tạo tài khoản', 'error');
+            }
+        });
+        
+        // Handle edit user form submission
+        document.getElementById('editUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Tìm button submit để hiển thị loading
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalContent = submitButton.innerHTML;
+            
+            // Hiển thị loading state
+            submitButton.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Đang cập nhật...';
+            submitButton.disabled = true;
+            
+            const formData = new FormData(this);
+            const data = new URLSearchParams();
+            
+            // Convert FormData to URLSearchParams
+            for (let [key, value] of formData.entries()) {
+                data.append(key, value);
+            }
+            
+            console.log('Sending edit user data:', data.toString());
+            
+            try {
+                const response = await fetch('/admin/accounts/edit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    body: data
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    closeEditModal();
+                    
+                    // Reload trang sau 1 giây để cập nhật danh sách
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showNotification('Lỗi: ' + result.message, 'error');
+                    // Khôi phục button
+                    submitButton.innerHTML = originalContent;
+                    submitButton.disabled = false;
+                }
+            } catch (error) {
+                console.error('Lỗi khi cập nhật tài khoản:', error);
+                showNotification('Có lỗi xảy ra khi cập nhật tài khoản', 'error');
+                // Khôi phục button
+                submitButton.innerHTML = originalContent;
+                submitButton.disabled = false;
+            }
+        });
+        
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'addUserModal') {
+                closeAddModal();
+            }
+            if (e.target.id === 'editUserModal') {
+                closeEditModal();
+            }
+            if (e.target.id === 'deleteUserModal') {
+                closeDeleteModal();
+            }
+        });
+
+        // User menu dropdown
+        document.addEventListener('DOMContentLoaded', function () {
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', function () {
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // Close user menu when clicking outside
+                document.addEventListener('click', function (event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

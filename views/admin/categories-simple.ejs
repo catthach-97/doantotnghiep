@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle || 'Quản lý danh mục' %> - Shoe Store</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                        'primary-dark': '#3730a3',
+                        'sidebar-bg': '#1f2937',
+                        'sidebar-hover': '#374151',
+                        'content-bg': '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-800 via-blue-900 to-blue-950 transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 shadow-2xl">
+            <!-- Sidebar Header -->
+            <div class="flex items-center justify-center h-16 bg-gradient-to-r from-blue-700 to-blue-800 border-b border-blue-600/50">
+                <a href="/admin/dashboard" class="flex items-center space-x-2 text-white">
+                    <i class="ri-store-2-line text-2xl text-blue-200"></i>
+                    <span class="text-2xl font-bold">Shoe Store</span>
+                </a>
+            </div>
+            
+            <!-- Sidebar Navigation -->
+            <nav class="mt-5 px-2">
+                <div class="space-y-1">
+                    <!-- Dashboard -->
+                    <a href="/admin/dashboard" class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 <%= path === '/admin/dashboard' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-blue-700/50 hover:text-white' %>">
+                        <i class="ri-dashboard-line mr-3 <%= path === '/admin/dashboard' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                        Dashboard
+                    </a>
+
+                    <!-- Products -->
+                    <a href="/admin/products" class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 <%= path === '/admin/products' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-blue-700/50 hover:text-white' %>">
+                        <i class="ri-shopping-bag-line mr-3 <%= path === '/admin/products' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                        Sản phẩm
+                    </a>
+
+                    <!-- Orders -->
+                    <a href="/admin/orders" class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 <%= path === '/admin/orders' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-blue-700/50 hover:text-white' %>">
+                        <i class="ri-file-list-3-line mr-3 <%= path === '/admin/orders' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                        Đơn hàng
+                    </a>
+
+                    <!-- Users -->
+                    <a href="/admin/accounts" class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 <%= path === '/admin/accounts' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-blue-700/50 hover:text-white' %>">
+                        <i class="ri-user-line mr-3 <%= path === '/admin/accounts' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                        Tài khoản
+                    </a>
+
+                    <!-- Categories -->
+                    <a href="/admin/categories" class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 <%= path === '/admin/categories' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-blue-700/50 hover:text-white' %>">
+                        <i class="ri-folder-line mr-3 <%= path === '/admin/categories' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                        Danh mục
+                    </a>
+
+                    <!-- Brands -->
+                    <a href="/admin/brands" class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 <%= path === '/admin/brands' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-blue-700/50 hover:text-white' %>">
+                        <i class="ri-award-line mr-3 <%= path === '/admin/brands' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                        Thương hiệu
+                    </a>
+
+                    <!-- Reviews -->
+                    <a href="/admin/reviews" class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 <%= path === '/admin/reviews' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-blue-700/50 hover:text-white' %>">
+                        <i class="ri-star-line mr-3 <%= path === '/admin/reviews' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                        Đánh giá
+                    </a>
+
+                    <!-- Slides -->
+                    <a href="/admin/slides" class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 <%= path === '/admin/slides' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg font-semibold' : 'text-gray-300 hover:bg-blue-700/50 hover:text-white' %>">
+                        <i class="ri-image-line mr-3 <%= path === '/admin/slides' ? 'text-white' : 'text-gray-400 group-hover:text-white' %>"></i>
+                        Slide Banner
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- User Info -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-600/50">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center">
+                        <i class="ri-user-line text-white text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-white truncate"><%= user ? user.name : 'Admin' %></p>
+                        <p class="text-xs text-gray-400 truncate"><%= user ? user.email : 'admin@example.com' %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 lg:ml-64">
+            <!-- Top Bar -->
+            <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+                <!-- Mobile menu button -->
+                <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" id="sidebar-toggle">
+                    <i class="ri-menu-line text-xl"></i>
+                </button>
+
+                <!-- Separator -->
+                <div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
+
+                <!-- Page title -->
+                <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+                    <div class="flex flex-1 items-center">
+                        <h1 class="text-xl font-semibold text-gray-900">
+                            Quản lý danh mục
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Right side -->
+                <div class="flex items-center gap-x-4 lg:gap-x-6">
+                    <!-- Notifications -->
+                    <button type="button" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+                        <i class="ri-notification-3-line text-xl"></i>
+                    </button>
+
+                    <!-- Separator -->
+                    <div class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" aria-hidden="true"></div>
+
+                    <!-- Profile dropdown -->
+                    <div class="relative">
+                        <button type="button" class="-m-1.5 flex items-center p-1.5" id="user-menu-button">
+                            <span class="sr-only">Open user menu</span>
+                            <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+                                <i class="ri-user-line text-white text-sm"></i>
+                            </div>
+                            <span class="hidden lg:flex lg:items-center">
+                                <span class="ml-4 text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">
+                                    <%= user ? user.name : 'Admin' %>
+                                </span>
+                                <i class="ri-arrow-down-s-line ml-2 text-gray-400"></i>
+                            </span>
+                        </button>
+
+                        <!-- Dropdown menu -->
+                        <div class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none hidden"
+                            id="user-menu">
+                            <a href="/admin/profile"
+                                class="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50">
+                                <i class="ri-user-line mr-2"></i>Profile
+                            </a>
+                            <a href="/admin/settings"
+                                class="block px-3 py-1 text-sm leading-6 text-gray-900 hover:bg-gray-50">
+                                <i class="ri-settings-line mr-2"></i>Settings
+                            </a>
+                            <form action="/logout" method="POST" class="block">
+                                <button type="submit"
+                                    class="w-full text-left px-3 py-1 text-sm leading-6 text-red-600 hover:bg-gray-50">
+                                    <i class="ri-logout-box-line mr-2"></i>Đăng xuất
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <main class="p-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <!-- Total Categories -->
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #3b82f6; --to-color: #1d4ed8;">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                            <i class="ri-folder-line text-white text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <dl>
+                                            <dt class="text-sm font-medium text-blue-100 truncate">Tổng danh mục</dt>
+                                            <dd class="text-2xl font-bold text-white"><%= totalCategories || 0 %></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-3xl text-white opacity-20">
+                                        <i class="ri-folder-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                            <div class="text-sm">
+                                <span class="font-medium text-white">Tất cả danh mục</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Categories -->
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #22c55e; --to-color: #16a34a;">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                            <i class="ri-check-line text-white text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <dl>
+                                            <dt class="text-sm font-medium text-green-100 truncate">Đang hoạt động</dt>
+                                            <dd class="text-2xl font-bold text-white"><%= activeCategories || 0 %></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-3xl text-white opacity-20">
+                                        <i class="ri-check-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                            <div class="text-sm">
+                                <span class="font-medium text-white">Danh mục hoạt động</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inactive Categories -->
+                    <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #eab308; --to-color: #ca8a04;">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                            <i class="ri-pause-line text-white text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <dl>
+                                            <dt class="text-sm font-medium text-yellow-100 truncate">Tạm dừng</dt>
+                                            <dd class="text-2xl font-bold text-white"><%= inactiveCategories || 0 %></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-3xl text-white opacity-20">
+                                        <i class="ri-pause-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                            <div class="text-sm">
+                                <span class="font-medium text-white">Danh mục tạm dừng</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Products -->
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 overflow-hidden shadow-xl rounded-2xl card-hover gradient-card" style="--from-color: #a855f7; --to-color: #9333ea;">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm icon-glow">
+                                            <i class="ri-shopping-bag-line text-white text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <dl>
+                                            <dt class="text-sm font-medium text-purple-100 truncate">Sản phẩm</dt>
+                                            <dd class="text-2xl font-bold text-white"><%= totalProducts || 0 %></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-3xl text-white opacity-20">
+                                        <i class="ri-shopping-bag-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-10 px-6 py-3 backdrop-blur-sm">
+                            <div class="text-sm">
+                                <span class="font-medium text-white">Tổng sản phẩm</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Bộ lọc & Tìm kiếm</h3>
+                        <form method="GET" action="/admin/categories" class="flex flex-wrap items-center gap-4">
+                            <div class="relative">
+                                <input type="text"
+                                       name="search"
+                                       placeholder="Tìm kiếm danh mục..."
+                                       value="<%= search || '' %>"
+                                       class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="active" <%= status === 'active' ? 'selected' : '' %>>Đang hoạt động</option>
+                                <option value="inactive" <%= status === 'inactive' ? 'selected' : '' %>>Tạm dừng</option>
+                            </select>
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="ri-filter-line mr-2"></i>Lọc
+                            </button>
+                            <a href="/admin/categories" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                                <i class="ri-refresh-line mr-2"></i>Làm mới
+                            </a>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Categories Table -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Danh sách danh mục</h3>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-500">Hiển thị: <%= categories ? categories.length : 0 %> / <%= totalCategories || 0 %> danh mục</span>
+                                    <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+                                        <span class="text-xs text-gray-400">(Trang <%= currentPage || 1 %> / <%= totalPages %>)</span>
+                                    <% } %>
+                                </div>
+                                <button onclick="openAddCategoryModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    <i class="ri-add-line mr-2"></i>Thêm danh mục
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <% if (categories && categories.length > 0) { %>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hình ảnh</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên danh mục</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mô tả</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sản phẩm</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <% categories.forEach((category, index) => { %>
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex-shrink-0 h-10 w-10">
+                                                    <% if (category.imageUrl) { %>
+                                                        <img class="h-10 w-10 rounded-full object-cover" src="<%= category.imageUrl %>" alt="<%= category.name %>">
+                                                    <% } else { %>
+                                                        <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                                            <i class="ri-folder-line text-gray-400"></i>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-medium text-gray-900"><%= category.name %></div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="text-sm text-gray-500 max-w-xs truncate"><%= category.description || 'Không có mô tả' %></div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= category.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                                                    <%= category.isActive ? 'Hoạt động' : 'Tạm dừng' %>
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <%= category.productCount || 0 %>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <%= category.createdAt ? new Date(category.createdAt).toLocaleDateString('vi-VN') : 'N/A' %>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <div class="flex space-x-2">
+                                                    <button onclick="editCategory('<%= category._id %>')" class="text-blue-600 hover:text-blue-900">
+                                                        <i class="ri-edit-line"></i>
+                                                    </button>
+                                                    <button onclick="toggleCategoryStatus('<%= category._id %>', <%= category.isActive %>)" class="<%= category.isActive ? 'text-yellow-600 hover:text-yellow-900' : 'text-green-600 hover:text-green-900' %>">
+                                                        <i class="<%= category.isActive ? 'ri-pause-line' : 'ri-play-line' %>"></i>
+                                                    </button>
+                                                    <button onclick="deleteCategory('<%= category._id %>', '<%= category.name %>')" class="text-red-600 hover:text-red-900">
+                                                        <i class="ri-delete-bin-line"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } else { %>
+                        <div class="text-center py-12">
+                            <i class="ri-folder-line text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-500 mb-2">Chưa có danh mục nào</h3>
+                            <p class="text-gray-400 mb-6">Thêm danh mục mới để bắt đầu</p>
+                            <button onclick="openAddCategoryModal()" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="ri-add-line mr-2"></i>Thêm danh mục đầu tiên
+                            </button>
+                        </div>
+                    <% } %>
+                </div>
+                
+                <!-- Pagination -->
+                <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+                <div class="mt-8">
+                    <!-- Pagination Info -->
+                    <div class="text-center mb-6">
+                        <p class="text-sm text-gray-600">
+                            Hiển thị <span class="font-semibold text-blue-600"><%= (currentPage - 1) * 5 + 1 %></span> - 
+                            <span class="font-semibold text-blue-600"><%= Math.min(currentPage * 5, totalCategories) %></span> 
+                            trong tổng <span class="font-semibold text-gray-800"><%= totalCategories %></span> danh mục
+                        </p>
+                    </div>
+                    
+                    <!-- Pagination Navigation -->
+                    <div class="flex justify-center">
+                        <nav class="flex items-center space-x-1">
+                            <!-- First Page -->
+                            <% if (currentPage > 1) { %>
+                                <a href="?page=1<%= search ? '&search=' + search : '' %><%= status ? '&status=' + status : '' %>" 
+                                   class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 text-sm">
+                                    <i class="ri-arrow-left-double-line"></i>
+                                </a>
+                            <% } %>
+                            
+                            <!-- Previous Page -->
+                            <% if (currentPage > 1) { %>
+                                <a href="?page=<%= currentPage - 1 %><%= search ? '&search=' + search : '' %><%= status ? '&status=' + status : '' %>" 
+                                   class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 text-sm">
+                                    <i class="ri-arrow-left-line"></i>
+                                </a>
+                            <% } %>
+                            
+                            <!-- Page Numbers -->
+                            <% 
+                                let startPage = Math.max(1, currentPage - 2);
+                                let endPage = Math.min(totalPages, currentPage + 2);
+                                
+                                // Adjust if we're near the beginning or end
+                                if (endPage - startPage < 4) {
+                                    if (startPage === 1) {
+                                        endPage = Math.min(totalPages, startPage + 4);
+                                    } else {
+                                        startPage = Math.max(1, endPage - 4);
+                                    }
+                                }
+                            %>
+                            
+                            <% if (startPage > 1) { %>
+                                <span class="px-3 py-2 text-gray-400">...</span>
+                            <% } %>
+                            
+                            <% for (let i = startPage; i <= endPage; i++) { %>
+                                <% const isActive = i === currentPage; %>
+                                <% const activeClass = isActive ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'border border-gray-300 text-gray-600 hover:bg-blue-50 hover:border-blue-300'; %>
+                                <a href="?page=<%= i %><%= search ? '&search=' + search : '' %><%= status ? '&status=' + status : '' %>" 
+                                   class="px-4 py-2 rounded-lg font-semibold transition-all duration-300 text-sm <%= activeClass %>">
+                                    <%= i %>
+                                </a>
+                            <% } %>
+                            
+                            <% if (endPage < totalPages) { %>
+                                <span class="px-3 py-2 text-gray-400">...</span>
+                            <% } %>
+                            
+                            <!-- Next Page -->
+                            <% if (currentPage < totalPages) { %>
+                                <a href="?page=<%= currentPage + 1 %><%= search ? '&search=' + search : '' %><%= status ? '&status=' + status : '' %>" 
+                                   class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 text-sm">
+                                    <i class="ri-arrow-right-line"></i>
+                                </a>
+                            <% } %>
+                            
+                            <!-- Last Page -->
+                            <% if (currentPage < totalPages) { %>
+                                <a href="?page=<%= totalPages %><%= search ? '&search=' + search : '' %><%= status ? '&status=' + status : '' %>" 
+                                   class="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 text-sm">
+                                    <i class="ri-arrow-right-double-line"></i>
+                                </a>
+                            <% } %>
+                        </nav>
+                    </div>
+                </div>
+                <% } %>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add/Edit Category Modal -->
+    <div id="categoryModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 id="modalTitle" class="text-lg font-medium text-gray-900 mb-4">Thêm danh mục mới</h3>
+                <form id="categoryForm" method="POST" action="/admin/categories" enctype="multipart/form-data">
+                    <input type="hidden" id="categoryId" name="categoryId">
+                    <input type="hidden" id="formAction" name="action" value="add">
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="categoryName" class="block text-sm font-medium text-gray-700 mb-2">Tên danh mục *</label>
+                            <input type="text" id="categoryName" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label for="categoryDescription" class="block text-sm font-medium text-gray-700 mb-2">Mô tả</label>
+                            <textarea id="categoryDescription" name="description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                        </div>
+                        
+                        <div>
+                            <label for="categoryImage" class="block text-sm font-medium text-gray-700 mb-2">Hình ảnh danh mục</label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-gray-400 transition-colors">
+                                <div class="space-y-1 text-center">
+                                    <div id="imagePreview" class="hidden mb-4">
+                                        <img id="imagePreviewImg" src="" alt="Image preview" class="mx-auto h-20 w-20 object-cover rounded-lg border border-gray-200">
+                                    </div>
+                                    <i class="ri-image-add-line text-gray-400 text-4xl"></i>
+                                    <div class="flex text-sm text-gray-600">
+                                        <label for="categoryImage" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                            <span>Chọn file hình ảnh</span>
+                                            <input id="categoryImage" name="image" type="file" accept="image/*" class="sr-only" onchange="previewImage(this)">
+                                        </label>
+                                        <p class="pl-1">hoặc kéo thả vào đây</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500">PNG, JPG, GIF, WebP tối đa 5MB</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="categoryActive" name="isActive" checked class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                <span class="ml-2 text-sm text-gray-700">Kích hoạt danh mục</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-end space-x-3 mt-6 pt-4 border-t border-gray-200">
+                        <button type="button" onclick="closeCategoryModal()" class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            Hủy
+                        </button>
+                        <button type="submit" class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                            Lưu
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                    <i class="ri-alert-line text-red-600 text-xl"></i>
+                </div>
+                <div class="mt-3 text-center">
+                    <h3 class="text-lg font-medium text-gray-900">Xác nhận xóa</h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">Bạn có chắc chắn muốn xóa danh mục <span id="categoryName" class="font-medium"></span>?</p>
+                        <p class="text-sm text-red-500 mt-1">Hành động này không thể hoàn tác!</p>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center justify-end space-x-3">
+                    <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Hủy
+                    </button>
+                    <form id="deleteForm" method="POST" action="/admin/categories/delete" class="inline">
+                        <input type="hidden" id="deleteCategoryId" name="categoryId">
+                        <button type="submit" class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700">
+                            Xóa
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        // User menu dropdown
+        document.addEventListener('DOMContentLoaded', function () {
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', function () {
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // Close user menu when clicking outside
+                document.addEventListener('click', function (event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        function openAddCategoryModal() {
+            document.getElementById('modalTitle').textContent = 'Thêm danh mục mới';
+            document.getElementById('formAction').value = 'add';
+            document.getElementById('categoryForm').action = '/admin/categories';
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = '';
+            clearImagePreview();
+            document.getElementById('categoryModal').classList.remove('hidden');
+        }
+
+        async function editCategory(categoryId) {
+            try {
+                // Tìm danh mục trong danh sách hiện tại
+                const categories = <%- JSON.stringify(categories || []) %>;
+                const category = categories.find(c => c._id === categoryId);
+                
+                if (category) {
+                    document.getElementById('modalTitle').textContent = 'Chỉnh sửa danh mục';
+                    document.getElementById('formAction').value = 'edit';
+                    document.getElementById('categoryForm').action = '/admin/categories';
+                    document.getElementById('categoryId').value = category._id;
+                    
+                    // Fill form fields
+                    document.getElementById('categoryName').value = category.name || '';
+                    document.getElementById('categoryDescription').value = category.description || '';
+                    document.getElementById('categoryActive').checked = category.isActive;
+                    
+                    // Handle image preview
+                    clearImagePreview();
+                    if (category.imageUrl && category.imageUrl !== '') {
+                        const preview = document.getElementById('imagePreview');
+                        const previewImg = document.getElementById('imagePreviewImg');
+                        previewImg.src = category.imageUrl;
+                        preview.classList.remove('hidden');
+                    }
+                    
+                    document.getElementById('categoryModal').classList.remove('hidden');
+                } else {
+                    alert('Không tìm thấy danh mục');
+                }
+            } catch (error) {
+                console.error('Error loading category:', error);
+                alert('Có lỗi xảy ra khi tải thông tin danh mục');
+            }
+        }
+
+        function toggleCategoryStatus(categoryId, currentStatus) {
+            if (confirm(`Bạn có chắc chắn muốn ${currentStatus ? 'ẩn' : 'hiển thị'} danh mục này?`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/admin/categories/toggle-status';
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'categoryId';
+                input.value = categoryId;
+                
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function deleteCategory(categoryId, categoryName) {
+            document.getElementById('deleteCategoryId').value = categoryId;
+            document.getElementById('categoryName').textContent = categoryName;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.add('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    const previewImg = document.getElementById('imagePreviewImg');
+                    previewImg.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function clearImagePreview() {
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('imagePreviewImg');
+            const imageInput = document.getElementById('categoryImage');
+            
+            preview.classList.add('hidden');
+            previewImg.src = '';
+            imageInput.value = '';
+        }
+
+        // Auto-submit search form
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search');
+            const statusSelect = document.getElementById('status');
+            const form = document.querySelector('form');
+            
+            let searchTimeout;
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        form.submit();
+                    }, 500);
+                });
+            }
+            
+            if (statusSelect) {
+                statusSelect.addEventListener('change', function() {
+                    form.submit();
+                });
+            }
+        });
+    </script>
+    
+    <style>
+        /* Gradient Cards Animation */
+        .gradient-card {
+            background: linear-gradient(135deg, var(--from-color), var(--to-color));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .gradient-card:hover::before {
+            left: 100%;
+        }
+        
+        /* Icon glow effect */
+        .icon-glow {
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+        
+        /* Card hover effects */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+    </style>
+</body>
+</html>

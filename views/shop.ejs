@@ -7,7 +7,7 @@
             <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="text-center mb-12">
                     <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Danh Sách Sản Phẩm</h1>
-                    <p class="text-lg text-gray-600">Khám phá các sản phẩm chất lượng từ Phương Store</p>
+                    <p class="text-lg text-gray-600">Khám phá các sản phẩm chất lượng từ Pet Store</p>
                 </div>
 
                 <% if (prods.length > 0) { %>
@@ -21,14 +21,14 @@
                                     <% } %>
                                 </div>
                                 <div class="p-4 flex flex-col h-full">
-                                    <h5 class="text-lg font-bold mb-2 text-blue-600 line-clamp-2"><%= product.title %></h5>
+                                    <h5 class="text-base font-bold mb-2 text-blue-600" style="white-space: nowrap; overflow: visible; word-break: keep-all;"><%= product.title %></h5>
                                     <div class="mb-3">
                                         <span class="text-xl font-bold text-gray-900"><%= product.price.toLocaleString('vi-VN') %> ₫</span>
                                         <% if (product.oldPrice) { %>
                                             <del class="text-gray-500 ml-2 text-sm"><%= product.oldPrice.toLocaleString('vi-VN') %> ₫</del>
                                         <% } %>
                                     </div>
-                                    <p class="text-gray-600 text-sm flex-grow mb-4 line-clamp-3">
+                                    <p class="text-gray-600 text-xs flex-grow mb-4" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-break: keep-all;">
                                         <%= product.description %>
                                     </p>
                                     <div class="flex gap-2 mt-auto">

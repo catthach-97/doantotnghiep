@@ -1,0 +1,8 @@
+[17:06:21 30/10/2025] [DEBUG] Request authentication | Meta: {"url":"/","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[17:06:26 30/10/2025] [DEBUG] Request authentication | Meta: {"url":"/favicon.ico","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[17:06:33 30/10/2025] [DEBUG] Request authentication | Meta: {"url":"/login","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[17:06:36 30/10/2025] [DEBUG] Request authentication | Meta: {"url":"/login","method":"POST","isAuthenticated":false,"userId":null,"cartCount":0}
+[17:06:37 30/10/2025] [DEBUG] Request authentication | Meta: {"url":"/","method":"GET","isAuthenticated":true,"isAdmin":false,"userId":"68ccef4f8a55d7d4ae4478d1","cartCount":0}
+[17:06:40 30/10/2025] [DEBUG] Request authentication | Meta: {"url":"/orders","method":"GET","isAuthenticated":true,"isAdmin":false,"userId":"68ccef4f8a55d7d4ae4478d1","cartCount":0}
+[17:06:47 30/10/2025] [DEBUG] Request authentication | Meta: {"url":"/favorites","method":"GET","isAuthenticated":true,"isAdmin":false,"userId":"68ccef4f8a55d7d4ae4478d1","cartCount":0}
+[17:15:45 30/10/2025] [DEBUG] Request authentication | Meta: {"url":"/","method":"GET","isAuthenticated":true,"isAdmin":false,"userId":"68ccef4f8a55d7d4ae4478d1","cartCount":0}

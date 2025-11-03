@@ -1,0 +1,11 @@
+[15:03:10 14/07/2025] [INFO] MongoDB connected successfully
+[15:03:10 14/07/2025] [INFO] Server started successfully | Meta: {"port":"5000","environment":"development","timestamp":"2025-07-14T08:03:10.416Z"}
+[15:06:44 14/07/2025] [INFO] GET / - 200 - 197ms | Meta: {"method":"GET","url":"/","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","statusCode":200,"responseTime":"197ms","userId":null}
+[15:06:46 14/07/2025] [WARN] GET /favicon.ico - 404 - 62ms | Meta: {"method":"GET","url":"/favicon.ico","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","statusCode":404,"responseTime":"62ms","userId":null}
+[15:17:22 14/07/2025] [INFO] GET / - 304 - 98ms | Meta: {"method":"GET","url":"/","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","statusCode":304,"responseTime":"98ms","userId":null}
+[18:55:27 14/07/2025] [INFO] MongoDB connected successfully
+[18:55:27 14/07/2025] [INFO] Server started successfully | Meta: {"port":"5000","environment":"development","timestamp":"2025-07-14T11:55:27.548Z"}
+[18:55:30 14/07/2025] [INFO] GET / - 304 - 200ms | Meta: {"method":"GET","url":"/","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","statusCode":304,"responseTime":"200ms","userId":null}
+[18:55:32 14/07/2025] [WARN] GET /favicon.ico - 404 - 36ms | Meta: {"method":"GET","url":"/favicon.ico","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36","statusCode":404,"responseTime":"36ms","userId":null}
+[18:57:32 14/07/2025] [INFO] MongoDB connected successfully
+[18:57:32 14/07/2025] [INFO] Server started successfully | Meta: {"port":"5000","environment":"development","timestamp":"2025-07-14T11:57:32.343Z"}

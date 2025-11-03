@@ -1,103 +1,704 @@
 <%- include('../includes/head.ejs') %>
-    </head>
+    <title>Giỏ hàng - Shoe Store</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        /* Custom styles for cart page */
+        .cart-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        
+        .cart-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cart-item {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #f1f5f9;
+        }
+        
+        .cart-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .product-image {
+            border-radius: 0.75rem;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .product-image:hover {
+            transform: scale(1.02);
+        }
+        
+        .quantity-control {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+        }
+        
+        .quantity-control:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .quantity-btn {
+            background: white;
+            border: none;
+            color: #64748b;
+            transition: all 0.2s ease;
+            border-radius: 0.5rem;
+        }
+        
+        .quantity-btn:hover {
+            background: #3b82f6;
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary-cart {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-primary-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-secondary-cart {
+            background: white;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary-cart:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+        
+        .clear-all-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .clear-all-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+        
+        .btn-danger-cart {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-danger-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+        
+        .empty-cart {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .price-highlight {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .info-badge {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+        
+        .stock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .stock-status.in-stock {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+        }
+        
+        .stock-status.low-stock {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+        
+        .stock-status.out-of-stock {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+        }
+    </style>
+</head>
 
-    <body class="bg-gray-50">
-        <%- include('../includes/navigation.ejs') %>
+<body class="cart-container">
+    <%- include('../includes/navigation.ejs') %>
 
-        <main class="container mx-auto px-4 py-8">
-            <div class="max-w-6xl mx-auto">
-                <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-                        <i class="ri-shopping-cart-line text-primary mr-3"></i> Giỏ hàng của bạn
-                    </h1>
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="cart-header p-8 mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold flex items-center mb-2">
+                            <i class="ri-shopping-cart-line mr-4"></i>
+                            Giỏ hàng của bạn
+                        </h1>
+                        <p class="text-lg opacity-90">
+                            <% if (products && products.length > 0) { %>
+                                <%= products.length %> sản phẩm trong giỏ hàng
+                            <% } else { %>
+                                Giỏ hàng của bạn đang trống
+                            <% } %>
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl font-bold header-total-value">
+                            <% if (totalPrice) { %>
+                                <%= totalPrice.toLocaleString('vi-VN') %> ₫
+                            <% } else { %>
+                                0 ₫
+                            <% } %>
+                        </div>
+                        <p class="opacity-90">Tổng giá trị</p>
+                    </div>
                 </div>
+                
+                <!-- Clear All Button -->
+                <% if (products && products.length > 0) { %>
+                    <div class="mt-4 flex justify-end">
+                        <button onclick="clearAllItems()" 
+                                class="clear-all-btn px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105">
+                            <i class="ri-delete-bin-line mr-2"></i>
+                            Xóa tất cả
+                        </button>
+                    </div>
+                <% } %>
+                
+                <% if (!isAuthenticated) { %>
+                    <div class="mt-6 info-badge rounded-lg px-4 py-3 flex items-center">
+                        <i class="ri-information-line mr-3 text-xl"></i>
+                        <span>Bạn đang xem giỏ hàng tạm thời. <a href="/login" class="font-semibold underline hover:no-underline">Đăng nhập</a> để lưu giỏ hàng và thanh toán.</span>
+                    </div>
+                <% } %>
+            </div>
 
-                <% if (products && products.length> 0) { %>
-                    <div class="space-y-6">
-                        <% products.forEach(product=> { %>
-                            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                                <div class="flex flex-col md:flex-row">
-                                    <div class="md:w-32 h-32 md:h-auto">
-                                        <img src="<%= product.imageUrl %>" class="w-full h-full object-cover"
-                                            alt="<%= product.title %>">
-                                    </div>
-                                    <div class="flex-1 p-6">
-                                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                                            <div class="flex-1">
-                                                <h3 class="text-xl font-semibold text-gray-900 mb-2">
-                                                    <%= product.title %>
-                                                </h3>
-                                                <div class="space-y-2">
-                                                    <p class="text-gray-600">
-                                                        <span class="font-medium">Đơn giá:</span>
-                                                        <span class="text-primary font-semibold">
-                                                            <%= product.price.toLocaleString('vi-VN') %> VNĐ
-                                                        </span>
-                                                    </p>
-                                                    <div class="flex items-center space-x-4">
-                                                        <span class="text-gray-600 font-medium">Số lượng:</span>
-                                                        <form action="/cart-update-quantity" method="POST" class="flex items-center">
-                                                            <input type="hidden" name="productId" value="<%= product._id %>">
-                                                            <div class="flex items-center border border-gray-300 rounded-lg">
-                                                                <input type="number" name="quantity" 
-                                                                    value="<%= product.quantity %>" min="1" max="<%= product.stockQuantity || 10 %>"
-                                                                    onchange="this.form.submit()"
-                                                                    class="w-20 px-3 py-2 text-center border-0 focus:ring-2 focus:ring-primary focus:outline-none">
-                                                                <span class="px-3 py-2 bg-gray-50 text-sm text-gray-500 border-l">
-                                                                    <%= product.stockQuantity ? `Còn ${product.stockQuantity} sp` : '' %>
-                                                                </span>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                    <p class="text-lg font-bold text-primary">
-                                                        <span class="text-gray-600 font-medium">Thành tiền:</span>
-                                                        <%= (product.price * product.quantity).toLocaleString('vi-VN') %> VNĐ
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="mt-4 md:mt-0 md:ml-6">
-                                                <form action="/cart-delete-item" method="POST">
-                                                    <input type="hidden" name="productId" value="<%= product._id %>">
-                                                    <button class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center" type="submit">
-                                                        <i class="ri-delete-bin-line mr-2"></i> Xóa
-                                                    </button>
-                                                </form>
+            <% if (products && products.length > 0) { %>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Danh sách sản phẩm -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <% products.forEach((product, index) => { %>
+                            <div class="cart-item p-6">
+                                <div class="flex flex-col md:flex-row gap-6">
+                                    <!-- Hình ảnh sản phẩm -->
+                                    <div class="md:w-28 h-28 flex-shrink-0">
+                                        <div class="relative w-full h-full rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                                            <img src="<%= product.imageUrl %>" 
+                                                 class="product-image" 
+                                                 alt="<%= product.title %>">
+                                            <div class="absolute top-1.5 right-1.5">
+                                                <span class="bg-white text-gray-700 px-1.5 py-0.5 rounded-full text-xs font-medium shadow-md">
+                                                    #<%= index + 1 %>
+                                                </span>
                                             </div>
                                         </div>
+                                    </div>
+                                    
+                                    <!-- Thông tin sản phẩm -->
+                                    <div class="flex-1">
+                                        <div class="flex flex-col h-full">
+                                            <!-- Tên sản phẩm -->
+                                            <h3 class="text-lg font-bold text-gray-900 mb-3" style="white-space: nowrap; overflow: visible; word-break: keep-all;">
+                                                <%= product.title %>
+                                            </h3>
+                                            
+                                            <!-- Thông tin chi tiết -->
+                                            <div class="space-y-3 mb-4">
+                                                <!-- Giá đơn vị -->
+                                                <div class="flex items-center justify-between">
+                                                    <span class="text-gray-600 font-medium">Đơn giá:</span>
+                                                    <span class="price-highlight text-lg">
+                                                        <%= product.price.toLocaleString('vi-VN') %> ₫
+                                                    </span>
+                                                </div>
+                                                
+                                                <!-- SKU -->
+                                                <% if (product.sku) { %>
+                                                    <div class="flex items-center justify-between">
+                                                        <span class="text-gray-600 font-medium">Mã SKU:</span>
+                                                        <span class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+                                                            <%= product.sku %>
+                                                        </span>
+                                                    </div>
+                                                <% } %>
+                                                
+                                                <!-- Tình trạng tồn kho -->
+                                                <div class="flex items-center justify-between">
+                                                    <span class="text-gray-600 font-medium">Tình trạng:</span>
+                                                    <% 
+                                                        const stockQuantity = product.stockQuantity || 0;
+                                                        let stockStatus, stockClass;
+                                                        if (stockQuantity > 10) {
+                                                            stockStatus = 'Còn hàng';
+                                                            stockClass = 'in-stock';
+                                                        } else if (stockQuantity > 0) {
+                                                            stockStatus = 'Sắp hết';
+                                                            stockClass = 'low-stock';
+                                                        } else {
+                                                            stockStatus = 'Hết hàng';
+                                                            stockClass = 'out-of-stock';
+                                                        }
+                                                    %>
+                                                    <span class="stock-status <%= stockClass %>">
+                                                        <i class="ri-<%= stockClass === 'in-stock' ? 'checkbox-circle-line' : stockClass === 'low-stock' ? 'error-warning-line' : 'close-circle-line' %>"></i>
+                                                        <%= stockStatus %>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Điều khiển số lượng và giá -->
+                                            <div class="mt-auto">
+                                                <div class="flex items-center justify-between mb-4">
+                                                    <span class="text-gray-600 font-medium">Số lượng:</span>
+                                                    <form action="/cart-update-quantity" method="POST" class="flex items-center">
+                                                        <input type="hidden" name="productId" value="<%= product.productId %>">
+                                                        <input type="hidden" name="timestamp" value="<%= Date.now() %>">
+                                                        <div class="quantity-control flex items-center">
+                                                            <button type="button" class="quantity-btn w-8 h-8 flex items-center justify-center" 
+                                                                    onclick="changeQuantitySimple(this, -1)">
+                                                                <i class="ri-subtract-line"></i>
+                                                            </button>
+                                                            <input type="number" name="quantity" 
+                                                                   value="<%= product.quantity %>" min="1" max="<%= product.stockQuantity || 10 %>"
+                                                                   onchange="updateQuantityDirectly(this)"
+                                                                   class="w-16 px-2 py-2 text-center border-0 bg-transparent focus:outline-none font-semibold">
+                                                            <button type="button" class="quantity-btn w-8 h-8 flex items-center justify-center"
+                                                                    onclick="changeQuantitySimple(this, 1)">
+                                                                <i class="ri-add-line"></i>
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                
+                                                <!-- Thành tiền -->
+                                                <div class="flex items-center justify-between border-t border-gray-200 pt-4">
+                                                    <span class="text-lg font-semibold text-gray-700">Thành tiền:</span>
+                                                    <span class="text-2xl font-bold text-gray-900">
+                                                        <%= (parseFloat(product.price) * parseInt(product.quantity)).toLocaleString('vi-VN') %> ₫
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Nút xóa -->
+                                    <div class="flex justify-end md:justify-start">
+                                        <form action="/cart-delete-item" method="POST" class="w-full md:w-auto">
+                                            <input type="hidden" name="productId" value="<%= product.productId %>">
+                                            <button class="btn-danger-cart w-full md:w-auto px-6 py-3 flex items-center justify-center gap-2" type="submit">
+                                                <i class="ri-delete-bin-line"></i>
+                                                <span>Xóa khỏi giỏ</span>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         <% }) %>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-lg p-6 mt-8">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Tóm tắt đơn hàng</h3>
-                        <div class="flex justify-between items-center py-4 border-t border-gray-200">
-                            <span class="text-lg font-medium text-gray-700">Tổng tiền:</span>
-                            <span class="text-2xl font-bold text-primary">
-                                <%= totalPrice.toLocaleString('vi-VN') %> VNĐ
-                            </span>
-                        </div>
-                        <div class="space-y-3 mt-6">
-                            <a href="/checkout" class="w-full bg-primary text-white py-3 px-6 rounded-lg font-semibold hover:bg-primary-dark transition-colors text-center block">
-                                Thanh toán
-                            </a>
-                            <a href="/" class="w-full border border-gray-300 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-50 transition-colors text-center block">
-                                Tiếp tục mua sắm
-                            </a>
+                    <!-- Tóm tắt đơn hàng -->
+                    <div class="lg:col-span-1">
+                        <div class="summary-card p-6 sticky top-8">
+                            <h3 class="text-2xl font-bold mb-6 flex items-center">
+                                <i class="ri-file-list-line mr-3"></i>
+                                Tóm tắt đơn hàng
+                            </h3>
+                            
+                            <!-- Chi tiết đơn hàng -->
+                            <div class="space-y-4 mb-6">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg opacity-90">Số sản phẩm:</span>
+                                    <span class="text-xl font-bold">
+                                        <%= products.length %> sản phẩm
+                                    </span>
+                                </div>
+                                
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg opacity-90">Tạm tính:</span>
+                                    <span class="text-xl font-semibold subtotal-value">
+                                        <%= totalPrice.toLocaleString('vi-VN') %> ₫
+                                    </span>
+                                </div>
+                                
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg opacity-90">Phí vận chuyển:</span>
+                                    <span class="text-xl font-semibold <%= shippingFee === 0 ? 'text-green-300' : 'text-white' %>">
+                                        <%= shippingFee === 0 ? 'Miễn phí' : shippingFee.toLocaleString('vi-VN') + ' ₫' %>
+                                    </span>
+                                </div>
+                                
+                                <div class="border-t border-white/20 pt-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-2xl font-bold">Tổng cộng:</span>
+                                        <span class="text-3xl font-bold final-total-value">
+                                            <%= (totalAmount || 0).toLocaleString('vi-VN') %> ₫
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Nút thanh toán -->
+                            <div class="space-y-3">
+                                <% if (isAuthenticated) { %>
+                                    <a href="/checkout" class="btn-primary-cart w-full py-4 px-6 text-center block flex items-center justify-center gap-2">
+                                        <i class="ri-arrow-right-line"></i>
+                                        <span>Tiến hành thanh toán</span>
+                                    </a>
+                                <% } else { %>
+                                    <a href="/login" class="btn-primary-cart w-full py-4 px-6 text-center block flex items-center justify-center gap-2">
+                                        <i class="ri-login-box-line"></i>
+                                        <span>Đăng nhập để thanh toán</span>
+                                    </a>
+                                <% } %>
+                                
+                                <a href="/" class="btn-secondary-cart w-full py-3 px-6 text-center block flex items-center justify-center gap-2">
+                                    <i class="ri-arrow-left-line"></i>
+                                    <span>Tiếp tục mua sắm</span>
+                                </a>
+                            </div>
+                            
+                            <!-- Thông tin bổ sung -->
+                            <div class="mt-6 pt-6 border-t border-white/20">
+                                <div class="space-y-3 text-sm opacity-90">
+                                    <div class="flex items-center gap-2">
+                                        <i class="ri-truck-line"></i>
+                                        <span>Miễn phí vận chuyển toàn quốc</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <i class="ri-shield-check-line"></i>
+                                        <span>Bảo hành chính hãng 12 tháng</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <i class="ri-arrow-go-back-line"></i>
+                                        <span>Đổi trả trong 30 ngày</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                <% } else { %>
-                    <div class="bg-white rounded-xl shadow-lg p-12 text-center">
-                        <i class="ri-shopping-cart-line text-6xl text-gray-400 mb-6"></i>
-                        <h3 class="text-2xl font-semibold text-gray-900 mb-4">Giỏ hàng của bạn đang trống</h3>
-                        <p class="text-gray-600 mb-8">Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm.</p>
-                        <a href="/" class="bg-primary text-white py-3 px-8 rounded-lg font-semibold hover:bg-primary-dark transition-colors inline-block">
-                            Bắt đầu mua sắm
-                        </a>
-                    </div>
-                <% } %>
                 </div>
-            </main>
+            <% } else { %>
+                <!-- Giỏ hàng trống -->
+                <div class="empty-cart p-16 text-center">
+                    <div class="max-w-md mx-auto">
+                        <div class="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-8">
+                            <i class="ri-shopping-cart-line text-6xl text-gray-400"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-4">Giỏ hàng của bạn đang trống</h3>
+                        <p class="text-gray-600 mb-8 text-lg">Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm và khám phá những đôi giày tuyệt vời.</p>
+                        <div class="space-y-4">
+                            <a href="/" class="btn-primary-cart inline-flex items-center gap-2 py-4 px-8 text-lg">
+                                <i class="ri-shopping-bag-line"></i>
+                                <span>Bắt đầu mua sắm</span>
+                            </a>
+                            <div class="text-sm text-gray-500">
+                                <p>Hoặc <a href="/products" class="text-blue-600 hover:underline">xem tất cả sản phẩm</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </main>
 
-            <%- include('../includes/end.ejs') %>
+    <!-- JavaScript -->
+    <script>
+        // Hàm thay đổi số lượng đơn giản - sử dụng AJAX
+        function changeQuantitySimple(button, change) {
+            // Tìm form chứa button này
+            const form = button.closest('form');
+            if (!form) {
+                console.error('Không tìm thấy form');
+                return;
+            }
+            
+            const quantityInput = form.querySelector('input[name="quantity"]');
+            const productIdInput = form.querySelector('input[name="productId"]');
+            
+            if (!quantityInput || !productIdInput) {
+                console.error('Không tìm thấy input quantity hoặc productId');
+                return;
+            }
+            
+            const currentQuantity = parseInt(quantityInput.value);
+            const newQuantity = currentQuantity + change;
+            const maxQuantity = parseInt(quantityInput.getAttribute('max'));
+            const productId = productIdInput.value;
+            
+            // Lấy giá đơn vị từ element hiển thị giá
+            const productCard = form.closest('.cart-item');
+            const priceElement = productCard.querySelector('.price-highlight');
+            const unitPrice = parseFloat(priceElement.textContent.replace(/[^\d]/g, ''));
+            
+            if (newQuantity >= 1 && newQuantity <= maxQuantity) {
+                // Cập nhật UI trước
+                quantityInput.value = newQuantity;
+                
+                // Cập nhật giá "Thành tiền" của sản phẩm này ngay lập tức
+                updateProductSubtotal(productId, newQuantity, unitPrice);
+                
+                // Gửi AJAX request
+                fetch('/cart-update-quantity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: `productId=${productId}&quantity=${newQuantity}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Cập nhật tổng giá nếu có
+                        if (data.totalPrice) {
+                            updateTotalPrice(data.totalPrice);
+                        }
+                    } else {
+                        // Revert về giá trị cũ
+                        quantityInput.value = currentQuantity;
+                        updateProductSubtotal(productId, currentQuantity, unitPrice);
+                        alert(data.message || 'Có lỗi xảy ra');
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi AJAX:', error);
+                    // Revert về giá trị cũ
+                    quantityInput.value = currentQuantity;
+                    updateProductSubtotal(productId, currentQuantity, unitPrice);
+                    alert('Có lỗi xảy ra khi cập nhật số lượng');
+                });
+            } else {
+                if (newQuantity < 1) {
+                    alert('Số lượng phải lớn hơn 0');
+                } else if (newQuantity > maxQuantity) {
+                    alert(`Số lượng không được vượt quá ${maxQuantity} sản phẩm`);
+                }
+            }
+        }
+        
+        // Hàm cập nhật giá "Thành tiền" của từng sản phẩm
+        function updateProductSubtotal(productId, newQuantity, unitPrice) {
+            // Tìm sản phẩm theo productId
+            const productCard = document.querySelector(`input[name="productId"][value="${productId}"]`).closest('.cart-item');
+            if (productCard) {
+                const subtotalElement = productCard.querySelector('.text-2xl.font-bold.text-gray-900');
+                if (subtotalElement) {
+                    const newSubtotal = unitPrice * newQuantity;
+                    subtotalElement.textContent = newSubtotal.toLocaleString('vi-VN') + ' ₫';
+                }
+            }
+        }
+
+        // Hàm cập nhật tổng giá (cập nhật cả header và sidebar)
+        function updateTotalPrice(totalPrice) {
+            // Cập nhật tổng giá trị trong header
+            const headerTotalElements = document.querySelectorAll('.header-total-value');
+            headerTotalElements.forEach(element => {
+                element.textContent = totalPrice.toLocaleString('vi-VN') + ' ₫';
+            });
+            
+            // Cập nhật tạm tính trong sidebar
+            const subtotalElements = document.querySelectorAll('.subtotal-value');
+            subtotalElements.forEach(element => {
+                element.textContent = totalPrice.toLocaleString('vi-VN') + ' ₫';
+            });
+            
+            // Cập nhật tổng cộng trong sidebar (bao gồm phí ship)
+            const shippingFee = totalPrice >= 500000 ? 0 : 30000;
+            const finalTotal = totalPrice + shippingFee;
+            const totalElements = document.querySelectorAll('.final-total-value');
+            totalElements.forEach(element => {
+                element.textContent = finalTotal.toLocaleString('vi-VN') + ' ₫';
+            });
+        }
+
+        // Hàm thay đổi số lượng sản phẩm bằng nút +/- (backup)
+        function changeQuantity(productId, change) {
+            // Tìm form chứa productId cụ thể
+            const forms = document.querySelectorAll('form[action="/cart-update-quantity"]');
+            let targetForm = null;
+            
+            forms.forEach(form => {
+                const productIdInput = form.querySelector('input[name="productId"]');
+                if (productIdInput && productIdInput.value === productId.toString()) {
+                    targetForm = form;
+                }
+            });
+            
+            if (!targetForm) {
+                console.error('Không tìm thấy form cho productId:', productId);
+                return;
+            }
+            
+            const quantityInput = targetForm.querySelector('input[name="quantity"]');
+            if (!quantityInput) {
+                console.error('Không tìm thấy input quantity');
+                return;
+            }
+            
+            const currentQuantity = parseInt(quantityInput.value);
+            const newQuantity = currentQuantity + change;
+            const maxQuantity = parseInt(quantityInput.getAttribute('max'));
+            
+            if (newQuantity >= 1 && newQuantity <= maxQuantity) {
+                quantityInput.value = newQuantity;
+                targetForm.submit();
+            } else {
+                if (newQuantity < 1) {
+                    alert('Số lượng phải lớn hơn 0');
+                } else if (newQuantity > maxQuantity) {
+                    alert(`Số lượng không được vượt quá ${maxQuantity} sản phẩm`);
+                }
+            }
+        }
+        
+        // Hàm cập nhật số lượng khi người dùng thay đổi trực tiếp trong input
+        function updateQuantityDirectly(input) {
+            const form = input.closest('form');
+            const productId = form.querySelector('input[name="productId"]').value;
+            const quantity = parseInt(input.value);
+            const maxQuantity = parseInt(input.getAttribute('max'));
+            
+            // Lấy giá đơn vị từ element hiển thị giá
+            const productCard = form.closest('.cart-item');
+            const priceElement = productCard.querySelector('.price-highlight');
+            const unitPrice = parseFloat(priceElement.textContent.replace(/[^\d]/g, ''));
+            
+            if (quantity >= 1 && quantity <= maxQuantity) {
+                // Cập nhật giá "Thành tiền" của sản phẩm này ngay lập tức
+                updateProductSubtotal(productId, quantity, unitPrice);
+                form.submit();
+            } else {
+                // Reset về giá trị cũ nếu không hợp lệ
+                if (quantity < 1) {
+                    input.value = 1;
+                    updateProductSubtotal(productId, 1, unitPrice);
+                    alert('Số lượng phải lớn hơn 0');
+                } else if (quantity > maxQuantity) {
+                    input.value = maxQuantity;
+                    updateProductSubtotal(productId, maxQuantity, unitPrice);
+                    alert(`Số lượng không được vượt quá ${maxQuantity} sản phẩm`);
+                }
+            }
+        }
+        
+        // Hàm xóa tất cả sản phẩm trong giỏ hàng
+        function clearAllItems() {
+            if (confirm('Bạn có chắc chắn muốn xóa tất cả sản phẩm khỏi giỏ hàng?')) {
+                // Hiển thị loading
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Đang xóa...';
+                button.disabled = true;
+                
+                // Gửi AJAX request để xóa tất cả
+                fetch('/cart-clear-all', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Cập nhật cart count
+                        updateCartCount(0);
+                        
+                        // Reload trang để cập nhật giao diện
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'Có lỗi xảy ra khi xóa giỏ hàng');
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi AJAX:', error);
+                    alert('Có lỗi xảy ra khi xóa giỏ hàng');
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                });
+            }
+        }
+        
+        // Animation cho các sản phẩm
+        document.addEventListener('DOMContentLoaded', function() {
+            const cartItems = document.querySelectorAll('.cart-item');
+            cartItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    item.style.transition = 'all 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+
+    <%- include('../includes/end.ejs') %>
+
+    <!-- Scroll to Top Button -->

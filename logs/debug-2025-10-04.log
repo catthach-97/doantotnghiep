@@ -1,0 +1,5 @@
+[15:04:29 04/10/2025] [DEBUG] Request authentication | Meta: {"url":"/","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[15:04:32 04/10/2025] [DEBUG] Request authentication | Meta: {"url":"/favicon.ico","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[15:10:00 04/10/2025] [DEBUG] Request authentication | Meta: {"url":"/categories","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[15:10:51 04/10/2025] [DEBUG] Request authentication | Meta: {"url":"/products?category=running","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
+[15:11:00 04/10/2025] [DEBUG] Request authentication | Meta: {"url":"/","method":"GET","isAuthenticated":false,"userId":null,"cartCount":0}
