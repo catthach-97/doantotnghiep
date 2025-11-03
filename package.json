@@ -4,13 +4,13 @@
   "description": "Complete Node.js Guide",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js",
-    "start-server": "node app.js",
-    "build:css": "tailwindcss -i ./public/css/tailwind.css -o ./public/css/tailwind.min.css --minify",
-    "watch:css": "tailwindcss -i ./public/css/tailwind.css -o ./public/css/tailwind.min.css --watch",
-    "dev": "npm run build:css && npm start"
-  },
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "start": "node app.js",
+  "start-server": "node app.js",
+  "build:css": "tailwindcss -i ./public/css/tailwind.css -o ./public/css/tailwind.min.css --minify",
+  "watch:css": "tailwindcss -i ./public/css/tailwind.css -o ./public/css/tailwind.min.css --watch",
+  "dev": "npm run build:css && nodemon app.js"
+},
   "author": "ITC School",
   "license": "ITC",
   "devDependencies": {
